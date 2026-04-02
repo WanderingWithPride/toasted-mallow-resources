@@ -31,3 +31,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 04:20 | Apply all text fixes: nav contradiction, duplicate link, TV/photo language, remo
   - 2026-04-02 04:37 | Add interactive toolkit: numbers panel, progress tracker, task checkboxes, grant
   - 2026-04-02 04:43 | Add campaign ROI calculator + subscription model calculator
+  - 2026-04-02 04:45 | Add explicit privacy statement, share-this-toolkit section, strengthen free offe
