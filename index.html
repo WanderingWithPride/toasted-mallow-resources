@@ -6556,7 +6556,9 @@ MATH RULES (critical — never violate):
 - Never show arithmetic that contradicts the numbers provided. If the context says net is -$11,650, that is the net. Do not show a different number.
 - "New costs after consolidation" = total_costs minus savings_consolidate. This is already computed in the context — use it directly.
 - If ingredient & supply costs are above 50% of revenue, that is the most urgent problem, more urgent than rent. Say so first and clearly. Do not use the term "COGS" — say "ingredient costs" or "the cost to make your product."
-- When you give a "after consolidation" projection, verify: revenue minus new costs = the net you state. Never say a loss is a surplus or vice versa.`;
+- When you give a "after consolidation" projection, verify: revenue minus new costs = the net you state. Never say a loss is a surplus or vice versa.
+- When ingredient costs are elevated and consolidation data is available, ALWAYS present THREE scenarios, using the pre-computed numbers from the context: (1) rightsize production only — cuts ingredient costs to healthy range, keeps both locations; (2) consolidate only — closes one location, keeps current production; (3) both together — which scenario actually gets her to breakeven or surplus. Do not present consolidation as the only path.
+- If the context includes a NOTE about Location B assumption, surface that uncertainty before recommending consolidation. Ask whether Location B is currently open before assuming it can be closed.`;
 
 var TM_GEMINI_PROXY = 'https://tm-ai.michael-eisinger.workers.dev';
 
@@ -6947,10 +6949,25 @@ function tmRunCostAnalysis(autoRun) {
   var occ_pct_str = rev > 0 ? Math.round(total_occupancy/rev*100)+'%' : 'n/a';
   var labor_pct_str = rev > 0 ? Math.round(payroll/rev*100)+'%' : 'n/a';
   var net_after_consolidate = net + savings_consolidate;
+  // Rightsizing math: what if she cuts production to match actual demand (target = 35% of rev)?
+  var target_cogs = rev > 0 ? Math.round(rev * 0.35) : 0;
+  var cogs_savings_potential = total_cogs > target_cogs ? total_cogs - target_cogs : 0;
+  var net_if_rightsize_only = net + cogs_savings_potential;
+  var net_if_both = net_after_consolidate + cogs_savings_potential;
+  var rightsize_str = '';
+  if (total_cogs > 0 && rev > 0 && Math.round(total_cogs/rev*100) > 35) {
+    rightsize_str = ' Rightsizing production to match actual demand (cutting ingredient costs to healthy 35% of revenue = $'+target_cogs+'/mo target, saving $'+cogs_savings_potential+'/mo):'
+      + ' net if she cuts production only (keeps both locations) = $'+net_if_rightsize_only+'/mo ('+(net_if_rightsize_only<0?'still a LOSS of $'+Math.abs(net_if_rightsize_only):'SURPLUS of $'+net_if_rightsize_only)+').'
+      + ' Net if she does BOTH consolidation AND rightsizes production = $'+net_if_both+'/mo ('+(net_if_both<0?'still a LOSS of $'+Math.abs(net_if_both):'SURPLUS of $'+net_if_both)+').'
+      + ' Use these three scenarios when comparing options: (1) consolidate only, (2) rightsize production only, (3) both together.';
+  }
+  var loc2_assumption = savings_consolidate > 0 ? ' NOTE: the consolidation math assumes Location B (the second location) is currently open and operational. If it is already closed or winding down, the consolidation savings are not available — ask her to confirm before recommending consolidation.' : '';
   window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo (that is a $'+Math.abs(net)+'/mo '+(net<0?'loss':'surplus')+'). Occupancy: $'+total_occupancy+'/mo ('+occ_pct_str+' of revenue). Labor: $'+payroll+'/mo ('+labor_pct_str+' of revenue)'+(payroll2>0?' — Location A: $'+payroll1+', Location B: $'+payroll2:'')+'.'
     +' Ingredient & supply costs (ingredients + packaging): $'+total_cogs+'/mo ('+cogs_pct_str+' of revenue — IMPORTANT: healthy range is 25-35%; above 50% is a production cost crisis, not a rent problem).'
     +' Overhead: $'+total_overhead+'/mo.'
     +' If she consolidates to one location: saves $'+savings_consolidate+'/mo (rent+util+staff for Location B), new total costs would be $'+(total_costs-savings_consolidate)+'/mo, new monthly net would be $'+net_after_consolidate+'/mo (still a '+(net_after_consolidate<0?'LOSS of $'+Math.abs(net_after_consolidate):'SURPLUS of $'+net_after_consolidate)+').'
+    + rightsize_str
+    + loc2_assumption
     + cashCtx;
 }
 
