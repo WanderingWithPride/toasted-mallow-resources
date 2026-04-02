@@ -911,6 +911,122 @@ document.getElementById('pw-input').focus();
       <strong>Lease exit cost:</strong> Early termination in AZ typically carries a 2–6 month rent penalty. If your second location has 12+ months left on the lease, the break cost changes the math significantly — find out the exact figure before making this call.<br><br>
       <strong>Staff impact:</strong> Consolidation likely means reducing headcount. Budget time and emotional bandwidth for that conversation. At under 10 employees you're below WARN Act thresholds, but how you handle it will affect your reputation in the local community and your ability to hire again.
     </div>
+
+    <!-- CONSOLIDATION DECISION CALCULATOR -->
+    <div style="background:white;border:2px solid #C05A10;border-radius:14px;padding:28px 28px 24px;margin-top:20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C05A10;margin-bottom:8px;">Decision Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.15rem;margin:0 0 6px 0;">Consolidation Cost Calculator</h3>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 20px 0;">Enter your actual numbers to see whether consolidation makes financial sense and what the break-even looks like.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly rent — location to close</label>
+          <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:8px;overflow:hidden;">
+            <span style="padding:8px 10px;background:#f5f0eb;color:#888;font-size:14px;">$</span>
+            <input id="calc-rent" type="number" placeholder="3500" style="border:none;padding:8px 12px;font-size:14px;width:100%;outline:none;">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Months left on lease</label>
+          <input id="calc-months" type="number" placeholder="18" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Early termination penalty (months)</label>
+          <input id="calc-penalty" type="number" placeholder="3" min="0" max="12" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Staff to transition (count)</label>
+          <input id="calc-staff" type="number" placeholder="2" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Average weekly pay per person</label>
+          <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:8px;overflow:hidden;">
+            <span style="padding:8px 10px;background:#f5f0eb;color:#888;font-size:14px;">$</span>
+            <input id="calc-wages" type="number" placeholder="450" style="border:none;padding:8px 12px;font-size:14px;width:100%;outline:none;">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Notice period you'll give (weeks)</label>
+          <input id="calc-notice" type="number" placeholder="2" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
+        </div>
+      </div>
+
+      <button onclick="runConsolidationCalc()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">Calculate</button>
+
+      <div id="calc-results" style="display:none;margin-top:20px;border-top:1px solid #e8ddd0;padding-top:18px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px;">
+          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Exit Cost</div>
+            <div id="res-exit" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
+            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">lease penalty</div>
+          </div>
+          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Staff Cost</div>
+            <div id="res-staff" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
+            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">notice period wages</div>
+          </div>
+          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Total One-Time Cost</div>
+            <div id="res-total" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
+            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">to execute consolidation</div>
+          </div>
+          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Monthly Savings</div>
+            <div id="res-savings" style="font-size:1.4rem;font-weight:800;color:#2a7a4a;"></div>
+            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">after closing</div>
+          </div>
+          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Break-Even</div>
+            <div id="res-breakeven" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
+            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">months to recover exit cost</div>
+          </div>
+        </div>
+        <div id="res-verdict" style="font-size:14px;line-height:1.7;padding:14px 16px;border-radius:10px;"></div>
+      </div>
+    </div>
+    <script>
+    function runConsolidationCalc() {
+      var rent = parseFloat(document.getElementById('calc-rent').value) || 0;
+      var months = parseFloat(document.getElementById('calc-months').value) || 0;
+      var penalty = parseFloat(document.getElementById('calc-penalty').value) || 3;
+      var staff = parseFloat(document.getElementById('calc-staff').value) || 0;
+      var wages = parseFloat(document.getElementById('calc-wages').value) || 0;
+      var notice = parseFloat(document.getElementById('calc-notice').value) || 2;
+
+      var exitCost = rent * penalty;
+      var staffCost = staff * wages * notice;
+      var total = exitCost + staffCost;
+      var monthlySavings = rent; // rent savings after closing
+      var breakeven = monthlySavings > 0 ? Math.ceil(total / monthlySavings) : 0;
+
+      document.getElementById('res-exit').textContent = '$' + exitCost.toLocaleString();
+      document.getElementById('res-staff').textContent = '$' + staffCost.toLocaleString();
+      document.getElementById('res-total').textContent = '$' + total.toLocaleString();
+      document.getElementById('res-savings').textContent = '$' + monthlySavings.toLocaleString() + '/mo';
+      document.getElementById('res-breakeven').textContent = breakeven > 0 ? breakeven + ' mo' : 'N/A';
+
+      var verdictEl = document.getElementById('res-verdict');
+      var verdict, bg, color;
+      if (breakeven <= 6) {
+        verdict = 'The math supports consolidation. At ' + breakeven + ' months to break even, the exit costs are recovered quickly and every month after that is pure savings. This is a strong argument for moving forward if the lease terms allow it.';
+        bg = '#e8f5ee'; color = '#1a5c33';
+      } else if (breakeven <= 12) {
+        verdict = 'Consolidation is financially reasonable but not urgent. At ' + breakeven + ' months to break even, you would recover costs within a year — which is viable if your cash position can absorb the upfront exit cost. Worth negotiating hard on the lease penalty first.';
+        bg = '#fffbe6'; color = '#7a5a00';
+      } else if (breakeven > 12) {
+        verdict = 'At ' + breakeven + ' months to break even, the exit costs are high relative to the savings. This does not mean consolidation is wrong — it means the lease penalty is a real obstacle. Negotiate with your landlord before signing off: ask for a lease buy-out at 1–2 months rent instead of the standard penalty.';
+        bg = '#fef0e4'; color = '#7A3010';
+      } else {
+        verdict = 'Enter your numbers above to see the analysis.';
+        bg = '#f5f0eb'; color = '#555';
+      }
+      verdictEl.textContent = verdict;
+      verdictEl.style.background = bg;
+      verdictEl.style.color = color;
+
+      document.getElementById('calc-results').style.display = 'block';
+    }
+    </script>
   </div>
 </section>
 
