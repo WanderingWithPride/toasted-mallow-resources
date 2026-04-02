@@ -1166,19 +1166,23 @@ function tmUpdateOneNumber() {
   var d = tmGetData();
   var rev = parseFloat(d.revenue_store||0) + parseFloat(d.revenue_online||0);
   var cash = parseFloat(d.cash||0);
+  var ar = parseFloat(d.ar||0);
+  var one_time_out = parseFloat(d.one_time_out||0);
+  var effective_cash = cash + ar - one_time_out;
   var rent = parseFloat(d.rent1||0) + parseFloat(d.rent2||0);
   var payroll = parseFloat(d.payroll||0);
   // Need at least revenue or cash to show something meaningful
   if (!rev && !cash) { banner.style.display='none'; return; }
   banner.style.display='block';
-  if (cash && rev && (rent||payroll)) {
+  if (effective_cash > 0 && rev && (rent||payroll)) {
     // Estimate fixed costs: rent + payroll + 20% buffer for other costs
     var fixedEst = rent + payroll;
-    var monthsRunway = fixedEst > 0 ? (cash / Math.max(fixedEst - rev, 1)) : 0;
     var gap = fixedEst - rev;
     if (gap > 0) {
       textEl.textContent = 'You need $' + Math.round(gap).toLocaleString() + '/month more to cover fixed costs';
-      subEl.textContent = 'Current revenue $' + Math.round(rev).toLocaleString() + ' vs. estimated fixed costs $' + Math.round(fixedEst).toLocaleString() + '. At current burn, approximately ' + (cash > 0 ? Math.round(cash/Math.max(gap,1)) + ' months of runway remain.' : 'track cash on hand in the Numbers Panel to see runway.');
+      var runwayMonths = Math.round(effective_cash/Math.max(gap,1));
+      var runwaySuffix = effective_cash > 0 ? runwayMonths + ' month' + (runwayMonths !== 1 ? 's' : '') + ' of runway' + (ar > 0 || one_time_out > 0 ? ' (effective cash $' + Math.round(effective_cash).toLocaleString() + ')' : '') + '.' : 'track cash on hand to see runway.';
+      subEl.textContent = 'Revenue $' + Math.round(rev).toLocaleString() + ' vs. estimated fixed costs $' + Math.round(fixedEst).toLocaleString() + '. At current burn, approximately ' + runwaySuffix;
     } else {
       var surplus = Math.abs(gap);
       textEl.textContent = 'Revenue is covering fixed costs — $' + Math.round(surplus).toLocaleString() + '/month surplus';
@@ -1351,6 +1355,8 @@ document.getElementById('pw-input').focus();
       <div class="tm-field"><label>TikTok followers</label><input id="tmf_followers" type="number" min="0" placeholder="270900"></div>
       <div class="tm-field"><label>Email list size</label><input id="tmf_email_list" type="number" min="0" placeholder="500"></div>
       <div class="tm-field"><label>Cash on hand right now ($)</label><input id="tmf_cash" type="number" min="0" placeholder="8000"></div>
+      <div class="tm-field"><label><span class="tm-tip" data-tip="Money already earned but not yet in your account — outstanding wholesale invoices, catering deposits, orders shipped but not collected. This adds to your real available cash.">Money owed TO you (outstanding invoices)</span> ($)</label><input id="tmf_ar" type="number" min="0" placeholder="0"></div>
+      <div class="tm-field"><label><span class="tm-tip" data-tip="Bills or payments due this month that are NOT in your regular monthly costs above — lease penalties, equipment repairs, vendor catch-up, one-time obligations. This reduces your real available cash.">One-time bills due this month</span> ($)</label><input id="tmf_one_time_out" type="number" min="0" placeholder="0"></div>
     </div>
 
     <!-- COST BREAKDOWN TAB -->
@@ -6648,7 +6654,7 @@ function tmChatSend() {
 
 
 // ── Extended numbers panel ────────────────────────────────────────────────────
-var TM_COST_FIELDS = ['revenue_store','revenue_online','aov','followers','email_list','cash',
+var TM_COST_FIELDS = ['revenue_store','revenue_online','aov','followers','email_list','cash','ar','one_time_out',
   'rent1','rent2','util1','util2','payroll1','payroll2','staff1','staff2','owner_pay',
   'cogs_dollar','packaging','shipping_supplies',
   'pos_fees','insurance','software','marketing','debt','other_fixed',
@@ -6711,6 +6717,10 @@ function tmRunCostAnalysis(autoRun) {
   var marketing = parseFloat(TM.marketing||0);
   var debt = parseFloat(TM.debt||0);
   var other = parseFloat(TM.other_fixed||0);
+  var cash = parseFloat(TM.cash||0);
+  var ar = parseFloat(TM.ar||0);
+  var one_time_out = parseFloat(TM.one_time_out||0);
+  var effective_cash = cash + ar - one_time_out;
 
   var total_occupancy = rent1+rent2+util1+util2;
   var total_cogs = cogs+packaging;
@@ -6879,8 +6889,21 @@ function tmRunCostAnalysis(autoRun) {
   if (rev) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:white;">$'+rev.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Revenue</div></div>';
   if (total_costs) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:white;">$'+total_costs.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Total Costs</div></div>';
   if (rev||total_costs) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:'+netColor+';">'+(net>=0?'+':'-')+'$'+Math.abs(net).toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Monthly Net</div></div>';
+  if (effective_cash > 0 && net < 0) {
+    var runway_weeks = Math.floor((effective_cash / Math.abs(net)) * 4.33);
+    var runway_color = runway_weeks >= 12 ? '#4CAF50' : runway_weeks >= 4 ? '#FFC107' : '#FF6B6B';
+    var runway_label = (ar > 0 || one_time_out > 0) ? 'Real Runway' : 'Runway';
+    html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:'+runway_color+';">'+runway_weeks+' wks</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">'+runway_label+'</div></div>';
+  }
   if (savings_consolidate) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:#4CAF50;">+$'+savings_consolidate.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Save if Consolidate</div></div>';
   html += '</div>';
+  if (net < 0 && (ar > 0 || one_time_out > 0)) {
+    var cashBreakdown = 'Cash: $'+cash.toLocaleString();
+    if (ar > 0) cashBreakdown += ' + $'+ar.toLocaleString()+' incoming invoices';
+    if (one_time_out > 0) cashBreakdown += ' − $'+one_time_out.toLocaleString()+' one-time bills due';
+    cashBreakdown += ' = $'+effective_cash.toLocaleString()+' effective available cash.';
+    html += '<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:10px;padding:0 2px;">'+cashBreakdown+'</div>';
+  }
 
   if (recs.length) {
     html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);margin-bottom:8px;">Specific Opportunities</div>';
@@ -6905,7 +6928,15 @@ function tmRunCostAnalysis(autoRun) {
   container.appendChild(output);
 
   // Store analysis context for AI
-  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo. Occupancy: $'+total_occupancy+'/mo. Labor: $'+payroll+'/mo'+(payroll2>0?' (Loc1: $'+payroll1+', Loc2: $'+payroll2+')':'')+'. COGS+packaging: $'+total_cogs+'/mo. Overhead: $'+total_overhead+'/mo. Consolidation (rent+util+staff) would save: $'+savings_consolidate+'/mo.';
+  var cashCtx = '';
+  if (effective_cash > 0) {
+    cashCtx = ' Cash on hand: $'+cash.toLocaleString();
+    if (ar > 0) cashCtx += ', plus $'+ar.toLocaleString()+' in outstanding receivables';
+    if (one_time_out > 0) cashCtx += ', minus $'+one_time_out.toLocaleString()+' in one-time bills due this month';
+    cashCtx += ' — effective available cash: $'+effective_cash.toLocaleString()+'.';
+    if (net < 0) cashCtx += ' At current burn that is ~'+Math.floor((effective_cash/Math.abs(net))*4.33)+' weeks of runway.';
+  }
+  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo. Occupancy: $'+total_occupancy+'/mo. Labor: $'+payroll+'/mo'+(payroll2>0?' (Loc1: $'+payroll1+', Loc2: $'+payroll2+')':'')+'. COGS+packaging: $'+total_cogs+'/mo. Overhead: $'+total_overhead+'/mo. Consolidation (rent+util+staff) would save: $'+savings_consolidate+'/mo.'+cashCtx;
 }
 
 function tmAskAIAboutCosts() {
