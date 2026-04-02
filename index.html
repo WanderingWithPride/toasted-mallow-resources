@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Toasted Mallow — Business Support Package</title>
+<title>The Toasted Mallow — Business Strategy Package</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1091,7 +1091,7 @@ document.getElementById('pw-input').focus();
   <div id="tm-numbers-body">
     <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 16px;margin-bottom:4px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Your privacy</div>
-      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">Everything you enter here is stored <strong style="color:white;">only in your browser</strong> using localStorage — the same way a site remembers your preferences. Nothing is transmitted to any server, stored in any database, or accessible to me or anyone else. I have no backend. Clearing your browser data removes it entirely. This is a static page hosted on GitHub — there is no server-side processing of any kind.</p>
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">The numbers you enter here are stored <strong style="color:white;">only in your browser</strong> using localStorage — never sent to me or any third party. This page loads Google Fonts (a standard IP-only request to Google). The AI chat routes through a proxy I control to Google Gemini — your messages go to Google for processing but no history is kept on my end. On a shared device, use incognito mode. Clearing browser data removes all saved numbers. <button onclick="tmExportData()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin-left:4px;">Export my data</button></p>
     </div>
     <div class="tm-input-grid">
       <div class="tm-field"><label>Monthly rent — location to keep</label><input id="tmf_rent" type="number" placeholder="3500"></div>
@@ -1239,7 +1239,7 @@ document.getElementById('pw-input').focus();
 
     <div class="verdict-box" style="margin-top: 32px;">
       <h3>The Verdict: Option C + B — together</h3>
-      <p>Option B (drop cupcakes) is necessary but not enough on its own. Option C (e-commerce pivot + consolidate to one location) is what actually solves the problem. Combined, they cut fixed overhead by ~50% — one lease, one set of utilities, fewer staff — while opening the national market for marshmallows. <strong>Option A is the worst path:</strong> it signals decline to customers, reduces revenue more than it reduces costs, and doesn't touch the real problem.</p>
+      <p>Option B (drop cupcakes) is necessary but not enough on its own. Option C (e-commerce pivot + consolidate to one location) is what actually solves the problem. Combined, they cut fixed overhead by ~50% — one lease, one set of utilities, fewer staff — while opening the national market for marshmallows. <strong>Option A is the worst path:</strong> it signals decline to customers, reduces revenue more than it reduces costs, and doesn't touch the real problem. <em style="color:var(--text-mid);font-size:0.9em;">Note on dropping cupcakes: this is the right call if cupcakes are a margin drag — but only you know your actual cupcake margins, cross-sell contribution, and whether any wholesale or event contracts depend on them. Run the math before making it final.</em></p>
       <div class="precedent-box">
         <strong>The precedent you need to know:</strong> XO Marshmallow (Chicago) ran the world's first marshmallow cafe — same category as you. Their cafe closed in 2024. Their e-commerce immediately jumped <strong>325%</strong> and they became a seven-figure business. TikTok Shop alone projects over $1M in revenue for them. You have something XO didn't: 10+ years of history, two locations as proof of scale, verified regional TV features (Arizona PBS, CBS 5, FOX 10 Phoenix), and dual certification (LGBTQ+ + women-owned) that opens major grant programs to you.
       </div>
@@ -2349,6 +2349,33 @@ document.getElementById('pw-input').focus();
           <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="sub-breakeven" style="font-size:1.3rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Subscribers to cover rent</div></div>
         </div>
         <div id="sub-verdict" style="margin-top:12px;font-size:13px;line-height:1.7;padding:12px 16px;background:var(--cream);border-radius:8px;color:var(--text);"></div>
+      </div>
+    </div>
+
+    <!-- 13-WEEK CASH FLOW TOOL -->
+    <div style="background:var(--cream-dark);border:2px solid #C05A10;border-radius:14px;padding:24px 28px;margin-top:32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C05A10;margin-bottom:8px;">Critical Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.1rem;margin:0 0 6px;">Cash Runway Calculator</h3>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">How many weeks can you operate at current burn? Enter your actual numbers to find out — and see what changes if you cut costs.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Cash on hand now ($)</label>
+          <input id="cf-cash" type="number" placeholder="8000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly revenue ($)</label>
+          <input id="cf-revenue" type="number" placeholder="15000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly fixed costs ($)</label>
+          <input id="cf-fixed" type="number" placeholder="12000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly variable costs ($)</label>
+          <input id="cf-variable" type="number" placeholder="3000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+      </div>
+      <button onclick="tmCalcCashFlow()" style="background:#C05A10;color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate runway</button>
+      <div id="cf-results" style="display:none;margin-top:16px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="cf-monthly-net" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Monthly net</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="cf-weeks" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Weeks of runway</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="cf-zero-date" style="font-size:1.2rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Cash-zero date</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="cf-break-revenue" style="font-size:1.4rem;font-weight:800;color:#2a7a4a;"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Revenue to break even</div></div>
+        </div>
+        <div id="cf-verdict" style="margin-top:12px;font-size:13px;line-height:1.7;padding:12px 16px;border-radius:8px;"></div>
       </div>
     </div>
 </section>
@@ -4941,7 +4968,10 @@ All grant eligibility verified against 2025–2026 program cycles as of April 20
       <h4>Business Advisor AI</h4>
       <span>Powered by Google Gemini (free) — knows your situation</span>
     </div>
-    <span id="tm-chat-close" onclick="tmChatToggle()">&times;</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="tm-tts-btn" onclick="tmToggleTTS()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:100px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">Voice: OFF</button>
+      <span id="tm-chat-close" onclick="tmChatToggle()">&times;</span>
+    </div>
   </div>
   <div id="tm-chat-messages">
     <div class="tm-msg-bot">Hi Tricia. I have context on your business situation from this toolkit — your two locations, the three paths you're weighing, your TikTok following, and the grants in this package. Ask me anything: grant writing help, TikTok script ideas, pricing questions, or just talking through a decision. What's on your mind?</div>
@@ -5067,6 +5097,7 @@ function tmChatSend() {
     botDiv.textContent = text;
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
+    tmSpeak(text);
   })
   .catch(function(err) {
     var think = document.getElementById('tm-thinking');
@@ -5081,6 +5112,87 @@ function tmChatSend() {
 
 
 
+
+
+
+
+// ── Cash flow runway ──────────────────────────────────────────────────────────
+function tmCalcCashFlow() {
+  var cash = parseFloat(document.getElementById('cf-cash').value) || 0;
+  var rev = parseFloat(document.getElementById('cf-revenue').value) || 0;
+  var fixed = parseFloat(document.getElementById('cf-fixed').value) || 0;
+  var variable = parseFloat(document.getElementById('cf-variable').value) || 0;
+  if (!cash && !rev) { alert('Enter your cash on hand and monthly revenue.'); return; }
+  var total_costs = fixed + variable;
+  var monthly_net = rev - total_costs;
+  var breakeven_rev = total_costs;
+  var weeks, zero_date_str;
+  if (monthly_net >= 0) { weeks = 999; zero_date_str = 'Not losing money'; }
+  else {
+    var months = cash / Math.abs(monthly_net);
+    weeks = Math.floor(months * 4.33);
+    var d = new Date(); d.setMonth(d.getMonth() + months);
+    zero_date_str = d.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+  }
+  document.getElementById('cf-monthly-net').textContent = (monthly_net >= 0 ? '+' : '') + '$' + Math.abs(monthly_net).toFixed(0);
+  document.getElementById('cf-weeks').textContent = weeks >= 999 ? 'Positive' : weeks + ' weeks';
+  document.getElementById('cf-zero-date').textContent = zero_date_str;
+  document.getElementById('cf-break-revenue').textContent = '$' + breakeven_rev.toLocaleString() + '/mo';
+  var verd = document.getElementById('cf-verdict');
+  var msg, bg, col;
+  if (monthly_net >= 0) { msg = 'You are cash-flow positive at current revenue. The goal now is growing the margin, not surviving.'; bg='#e8f5ee'; col='#1a5c33'; }
+  else if (weeks >= 12) { msg = 'You have ' + weeks + ' weeks of runway — enough time to execute the pivot if you start now. The e-commerce buildout, grant applications, and consolidation planning can all happen within that window if prioritized correctly.'; bg='#fffbe6'; col='#7a5a00'; }
+  else if (weeks >= 4) { msg = 'At ' + weeks + ' weeks of runway, the clock is real. The three jobs in the Start Here section — landlord call, GoFundMe, and Kiva — are the most likely to buy time in the next 30 days. Everything else is parallel.'; bg='#fef0e4'; col='#7A3010'; }
+  else { msg = 'Under 4 weeks is a liquidity emergency. Landlord call and GoFundMe/Ko-fi need to happen today. Before doing anything else in this toolkit, get those two conversations started.'; bg='#fee8e8'; col='#8B0000'; }
+  verd.textContent = msg; verd.style.background = bg; verd.style.color = col;
+  document.getElementById('cf-results').style.display = 'block';
+}
+
+
+// ── Text-to-speech ────────────────────────────────────────────────────────────
+var TM_TTS_ON = false;
+
+function tmToggleTTS() {
+  TM_TTS_ON = !TM_TTS_ON;
+  var btn = document.getElementById('tm-tts-btn');
+  if (btn) {
+    btn.textContent = TM_TTS_ON ? 'Voice: ON' : 'Voice: OFF';
+    btn.style.background = TM_TTS_ON ? '#C05A10' : 'rgba(255,255,255,0.15)';
+  }
+  if (!TM_TTS_ON) speechSynthesis.cancel();
+}
+
+function tmSpeak(text) {
+  if (!TM_TTS_ON || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  var utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 1.05;
+  utt.pitch = 1.0;
+  // Prefer a natural female voice if available
+  var voices = speechSynthesis.getVoices();
+  var preferred = voices.find(function(v) {
+    return /samantha|karen|moira|female|zira/i.test(v.name) && v.lang.startsWith('en');
+  }) || voices.find(function(v){ return v.lang.startsWith('en'); });
+  if (preferred) utt.voice = preferred;
+  speechSynthesis.speak(utt);
+}
+
+// ── Data export ───────────────────────────────────────────────────────────────
+function tmExportData() {
+  var data = { version: 1, exported: new Date().toISOString(), numbers: {}, tasks: {}, grants: {} };
+  var TM_FIELDS = ['rent','revenue','aov','cogs_pct','staff','followers','email_list'];
+  TM_FIELDS.forEach(function(k) { var v = localStorage.getItem('tm_'+k); if(v) data.numbers[k] = v; });
+  document.querySelectorAll('.tm-task-check').forEach(function(el) {
+    data.tasks[el.dataset.id] = el.checked;
+  });
+  var grants = ['nglcc','founders','doordash','amber','kiva','wfsa','prestamos','az_micro','ifiundwomen','sba','score','artisan','gilbert'];
+  grants.forEach(function(g) { var v = localStorage.getItem('tmgrant_'+g); if(v) data.grants[g] = v; });
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'toasted-mallow-toolkit-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
 
 // ── Google Calendar links ─────────────────────────────────────────────────────
 function tmAddToCalendar(title, dateStr, description) {
@@ -5166,6 +5278,7 @@ function tmStartGuide() {
     botDiv.textContent = text;
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
+    tmSpeak(text);
     document.getElementById('tm-chat-input').focus();
   })
   .catch(function() {
