@@ -958,6 +958,60 @@ function tmCountdown() {
   el.innerHTML = '<div style="margin-bottom:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);">Until Mother's Day (May 11)</div><div class="tm-countdown"><div class="tm-cd-box"><div class="num">'+td.d+'</div><div class="unit">Days</div></div><div class="tm-cd-box"><div class="num">'+td.h+'</div><div class="unit">Hours</div></div><div class="tm-cd-box"><div class="num">'+td.m+'</div><div class="unit">Min</div></div></div><div style="margin-top:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);">Until Last Safe Ship Date (May 4)</div><div class="tm-countdown"><div class="tm-cd-box"><div class="num">'+ts.d+'</div><div class="unit">Days</div></div><div class="tm-cd-box"><div class="num">'+ts.h+'</div><div class="unit">Hours</div></div><div class="tm-cd-box"><div class="num">'+ts.m+'</div><div class="unit">Min</div></div></div>';
 }
 
+
+// Campaign ROI
+function tmCalcCampaign() {
+  var spend = parseFloat(document.getElementById('croi-spend').value) || 0;
+  var orders = parseFloat(document.getElementById('croi-orders').value) || 0;
+  var aov = parseFloat(document.getElementById('croi-aov').value) || 0;
+  var cogs = parseFloat(document.getElementById('croi-cogs').value) || 35;
+  if (!spend || !orders || !aov) { alert('Fill in spend, orders, and average order value.'); return; }
+  var revenue = orders * aov;
+  var profit = revenue * (1 - cogs/100) - spend;
+  var roi = ((profit) / spend * 100);
+  var cpo = spend / orders;
+  var roas = revenue / spend;
+  function fmt(v){ return '$'+v.toFixed(2); }
+  document.getElementById('croi-revenue').textContent = fmt(revenue);
+  document.getElementById('croi-profit').textContent = fmt(profit);
+  document.getElementById('croi-roi').textContent = roi.toFixed(0)+'%';
+  document.getElementById('croi-cpo').textContent = fmt(cpo);
+  document.getElementById('croi-roas').textContent = roas.toFixed(1)+'x';
+  var verd = document.getElementById('croi-verdict');
+  var msg, bg, col;
+  if (roas >= 3) { msg = 'Strong result. A ROAS of '+roas.toFixed(1)+'x means every dollar you spent brought back '+roas.toFixed(1)+' in revenue. Scale what you did here — same content format, same offer structure, more spend.'; bg='#e8f5ee'; col='#1a5c33'; }
+  else if (roas >= 1.5) { msg = 'Break-even territory. You recovered your spend but the margin after product cost is thin. Worth running again with a higher average order value — bundles and gift sets would improve this number.'; bg='#fffbe6'; col='#7a5a00'; }
+  else { msg = 'The spend outpaced the return this time. That is not unusual for a first campaign — the audience data you gathered is worth something even when the ROI is low. The next run with the same audience will cost less.'; bg='#fef0e4'; col='#7A3010'; }
+  verd.textContent = msg; verd.style.background = bg; verd.style.color = col;
+  document.getElementById('croi-results').style.display = 'block';
+}
+
+// Subscription model
+function tmCalcSub() {
+  var price = parseFloat(document.getElementById('sub-price').value) || 0;
+  var cost = parseFloat(document.getElementById('sub-cost').value) || 0;
+  var churn = parseFloat(document.getElementById('sub-churn').value) || 8;
+  var target = parseFloat(document.getElementById('sub-target').value) || 0;
+  if (!price || !target) { alert('Enter a monthly price and target subscriber count.'); return; }
+  var mrr = price * target;
+  var margin = price > 0 ? ((price - cost) / price * 100) : 0;
+  var ltv = churn > 0 ? (price - cost) / (churn/100) : 0;
+  // How many subscribers needed to cover rent
+  var rent = parseFloat((window.TM && TM.rent) || 3500);
+  var subs_for_rent = rent > 0 && (price - cost) > 0 ? Math.ceil(rent / (price - cost)) : 0;
+  function fmt(v){ return '$'+v.toFixed(0); }
+  document.getElementById('sub-mrr').textContent = fmt(mrr);
+  document.getElementById('sub-margin').textContent = margin.toFixed(0)+'%';
+  document.getElementById('sub-ltv').textContent = fmt(ltv);
+  document.getElementById('sub-breakeven').textContent = subs_for_rent > 0 ? subs_for_rent+' subscribers' : 'Enter rent above';
+  var verd = document.getElementById('sub-verdict');
+  var msg = 'At '+target+' subscribers, the subscription generates $'+mrr.toFixed(0)+'/month in recurring revenue with a '+margin.toFixed(0)+'% gross margin per box. ';
+  if (subs_for_rent > 0) { msg += 'To cover one location's rent alone, you need '+subs_for_rent+' subscribers. '; }
+  msg += 'Average subscriber stays '+(churn > 0 ? Math.round(100/churn)+' months' : 'indefinitely')+' before churning — each one is worth $'+ltv.toFixed(0)+' in lifetime gross profit.';
+  verd.textContent = msg;
+  document.getElementById('sub-results').style.display = 'block';
+}
+
 // ── Init all ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   tmLoad();
@@ -1928,6 +1982,34 @@ document.getElementById('pw-input').focus();
     </div>
 
   </div>
+
+    <!-- CAMPAIGN ROI CALCULATOR -->
+    <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:24px 28px;margin-top:28px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:0.8;margin-bottom:8px;">Your Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:white;font-size:1.1rem;margin:0 0 6px;">Campaign ROI Calculator</h3>
+      <p style="font-size:13px;color:rgba(255,255,255,0.6);margin:0 0 16px;">Use this for Mother's Day — or any campaign. Enter what you spent and what came in. Get back your ROI and cost per order so you know whether to scale or change direction.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px;">Total campaign spend ($)</label>
+          <input id="croi-spend" type="number" placeholder="150" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px;">Orders generated</label>
+          <input id="croi-orders" type="number" placeholder="12" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px;">Average order value ($)</label>
+          <input id="croi-aov" type="number" placeholder="45" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.5);display:block;margin-bottom:4px;">Product cost % of price</label>
+          <input id="croi-cogs" type="number" placeholder="35" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:13px;outline:none;box-sizing:border-box;"></div>
+      </div>
+      <button onclick="tmCalcCampaign()" style="background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate ROI</button>
+      <div id="croi-results" style="display:none;margin-top:16px;display:none;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-revenue" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Revenue</div></div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-profit" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Gross profit</div></div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-roi" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">ROI</div></div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-cpo" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Cost per order</div></div>
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-roas" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">ROAS</div></div>
+        </div>
+        <div id="croi-verdict" style="margin-top:12px;font-size:13px;line-height:1.7;padding:12px 16px;border-radius:8px;"></div>
+      </div>
+    </div>
 </section>
 
 <!-- SECURITY -->
@@ -2224,6 +2306,33 @@ document.getElementById('pw-input').focus();
       </div>
     </div>
   </div>
+
+    <!-- SUBSCRIPTION CALCULATOR -->
+    <div style="background:var(--cream-dark);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-top:32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Your Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.1rem;margin:0 0 6px;">Subscription Model Calculator</h3>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">A "Mallow of the Month" subscription could be your most reliable revenue stream. Enter your numbers to see what it takes to make it meaningful.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly price per subscriber ($)</label>
+          <input id="sub-price" type="number" placeholder="35" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Cost to fulfill per box ($)</label>
+          <input id="sub-cost" type="number" placeholder="14" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly churn rate (%)</label>
+          <input id="sub-churn" type="number" placeholder="8" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Target subscribers at launch</label>
+          <input id="sub-target" type="number" placeholder="50" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+      </div>
+      <button onclick="tmCalcSub()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate</button>
+      <div id="sub-results" style="display:none;margin-top:16px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="sub-mrr" style="font-size:1.3rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Monthly revenue (MRR)</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="sub-margin" style="font-size:1.3rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Gross margin</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="sub-ltv" style="font-size:1.3rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Avg lifetime value</div></div>
+          <div style="background:white;border-radius:8px;padding:12px 14px;text-align:center;"><div id="sub-breakeven" style="font-size:1.3rem;font-weight:800;color:var(--brown);"></div><div style="font-size:11px;color:var(--text-mid);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Subscribers to cover rent</div></div>
+        </div>
+        <div id="sub-verdict" style="margin-top:12px;font-size:13px;line-height:1.7;padding:12px 16px;background:var(--cream);border-radius:8px;color:var(--text);"></div>
+      </div>
+    </div>
 </section>
 
 <!-- OMNICHANNEL DISTRIBUTION -->

@@ -29,3 +29,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 03:47 | Update Founders First grant: pre-register now, correct eligibility, fix URL to /
   - 2026-04-02 04:16 | Fix contradictions, humanize photography + TV language, add consolidation calcul
   - 2026-04-02 04:20 | Apply all text fixes: nav contradiction, duplicate link, TV/photo language, remo
+  - 2026-04-02 04:37 | Add interactive toolkit: numbers panel, progress tracker, task checkboxes, grant
