@@ -708,6 +708,7 @@
     gap: 20px;
   }
   @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  @media (max-width: 700px) { #consol-grid { grid-template-columns: 1fr !important; } }
 
   .assets-list {
     background: var(--white);
@@ -1303,114 +1304,281 @@ document.getElementById('pw-input').focus();
     <div style="background:white;border:2px solid #C05A10;border-radius:14px;padding:28px 28px 24px;margin-top:20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C05A10;margin-bottom:8px;">Decision Tool</div>
       <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.15rem;margin:0 0 6px 0;">Consolidation Cost Calculator</h3>
-      <p style="font-size:13px;color:var(--text-mid);margin:0 0 20px 0;">Enter your actual numbers to see whether consolidation makes financial sense and what the break-even looks like.</p>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 20px 0;">Enter details for both locations. The calculator will tell you which one to close, what it will cost, and how long until you break even. Numbers are saved automatically.</p>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px;">
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly rent — location to close</label>
-          <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:8px;overflow:hidden;">
-            <span style="padding:8px 10px;background:#f5f0eb;color:#888;font-size:14px;">$</span>
-            <input id="calc-rent" type="number" placeholder="3500" style="border:none;padding:8px 12px;font-size:14px;width:100%;outline:none;">
+      <!-- Two-location inputs -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" id="consol-grid">
+
+        <!-- LOCATION A -->
+        <div style="background:#fdf6ec;border:1px solid #e8ddd0;border-radius:12px;padding:18px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Location A</div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Name (e.g. Gilbert)</label>
+            <input id="loc-a-name" type="text" placeholder="Gilbert" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly rent</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-a-rent" type="number" placeholder="3500" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly utilities</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-a-utilities" type="number" placeholder="400" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly revenue from this location</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-a-revenue" type="number" placeholder="12000" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Months left on lease</label>
+            <input id="loc-a-months" type="number" placeholder="18" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Early termination penalty (months of rent)</label>
+            <input id="loc-a-penalty" type="number" placeholder="3" min="0" max="12" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Staff count at this location</label>
+            <input id="loc-a-staff" type="number" placeholder="2" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Avg weekly pay per person</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-a-wages" type="number" placeholder="450" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
           </div>
         </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Months left on lease</label>
-          <input id="calc-months" type="number" placeholder="18" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Early termination penalty (months)</label>
-          <input id="calc-penalty" type="number" placeholder="3" min="0" max="12" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Staff to transition (count)</label>
-          <input id="calc-staff" type="number" placeholder="2" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Average weekly pay per person</label>
-          <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:8px;overflow:hidden;">
-            <span style="padding:8px 10px;background:#f5f0eb;color:#888;font-size:14px;">$</span>
-            <input id="calc-wages" type="number" placeholder="450" style="border:none;padding:8px 12px;font-size:14px;width:100%;outline:none;">
+
+        <!-- LOCATION B -->
+        <div style="background:#fdf6ec;border:1px solid #e8ddd0;border-radius:12px;padding:18px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">Location B</div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Name (e.g. Chandler)</label>
+            <input id="loc-b-name" type="text" placeholder="Chandler" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
           </div>
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Notice period you'll give (weeks)</label>
-          <input id="calc-notice" type="number" placeholder="2" style="border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:14px;width:100%;outline:none;box-sizing:border-box;">
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly rent</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-b-rent" type="number" placeholder="4200" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly utilities</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-b-utilities" type="number" placeholder="450" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Monthly revenue from this location</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-b-revenue" type="number" placeholder="9000" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Months left on lease</label>
+            <input id="loc-b-months" type="number" placeholder="12" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Early termination penalty (months of rent)</label>
+            <input id="loc-b-penalty" type="number" placeholder="2" min="0" max="12" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Staff count at this location</label>
+            <input id="loc-b-staff" type="number" placeholder="2" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:100%;box-sizing:border-box;outline:none;">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Avg weekly pay per person</label>
+            <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+              <span style="padding:7px 9px;background:#f0ebe3;color:#999;font-size:13px;">$</span>
+              <input id="loc-b-wages" type="number" placeholder="450" oninput="tmSaveConsolInputs()" style="border:none;padding:7px 11px;font-size:13px;width:100%;outline:none;">
+            </div>
+          </div>
         </div>
       </div>
 
-      <button onclick="runConsolidationCalc()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">Calculate</button>
+      <!-- Shared: notice period -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--brown);display:block;margin-bottom:3px;">Notice period for transitioning staff (weeks)</label>
+          <input id="calc-notice" type="number" placeholder="2" oninput="tmSaveConsolInputs()" style="border:1px solid #ddd;border-radius:7px;padding:7px 11px;font-size:13px;width:120px;outline:none;">
+        </div>
+        <div style="font-size:12px;color:var(--text-mid);max-width:340px;line-height:1.5;">This applies to staff you won't absorb into the remaining location. If you plan to keep all staff, set this to 0.</div>
+      </div>
 
-      <div id="calc-results" style="display:none;margin-top:20px;border-top:1px solid #e8ddd0;padding-top:18px;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px;">
-          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Exit Cost</div>
-            <div id="res-exit" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
-            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">lease penalty</div>
+      <button onclick="runConsolidationCalc()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">Compare Locations</button>
+
+      <!-- Results -->
+      <div id="calc-results" style="display:none;margin-top:24px;border-top:1px solid #e8ddd0;padding-top:20px;">
+
+        <!-- Side-by-side comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div style="border:2px solid #e8ddd0;border-radius:12px;padding:16px 18px;">
+            <div id="res-a-label" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:12px;">Location A</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Exit Cost</div>
+                <div id="res-a-exit" style="font-size:1.2rem;font-weight:800;color:var(--brown);"></div>
+                <div style="font-size:11px;color:var(--text-mid);">lease + staff</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Monthly Savings</div>
+                <div id="res-a-savings" style="font-size:1.2rem;font-weight:800;color:#2a7a4a;"></div>
+                <div style="font-size:11px;color:var(--text-mid);">rent + utilities</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Break-Even</div>
+                <div id="res-a-breakeven" style="font-size:1.2rem;font-weight:800;color:var(--brown);"></div>
+                <div style="font-size:11px;color:var(--text-mid);">months</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Revenue at Risk</div>
+                <div id="res-a-revenue" style="font-size:1.2rem;font-weight:800;color:#7A3010;"></div>
+                <div style="font-size:11px;color:var(--text-mid);">monthly</div>
+              </div>
+            </div>
           </div>
-          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Staff Cost</div>
-            <div id="res-staff" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
-            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">notice period wages</div>
-          </div>
-          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Total One-Time Cost</div>
-            <div id="res-total" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
-            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">to execute consolidation</div>
-          </div>
-          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Monthly Savings</div>
-            <div id="res-savings" style="font-size:1.4rem;font-weight:800;color:#2a7a4a;"></div>
-            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">after closing</div>
-          </div>
-          <div style="background:var(--cream-dark);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:4px;">Break-Even</div>
-            <div id="res-breakeven" style="font-size:1.4rem;font-weight:800;color:var(--brown);"></div>
-            <div style="font-size:12px;color:var(--text-mid);margin-top:2px;">months to recover exit cost</div>
+          <div style="border:2px solid #e8ddd0;border-radius:12px;padding:16px 18px;">
+            <div id="res-b-label" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:12px;">Location B</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Exit Cost</div>
+                <div id="res-b-exit" style="font-size:1.2rem;font-weight:800;color:var(--brown);"></div>
+                <div style="font-size:11px;color:var(--text-mid);">lease + staff</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Monthly Savings</div>
+                <div id="res-b-savings" style="font-size:1.2rem;font-weight:800;color:#2a7a4a;"></div>
+                <div style="font-size:11px;color:var(--text-mid);">rent + utilities</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Break-Even</div>
+                <div id="res-b-breakeven" style="font-size:1.2rem;font-weight:800;color:var(--brown);"></div>
+                <div style="font-size:11px;color:var(--text-mid);">months</div>
+              </div>
+              <div style="background:var(--cream-dark);border-radius:8px;padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-mid);letter-spacing:1px;margin-bottom:3px;">Revenue at Risk</div>
+                <div id="res-b-revenue" style="font-size:1.2rem;font-weight:800;color:#7A3010;"></div>
+                <div style="font-size:11px;color:var(--text-mid);">monthly</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div id="res-verdict" style="font-size:14px;line-height:1.7;padding:14px 16px;border-radius:10px;"></div>
+
+        <!-- Recommendation verdict -->
+        <div id="res-comparison-verdict" style="font-size:14px;line-height:1.7;padding:16px 20px;border-radius:10px;"></div>
       </div>
     </div>
     <script>
+    function tmSaveConsolInputs() {
+      var fields = ['loc-a-name','loc-a-rent','loc-a-utilities','loc-a-revenue','loc-a-months','loc-a-penalty','loc-a-staff','loc-a-wages','loc-b-name','loc-b-rent','loc-b-utilities','loc-b-revenue','loc-b-months','loc-b-penalty','loc-b-staff','loc-b-wages','calc-notice'];
+      var data = {};
+      fields.forEach(function(id) { var el = document.getElementById(id); if (el) data[id] = el.value; });
+      localStorage.setItem('tm_consol_inputs', JSON.stringify(data));
+    }
+    function tmLoadConsolInputs() {
+      var saved = localStorage.getItem('tm_consol_inputs');
+      if (!saved) return;
+      var data = JSON.parse(saved);
+      Object.keys(data).forEach(function(id) { var el = document.getElementById(id); if (el) el.value = data[id]; });
+    }
+    document.addEventListener('DOMContentLoaded', tmLoadConsolInputs);
+
     function runConsolidationCalc() {
-      var rent = parseFloat(document.getElementById('calc-rent').value) || 0;
-      var months = parseFloat(document.getElementById('calc-months').value) || 0;
-      var penalty = parseFloat(document.getElementById('calc-penalty').value) || 3;
-      var staff = parseFloat(document.getElementById('calc-staff').value) || 0;
-      var wages = parseFloat(document.getElementById('calc-wages').value) || 0;
+      var nameA = document.getElementById('loc-a-name').value || 'Location A';
+      var rentA = parseFloat(document.getElementById('loc-a-rent').value) || 0;
+      var utilA = parseFloat(document.getElementById('loc-a-utilities').value) || 0;
+      var revA  = parseFloat(document.getElementById('loc-a-revenue').value) || 0;
+      var penA  = parseFloat(document.getElementById('loc-a-penalty').value) || 0;
+      var staffA = parseFloat(document.getElementById('loc-a-staff').value) || 0;
+      var wagesA = parseFloat(document.getElementById('loc-a-wages').value) || 0;
+
+      var nameB = document.getElementById('loc-b-name').value || 'Location B';
+      var rentB = parseFloat(document.getElementById('loc-b-rent').value) || 0;
+      var utilB = parseFloat(document.getElementById('loc-b-utilities').value) || 0;
+      var revB  = parseFloat(document.getElementById('loc-b-revenue').value) || 0;
+      var penB  = parseFloat(document.getElementById('loc-b-penalty').value) || 0;
+      var staffB = parseFloat(document.getElementById('loc-b-staff').value) || 0;
+      var wagesB = parseFloat(document.getElementById('loc-b-wages').value) || 0;
+
       var notice = parseFloat(document.getElementById('calc-notice').value) || 2;
 
-      var exitCost = rent * penalty;
-      var staffCost = staff * wages * notice;
-      var total = exitCost + staffCost;
-      var monthlySavings = rent; // rent savings after closing
-      var breakeven = monthlySavings > 0 ? Math.ceil(total / monthlySavings) : 0;
+      // Exit costs: lease penalty + notice period wages for transitioned staff
+      var exitA = (rentA * penA) + (staffA * wagesA * notice);
+      var exitB = (rentB * penB) + (staffB * wagesB * notice);
 
-      document.getElementById('res-exit').textContent = '$' + exitCost.toLocaleString();
-      document.getElementById('res-staff').textContent = '$' + staffCost.toLocaleString();
-      document.getElementById('res-total').textContent = '$' + total.toLocaleString();
-      document.getElementById('res-savings').textContent = '$' + monthlySavings.toLocaleString() + '/mo';
-      document.getElementById('res-breakeven').textContent = breakeven > 0 ? breakeven + ' mo' : 'N/A';
+      // Monthly savings = rent + utilities freed up
+      var savingsA = rentA + utilA;
+      var savingsB = rentB + utilB;
 
-      var verdictEl = document.getElementById('res-verdict');
+      // Break-even months
+      var beA = savingsA > 0 ? Math.ceil(exitA / savingsA) : 999;
+      var beB = savingsB > 0 ? Math.ceil(exitB / savingsB) : 999;
+
+      // Update labels
+      document.getElementById('res-a-label').textContent = nameA;
+      document.getElementById('res-b-label').textContent = nameB;
+
+      // Fill results
+      document.getElementById('res-a-exit').textContent = '$' + Math.round(exitA).toLocaleString();
+      document.getElementById('res-a-savings').textContent = '$' + Math.round(savingsA).toLocaleString() + '/mo';
+      document.getElementById('res-a-breakeven').textContent = beA < 999 ? beA + ' mo' : 'N/A';
+      document.getElementById('res-a-revenue').textContent = '$' + Math.round(revA).toLocaleString() + '/mo';
+
+      document.getElementById('res-b-exit').textContent = '$' + Math.round(exitB).toLocaleString();
+      document.getElementById('res-b-savings').textContent = '$' + Math.round(savingsB).toLocaleString() + '/mo';
+      document.getElementById('res-b-breakeven').textContent = beB < 999 ? beB + ' mo' : 'N/A';
+      document.getElementById('res-b-revenue').textContent = '$' + Math.round(revB).toLocaleString() + '/mo';
+
+      // Score each option: lower break-even = better, lower revenue at risk = better
+      // Score = break-even months + (revenue / 1000) as a tiebreaker weight
+      var scoreA = beA + (revA / 1000);
+      var scoreB = beB + (revB / 1000);
+
+      var verdictEl = document.getElementById('res-comparison-verdict');
       var verdict, bg, color;
-      if (breakeven <= 6) {
-        verdict = 'The math supports consolidation. At ' + breakeven + ' months to break even, the exit costs are recovered quickly and every month after that is pure savings. This is a strong argument for moving forward if the lease terms allow it.';
+
+      var closeName, keepName, closeBe, closeSavings, closeRevenue;
+      if (scoreA <= scoreB) {
+        closeName = nameA; keepName = nameB; closeBe = beA;
+        closeSavings = savingsA; closeRevenue = revA;
+      } else {
+        closeName = nameB; keepName = nameA; closeBe = beB;
+        closeSavings = savingsB; closeRevenue = revB;
+      }
+
+      var revenueNote = closeRevenue > 0
+        ? ' ' + closeName + ' generates $' + Math.round(closeRevenue).toLocaleString() + '/mo — that revenue will need to shift online or to ' + keepName + ' after closing.'
+        : '';
+
+      if (closeBe <= 6) {
+        verdict = 'Close ' + closeName + '. The math is clear: you recover the exit cost in ' + closeBe + ' months and save $' + Math.round(closeSavings).toLocaleString() + '/mo after that.' + revenueNote;
         bg = '#e8f5ee'; color = '#1a5c33';
-      } else if (breakeven <= 12) {
-        verdict = 'Consolidation is financially reasonable but not urgent. At ' + breakeven + ' months to break even, you would recover costs within a year — which is viable if your cash position can absorb the upfront exit cost. Worth negotiating hard on the lease penalty first.';
+      } else if (closeBe <= 12) {
+        verdict = 'Closing ' + closeName + ' is the better option — break-even at ' + closeBe + ' months means you recover costs within the year. Negotiate the lease penalty down first if you can; getting it to 1–2 months instead of the standard penalty could cut your break-even in half.' + revenueNote;
         bg = '#fffbe6'; color = '#7a5a00';
-      } else if (breakeven > 12) {
-        verdict = 'At ' + breakeven + ' months to break even, the exit costs are high relative to the savings. This does not mean consolidation is wrong — it means the lease penalty is a real obstacle. Negotiate with your landlord before signing off: ask for a lease buy-out at 1–2 months rent instead of the standard penalty.';
+      } else if (closeBe <= 24) {
+        verdict = closeName + ' is still the stronger candidate to close, but at ' + closeBe + ' months to break even, the lease penalty is a real problem. Go back to your landlord before signing off — offer a lump sum of 1–2 months rent to exit early. Most landlords in a soft retail market will negotiate.' + revenueNote;
         bg = '#fef0e4'; color = '#7A3010';
       } else {
-        verdict = 'Enter your numbers above to see the analysis.';
-        bg = '#f5f0eb'; color = '#555';
+        verdict = 'Both locations have high exit costs relative to savings. This suggests the primary lever is renegotiating lease penalties before committing to either closure — the standard penalty is negotiable. Enter penalty = 0 to see what break-even looks like if you negotiate a clean exit.';
+        bg = '#fef0e4'; color = '#7A3010';
       }
+
       verdictEl.textContent = verdict;
       verdictEl.style.background = bg;
       verdictEl.style.color = color;
-
       document.getElementById('calc-results').style.display = 'block';
     }
     </script>

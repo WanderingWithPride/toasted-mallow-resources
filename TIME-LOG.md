@@ -50,3 +50,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 12:36 | Fix all onclick apostrophe issues: use data-attributes for calendar buttons
   - 2026-04-02 12:53 | Fix structural bug: move chat widget out of generatePackage template literal int
   - 2026-04-02 13:12 | Fix Groq branding, add chat persistence via localStorage
+  - 2026-04-02 13:17 | Fix audit badge overflow, add body overflow-x hidden
