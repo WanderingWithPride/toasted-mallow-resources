@@ -1,21 +1,28 @@
 # toasted-mallow-resources -- Development Time Log
 
-**Total estimated hours:** 3.5
-**Total commits:** 12
-**Sessions:** 2
-**Generated:** 2026-04-02 01:15 by portfolio_time_audit.py
+Auto-tracked by git post-commit hook.
 
 ---
 
-## Monthly Summary
 
-| Month | Hours |
-|-------|-------|
-| 2026-04 | 3.5 |
-
-## Recent Sessions (last 20)
-
-| Date | Start | End | Commits | Hours |
-|------|-------|-----|---------|-------|
-| 2026-04-01 | 23:06 | 00:05 | 4 | 1.5 |
-| 2026-04-02 | 03:42 | 05:12 | 8 | 2.0 |
+## 2026-04-02 Session
+**Started:** 2026-04-02 01:07
+  - 2026-04-02 01:07 | Add pricing analysis, supply cost reduction, payment automation sections; nav li
+  - 2026-04-02 01:10 | Correct free shipping threshold to $65, add 4 live audit technical findings (H1,
+  - 2026-04-02 01:12 | Apply AI Council pricing corrections: channel-diff pricing, bundle fixes, starte
+  - 2026-04-02 01:22 | Add gifting, wedding/event, corporate, free ad credits sections; nav links
+  - 2026-04-02 01:26 | Add gift card sizing guide with denomination breakdowns, occasion copy, digital 
+  - 2026-04-02 01:30 | Expand subscription gifting to full mechanics: tiers, recipient flow, no-code se
+  - 2026-04-02 01:34 | Apply council corrections: Klaviyo 250 contacts, remove fabricated gift wrap sta
+  - 2026-04-02 01:39 | Add customization options section, community support campaign, local employer B2
+  - 2026-04-02 01:57 | Add TikTok growth engine section: 3 video types, trend-riding method, monetizati
+  - 2026-04-02 02:04 | Apply council gap analysis: Phase 0 section, TikTok monetization rewrite, Etsy/c
+  - 2026-04-02 02:07 | Fix TikTok section: 'if not already active' framing, correct intro, no condescen
+  - 2026-04-02 02:10 | Fix TikTok Creator Rewards Program name, add Start Here section
+  - 2026-04-02 02:14 | Add omnichannel distribution section: all platforms + sell everywhere + one-work
+  - 2026-04-02 02:22 | Add on-camera profile section: Named Regular format, hands-only, text-narrated, 
+  - 2026-04-02 02:37 | Add research intel, competitor benchmarks, compliance warnings, breakeven correc
+  - 2026-04-02 02:43 | Fix platform fees, add legal/compliance checklist, shipping cost model, decision
+  - 2026-04-02 02:59 | Add Easter post-mortem + Mother's Day urgent action section
+  - 2026-04-02 03:25 | Add merch expansion section + nav link: Mallow Fam POD plan, 6 new product ideas
+  - 2026-04-02 03:34 | Add product photography audit finding with 5-shot session guide
