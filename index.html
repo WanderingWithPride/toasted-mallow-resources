@@ -723,6 +723,251 @@
   .assets-list-item:last-child { border-bottom: none; }
   .assets-list-item::before { content: "✓"; color: var(--teal); font-weight: 700; flex-shrink: 0; }
 </style>
+
+<!-- TOOLKIT STYLES -->
+<style>
+/* Master Numbers Panel */
+#tm-numbers-panel { background: #1a0a02; border-bottom: 2px solid var(--gold); padding: 0; }
+#tm-numbers-header { display:flex;align-items:center;justify-content:space-between;padding:14px 40px;cursor:pointer; }
+#tm-numbers-header h3 { font-family:'Playfair Display',serif;color:var(--gold);font-size:1rem;margin:0; }
+#tm-numbers-header span { color:rgba(255,255,255,0.5);font-size:12px; }
+#tm-numbers-body { display:none;padding:0 40px 28px;max-width:960px;margin:0 auto; }
+#tm-numbers-body.open { display:block; }
+.tm-input-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px; }
+.tm-field label { font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.55);display:block;margin-bottom:4px; }
+.tm-field input { width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:14px;outline:none;box-sizing:border-box; }
+.tm-field input:focus { border-color:var(--gold); }
+.tm-save-btn { margin-top:16px;background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px; }
+.tm-saved-note { color:var(--gold);font-size:12px;margin-left:12px;opacity:0;transition:opacity 0.4s; }
+
+/* Progress bar */
+#tm-progress-bar { position:fixed;bottom:0;left:0;right:0;background:#1a0a02;border-top:2px solid var(--gold);z-index:8000;padding:10px 24px;display:flex;align-items:center;gap:16px;font-size:13px; }
+#tm-progress-bar .tm-prog-label { color:rgba(255,255,255,0.7);white-space:nowrap; }
+#tm-progress-bar .tm-prog-track { flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden; }
+#tm-progress-bar .tm-prog-fill { height:100%;background:var(--gold);border-radius:3px;transition:width 0.4s; }
+#tm-progress-bar .tm-prog-count { color:var(--gold);font-weight:700;white-space:nowrap; }
+#tm-progress-bar .tm-prog-close { color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;line-height:1;padding:0 4px; }
+body { padding-bottom: 52px; }
+
+/* Checkboxes on timeline items */
+.tm-check { display:inline-flex;align-items:center;gap:6px;margin-top:6px;cursor:pointer; }
+.tm-check input[type=checkbox] { width:16px;height:16px;accent-color:var(--gold);cursor:pointer; }
+.tm-check span { font-size:12px;color:rgba(255,255,255,0.5); }
+.timeline-item.done .timeline-item-text { opacity:0.45;text-decoration:line-through; }
+
+/* Grant tracker buttons */
+.grant-status-row { display:flex;gap:8px;margin-top:12px;flex-wrap:wrap; }
+.grant-status-btn { padding:5px 12px;border-radius:100px;border:1px solid;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s; }
+.gsb-not-started { background:transparent;border-color:#aaa;color:#aaa; }
+.gsb-not-started.active { background:#555;border-color:#888;color:white; }
+.gsb-applied { background:transparent;border-color:var(--gold);color:var(--gold); }
+.gsb-applied.active { background:var(--gold);color:var(--brown); }
+.gsb-received { background:transparent;border-color:#3a9;color:#3a9; }
+.gsb-received.active { background:#3a9;color:white; }
+
+/* SEO generator */
+.tm-gen-box { background:var(--cream-dark);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:24px; }
+.tm-gen-output { background:white;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.7;min-height:40px;color:var(--text); }
+.tm-gen-output em { color:var(--text-mid);font-style:normal; }
+.tm-copy-btn { background:var(--teal);color:white;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px; }
+
+/* Pricing calculator */
+.tm-pricing-calc { background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:24px; }
+.tm-pricing-result { display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px; }
+.tm-pr-box { background:var(--cream-dark);border-radius:8px;padding:12px 14px;text-align:center; }
+.tm-pr-box .val { font-size:1.4rem;font-weight:800;color:var(--brown); }
+.tm-pr-box .lbl { font-size:11px;color:var(--text-mid);text-transform:uppercase;letter-spacing:1px;margin-top:2px; }
+
+/* Countdown */
+.tm-countdown { display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:20px 0; }
+.tm-cd-box { background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:14px 20px;text-align:center;min-width:70px; }
+.tm-cd-box .num { font-size:2rem;font-weight:800;color:var(--gold);line-height:1; }
+.tm-cd-box .unit { font-size:11px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-top:4px; }
+
+/* AI advisor section */
+#ai-advisor { background:linear-gradient(135deg,#0d1f2d,#1a3245);padding:60px 40px; }
+.ai-card { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:24px; }
+.ai-card h4 { color:white;font-size:1rem;margin-bottom:8px; }
+.ai-card p { color:rgba(255,255,255,0.65);font-size:13px;line-height:1.6;margin-bottom:14px; }
+.ai-prompt-box { background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 14px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;font-family:monospace;cursor:text;margin-bottom:10px; }
+.ai-open-btn { display:inline-block;padding:8px 18px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:white; }
+.ai-open-claude { background:#C05A10; }
+.ai-open-chatgpt { background:#10a37f; }
+.ai-open-perplexity { background:#5b5ef4; }
+</style>
+
+<!-- TOOLKIT GLOBAL JS -->
+<script>
+// ── Global state ──────────────────────────────────────────────────────────────
+var TM = {};
+var TM_FIELDS = ['rent','revenue','aov','cogs_pct','staff','followers','email_list'];
+var TM_LABELS = {rent:'Monthly rent (one location)',revenue:'Monthly revenue (all)',aov:'Avg order value (online)',cogs_pct:'Product cost % of price',staff:'Staff count',followers:'TikTok followers',email_list:'Email list size'};
+var TM_PREFIXES = {rent:'$',revenue:'$',aov:'$',cogs_pct:'',staff:'',followers:'',email_list:''};
+var TM_SUFFIXES = {cogs_pct:'%'};
+
+function tmLoad() {
+  TM_FIELDS.forEach(function(k) {
+    var v = localStorage.getItem('tm_'+k);
+    if (v) TM[k] = v;
+  });
+}
+
+function tmSave() {
+  TM_FIELDS.forEach(function(k) {
+    var el = document.getElementById('tmf_'+k);
+    if (el && el.value) { TM[k] = el.value; localStorage.setItem('tm_'+k, el.value); }
+  });
+  var note = document.getElementById('tm-saved-note');
+  if (note) { note.style.opacity=1; setTimeout(function(){ note.style.opacity=0; }, 2000); }
+}
+
+function tmTogglePanel() {
+  var body = document.getElementById('tm-numbers-body');
+  var arrow = document.getElementById('tm-panel-arrow');
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    if(arrow) arrow.textContent = 'Click to enter your numbers';
+  } else {
+    body.classList.add('open');
+    if(arrow) arrow.textContent = 'Click to close';
+    TM_FIELDS.forEach(function(k) {
+      var el = document.getElementById('tmf_'+k);
+      if (el && TM[k]) el.value = TM[k];
+    });
+  }
+}
+
+// ── Progress tracker ──────────────────────────────────────────────────────────
+function tmUpdateProgress() {
+  var all = document.querySelectorAll('.tm-task-check');
+  var done = document.querySelectorAll('.tm-task-check:checked');
+  var pct = all.length ? Math.round((done.length/all.length)*100) : 0;
+  var fill = document.getElementById('tm-prog-fill');
+  var count = document.getElementById('tm-prog-count');
+  if (fill) fill.style.width = pct+'%';
+  if (count) count.textContent = done.length+' of '+all.length+' tasks done ('+pct+'%)';
+}
+
+function tmCheckChange(el) {
+  localStorage.setItem('tmck_'+el.dataset.id, el.checked ? '1' : '0');
+  var item = el.closest('.timeline-item');
+  if (item) item.classList.toggle('done', el.checked);
+  tmUpdateProgress();
+}
+
+function tmInitCheckboxes() {
+  document.querySelectorAll('.tm-task-check').forEach(function(el) {
+    var saved = localStorage.getItem('tmck_'+el.dataset.id);
+    if (saved === '1') {
+      el.checked = true;
+      var item = el.closest('.timeline-item');
+      if (item) item.classList.add('done');
+    }
+    el.addEventListener('change', function(){ tmCheckChange(this); });
+  });
+  tmUpdateProgress();
+}
+
+function tmCloseProgress() {
+  var bar = document.getElementById('tm-progress-bar');
+  if (bar) bar.style.display='none';
+  document.body.style.paddingBottom='0';
+}
+
+// ── Grant tracker ─────────────────────────────────────────────────────────────
+function tmGrantStatus(grantId, status) {
+  localStorage.setItem('tmgrant_'+grantId, status);
+  var btns = document.querySelectorAll('[data-grant="'+grantId+'"]');
+  btns.forEach(function(b){ b.classList.remove('active'); });
+  var active = document.querySelector('[data-grant="'+grantId+'"][data-status="'+status+'"]');
+  if (active) active.classList.add('active');
+}
+
+function tmInitGrants() {
+  document.querySelectorAll('.grant-status-btn').forEach(function(btn) {
+    var grantId = btn.dataset.grant;
+    var status = btn.dataset.status;
+    var saved = localStorage.getItem('tmgrant_'+grantId);
+    if (saved === status) btn.classList.add('active');
+    btn.addEventListener('click', function(){ tmGrantStatus(grantId, status); });
+  });
+}
+
+// ── SEO generator ─────────────────────────────────────────────────────────────
+function tmGenSEO() {
+  var product = (document.getElementById('seo-product').value || '').trim();
+  var location = (document.getElementById('seo-location').value || 'Arizona').trim();
+  var keyword = (document.getElementById('seo-keyword').value || '').trim();
+  if (!product) { alert('Enter a product name first.'); return; }
+  var kw = keyword || product.toLowerCase();
+  var title = product+' — Handmade Artisan Marshmallows | The Toasted Mallow | '+location;
+  if (title.length > 60) title = product+' | Artisan Marshmallows | The Toasted Mallow';
+  var desc = 'Shop '+product+' from The Toasted Mallow — '+location+"'s original handcrafted marshmallow shop, est. 2014. LGBTQ+ and women-owned. Ships nationwide. "+(keyword ? 'Perfect for '+keyword+'. ' : '')+'Order online today.';
+  document.getElementById('seo-title-out').textContent = title;
+  document.getElementById('seo-title-len').textContent = title.length+' chars (ideal: 50–60)';
+  document.getElementById('seo-desc-out').textContent = desc;
+  document.getElementById('seo-desc-len').textContent = desc.length+' chars (ideal: 140–160)';
+  document.getElementById('seo-gen-results').style.display='block';
+}
+
+function tmCopyText(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(function(){
+    var btn = el.nextElementSibling;
+    if(btn){ var orig=btn.textContent; btn.textContent='Copied!'; setTimeout(function(){ btn.textContent=orig; },1500); }
+  });
+}
+
+// ── Pricing calculator ────────────────────────────────────────────────────────
+function tmCalcPricing() {
+  var cogs = parseFloat(document.getElementById('pc-cogs').value) || 0;
+  var target = parseFloat(document.getElementById('pc-margin').value) || 60;
+  if (!cogs) { alert('Enter your product cost.'); return; }
+  var retail = cogs / (1 - target/100);
+  var bundle3 = retail * 3 * 0.9;
+  var bundle6 = retail * 6 * 0.82;
+  var sub = retail * 6 * 0.78;
+  function fmt(v){ return '$'+v.toFixed(2); }
+  document.getElementById('pc-retail').textContent = fmt(retail);
+  document.getElementById('pc-margin-out').textContent = target+'%';
+  document.getElementById('pc-bundle3').textContent = fmt(bundle3);
+  document.getElementById('pc-bundle6').textContent = fmt(bundle6);
+  document.getElementById('pc-sub').textContent = fmt(sub)+'/mo';
+  document.getElementById('pc-results').style.display='grid';
+}
+
+// ── Mother's Day countdown ────────────────────────────────────────────────────
+function tmCountdown() {
+  var now = new Date();
+  var year = now.getFullYear();
+  var mday = new Date(year, 4, 11); // May 11
+  var ship = new Date(year, 4, 4);  // May 4 (last safe ship date)
+  if (now > mday) { mday.setFullYear(year+1); ship.setFullYear(year+1); }
+  function diff(target) {
+    var ms = target - now;
+    if (ms < 0) return {d:0,h:0,m:0};
+    var d = Math.floor(ms/86400000);
+    var h = Math.floor((ms%86400000)/3600000);
+    var m = Math.floor((ms%3600000)/60000);
+    return {d:d,h:h,m:m};
+  }
+  var td = diff(mday); var ts = diff(ship);
+  var el = document.getElementById('tm-mday-countdown');
+  if (!el) return;
+  el.innerHTML = '<div style="margin-bottom:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);">Until Mother's Day (May 11)</div><div class="tm-countdown"><div class="tm-cd-box"><div class="num">'+td.d+'</div><div class="unit">Days</div></div><div class="tm-cd-box"><div class="num">'+td.h+'</div><div class="unit">Hours</div></div><div class="tm-cd-box"><div class="num">'+td.m+'</div><div class="unit">Min</div></div></div><div style="margin-top:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5);">Until Last Safe Ship Date (May 4)</div><div class="tm-countdown"><div class="tm-cd-box"><div class="num">'+ts.d+'</div><div class="unit">Days</div></div><div class="tm-cd-box"><div class="num">'+ts.h+'</div><div class="unit">Hours</div></div><div class="tm-cd-box"><div class="num">'+ts.m+'</div><div class="unit">Min</div></div></div>';
+}
+
+// ── Init all ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  tmLoad();
+  tmInitCheckboxes();
+  tmInitGrants();
+  tmCountdown();
+  setInterval(tmCountdown, 30000);
+});
+</script>
+
 </head>
 <body>
 
@@ -780,6 +1025,37 @@ document.getElementById('pw-input').focus();
       <a href="https://wanderingwithpride.org" target="_blank" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;text-decoration:none;padding:8px 18px;border-radius:100px;font-size:13px;font-weight:600;">wanderingwithpride.org</a>
     </div>
   </div>
+</div>
+
+
+<!-- MASTER NUMBERS PANEL -->
+<div id="tm-numbers-panel">
+  <div id="tm-numbers-header" onclick="tmTogglePanel()">
+    <h3>Your Business Numbers — Enter Once, Used Everywhere</h3>
+    <span id="tm-panel-arrow">Click to enter your numbers</span>
+  </div>
+  <div id="tm-numbers-body">
+    <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:0;">These numbers are saved only in your browser and used to pre-fill every calculator on this page. Nothing is sent anywhere.</p>
+    <div class="tm-input-grid">
+      <div class="tm-field"><label>Monthly rent — location to keep</label><input id="tmf_rent" type="number" placeholder="3500"></div>
+      <div class="tm-field"><label>Current monthly revenue (all)</label><input id="tmf_revenue" type="number" placeholder="15000"></div>
+      <div class="tm-field"><label>Average online order value ($)</label><input id="tmf_aov" type="number" placeholder="45"></div>
+      <div class="tm-field"><label>Product cost as % of sale price</label><input id="tmf_cogs_pct" type="number" placeholder="35"></div>
+      <div class="tm-field"><label>Current staff count</label><input id="tmf_staff" type="number" placeholder="4"></div>
+      <div class="tm-field"><label>TikTok followers</label><input id="tmf_followers" type="number" placeholder="270900"></div>
+      <div class="tm-field"><label>Email list size</label><input id="tmf_email_list" type="number" placeholder="500"></div>
+    </div>
+    <button class="tm-save-btn" onclick="tmSave()">Save my numbers</button>
+    <span id="tm-saved-note" class="tm-saved-note">Saved.</span>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div id="tm-progress-bar">
+  <span class="tm-prog-label">Your progress:</span>
+  <div class="tm-prog-track"><div class="tm-prog-fill" id="tm-prog-fill" style="width:0%"></div></div>
+  <span class="tm-prog-count" id="tm-prog-count">0 tasks done</span>
+  <span class="tm-prog-close" onclick="tmCloseProgress()" title="Dismiss">&times;</span>
 </div>
 
 <!-- START HERE -->
@@ -850,7 +1126,7 @@ document.getElementById('pw-input').focus();
     <a class="nav-link" href="#events">Events</a>
     <a class="nav-link" href="#free-reach">Free Reach</a>
     <a class="nav-link" href="#build-package" style="color:var(--teal);">Build My Plan</a>
-    <a class="nav-link" href="#help" style="color:var(--gold);">How I Can Help</a>
+    <a class="nav-link" href="#ai-advisor">Free AI Tools</a><a class="nav-link" href="#help" style="color:var(--gold);">How I Can Help</a>
   </div>
 </nav>
 
@@ -1088,26 +1364,32 @@ document.getElementById('pw-input').focus();
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Stop ordering cupcake ingredients immediately.</strong> Run down existing inventory.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_1"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Decide which location to consolidate</strong> — whichever has better lease terms and enough space for order fulfillment.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_2"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Film "The Evolution of Toasted Mallow" TikTok series.</strong> Tricia tells the 10-year story and frames the pivot as bringing marshmallows to the entire country — not as closing. Control the narrative before rumors spread. <span class="tag tag-free">Free</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_3"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Run a "Last Call for Cupcakes" in-store event.</strong> Liquidate inventory and drive one final surge of foot traffic. Make it a celebration.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_4"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Begin TikTok Shop setup.</strong> Free to start, takes 2-3 days to get approved. Your product is made for TikTok — this is the fastest-to-revenue channel available to you. <span class="tag tag-free">Free</span> <span class="tag tag-revenue">Revenue Fast</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_5"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Start the NGLCC/Grubhub grant application.</strong> Best single grant match for your situation. Watch nglcc.org for 2026 cycle opening. <span class="tag tag-urgent">Deadline Soon</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_6"><span>Mark done</span></label>
           </div>
         </div>
         <div style="margin-top:16px;background:rgba(139,90,43,0.12);border:1px solid var(--gold);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--text-mid);line-height:1.6;">
@@ -1123,26 +1405,32 @@ document.getElementById('pw-input').focus();
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Work toward closing the second location — on your timeline, not a fixed date.</strong> This only makes sense if the lease math works: get the exact early termination figure from your landlord first. If the break fee is unaffordable right now, pivot to negotiating a sublease or month-to-month conversion instead. The goal is overhead reduction — the path depends on what your lease actually allows. Use the closure as a content event when the timing is right: "Toasted Mallow's next chapter begins."</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_7"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Launch TikTok Shop with your top 5 bestselling marshmallow SKUs.</strong> Tag products in every video. <span class="tag tag-revenue">Revenue Fast</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_8"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Launch "Mallow of the Month" subscription — $35/month.</strong> Curated 6-pack + hot cocoa pairing. Recurring revenue is the single most important financial improvement you can make right now. <span class="tag tag-revenue">Recurring Revenue</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_9"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Apply to Goldbelly.</strong> No Arizona marshmallow brand is on Goldbelly today. You'd be filling a gap they'd likely want filled. goldbelly.com/sell</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_10"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Pre-register for Founders First CDC Pride Grant.</strong> Pre-registration is open now at foundersfirstcdc.org/pride-grant — full application opens April 2026. Award: $1,000 cash + program access (valued up to $1,699). Eligibility: LGBTQ+-owned, 1+ year in business, 2–100 employees, revenue under $5M. <span class="tag tag-urgent">Pre-Register Now</span> <span class="tag tag-free">Free to Apply</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_11"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Add a "Best Seller Bundle" to the online store.</strong> Curated 6-flavor assortment at $55. Increases average order value immediately.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_12"><span>Mark done</span></label>
           </div>
         </div>
       </div>
@@ -1155,22 +1443,27 @@ document.getElementById('pw-input').focus();
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Establish TikTok Shop live sale schedule — 2x/week minimum.</strong> Live selling consistently outperforms standard posts for food products.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_13"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Pitch 10 Phoenix-area coffee shops for wholesale marshmallow placement.</strong> Hot cocoa topping, s'mores kits, impulse-buy displays. <span class="tag tag-revenue">New Channel</span></div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_14"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Build a corporate gifting page.</strong> Custom branded boxes starting at $150. Phoenix metro is one of the largest corporate event markets in the Southwest. A single holiday order can be worth $2,000–$10,000.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_15"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>Apply to Faire wholesale marketplace.</strong> Boutiques and specialty retailers place wholesale orders. Your marshmallows as a boutique gift item is a natural fit.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_16"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
             <div class="timeline-item-text"><strong>$5–10/day paid ads on Facebook/Instagram.</strong> Once TikTok Shop is generating revenue. Target Phoenix metro, women 25–45, interests in artisan food, gifting, desserts.</div>
+            <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_17"><span>Mark done</span></label>
           </div>
         </div>
       </div>
@@ -1195,6 +1488,7 @@ document.getElementById('pw-input').focus();
           <h3>NGLCC / Grubhub Community Impact Grant</h3>
           <div class="grant-why">LGBTQ-owned food-serving business — this is the single best match of any grant for your situation. <strong>Food-specific + LGBTQ-owned.</strong></div>
           <a class="grant-url" href="https://nglcc.org" target="_blank">nglcc.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="nglcc" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="nglcc" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="nglcc" data-status="received">Received</button></div>
           <span style="font-size:12px;color:var(--text-light);margin-left:8px;">· also about.grubhub.com</span>
         </div>
         <div>
@@ -1209,6 +1503,7 @@ document.getElementById('pw-input').focus();
           <h3>Founders First CDC National Pride Grant</h3>
           <div class="grant-why">LGBTQ+-owned, active US business, 1+ year in business, 2–100 employees, revenue under $5M. Award is $1,000 cash + free program access (valued at $1,499–$1,699) — 20 winners selected. Pre-registration is open now; full application opens April 2026.</div>
           <a class="grant-url" href="https://foundersfirstcdc.org/pride-grant" target="_blank">foundersfirstcdc.org/pride-grant</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="founders" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="founders" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="founders" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">$1,000 + program</div>
@@ -1222,6 +1517,7 @@ document.getElementById('pw-input').focus();
           <h3>DoorDash Local Biz Relief (via Hello Alice)</h3>
           <div class="grant-why">Small food business, emergency relief focus. Rolling deadline means you can apply right now.</div>
           <a class="grant-url" href="https://helloalice.com/grants/doordash/" target="_blank">helloalice.com/grants/doordash/</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="doordash" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="doordash" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="doordash" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">$5K–$15K</div>
@@ -1235,6 +1531,7 @@ document.getElementById('pw-input').focus();
           <h3>Amber Grant for Women</h3>
           <div class="grant-why">Women-owned. Food &amp; Beverage is a recent focus category — your timing is good. Monthly rolling deadline.</div>
           <a class="grant-url" href="https://ambergrantsforwomen.com" target="_blank">ambergrantsforwomen.com</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="amber" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="amber" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="amber" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">$1K–$25K</div>
@@ -1248,6 +1545,7 @@ document.getElementById('pw-input').focus();
           <h3>Kiva 0% Loan (via LISC Phoenix)</h3>
           <div class="grant-why">Phoenix metro, underrepresented owner priority. <strong>0% interest</strong> — useful as bridge capital while grants process.</div>
           <a class="grant-url" href="https://lisc.org/phoenix" target="_blank">lisc.org/phoenix</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="kiva" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="kiva" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="kiva" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Up to $10K</div>
@@ -1266,6 +1564,7 @@ document.getElementById('pw-input').focus();
           <h3>Women's Foundation for the State of Arizona (WFSA)</h3>
           <div class="grant-why">Active 2025–2026 grantmaking cycle. Arizona-based, gender and economic equity focus.</div>
           <a class="grant-url" href="https://womengiving.org" target="_blank">womengiving.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="wfsa" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="wfsa" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="wfsa" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Varies</div>
@@ -1279,6 +1578,7 @@ document.getElementById('pw-input').focus();
           <h3>Prestamos CDFI</h3>
           <div class="grant-why">Phoenix-based lender, LGBTQ+ + Latinx priority, SSBCI program. Low-cost loan with community focus.</div>
           <a class="grant-url" href="https://prestamos.org" target="_blank">prestamos.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="prestamos" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="prestamos" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="prestamos" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Up to $50K</div>
@@ -1292,6 +1592,7 @@ document.getElementById('pw-input').focus();
           <h3>Arizona Microbusiness Loan Program</h3>
           <div class="grant-why">AZ-based, under 5 FT employees. Active through June 2029.</div>
           <a class="grant-url" href="https://oeo.az.gov" target="_blank">oeo.az.gov</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="az_micro" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="az_micro" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="az_micro" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">$2K–$50K</div>
@@ -1305,6 +1606,7 @@ document.getElementById('pw-input').focus();
           <h3>IFundWomen Queer-Owned Fund</h3>
           <div class="grant-why">Crowdfunding platform with Visa/PayPal backing. Women + LGBTQ+ owned businesses.</div>
           <a class="grant-url" href="https://ifundwomen.com" target="_blank">ifundwomen.com</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="ifiundwomen" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="ifiundwomen" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="ifiundwomen" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Varies</div>
@@ -1318,6 +1620,7 @@ document.getElementById('pw-input').focus();
           <h3>QBA (Queer Business Alliance)</h3>
           <div class="grant-why">LGBTQ+ business, new and established. Rolling program.</div>
           <a class="grant-url" href="#" target="_blank">qba.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="sba" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="sba" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="sba" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">$2.5K–$50K</div>
@@ -1335,6 +1638,7 @@ document.getElementById('pw-input').focus();
           <h3>StartOut Growth Lab</h3>
           <div class="grant-why">No cash — but J.P. Morgan-backed strategic mentorship. With 10+ years in, you're in the right revenue range to qualify.</div>
           <a class="grant-url" href="https://startout.org" target="_blank">startout.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="score" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="score" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="score" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Mentorship</div>
@@ -1347,6 +1651,7 @@ document.getElementById('pw-input').focus();
           <h3>SCORE Arizona (Greater Phoenix)</h3>
           <div class="grant-why">Free mentoring from retired executives, including food/CPG specialists. Also connects to additional grant programs.</div>
           <a class="grant-url" href="https://score.org/greaterphoenix" target="_blank">score.org/greaterphoenix</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="artisan" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="artisan" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="artisan" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Free</div>
@@ -1359,6 +1664,7 @@ document.getElementById('pw-input').focus();
           <h3>GPECC — Greater Phoenix Equality Chamber</h3>
           <div class="grant-why">Oldest LGBT Chamber in the US. Membership = access to grants, contracts, referrals, and the entire local LGBTQ+ business community.</div>
           <a class="grant-url" href="https://gpequality.org" target="_blank">gpequality.org</a>
+        <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="gilbert" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="gilbert" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="gilbert" data-status="received">Received</button></div>
         </div>
         <div>
           <div class="grant-amount">Membership</div>
@@ -1544,6 +1850,10 @@ document.getElementById('pw-input').focus();
 <!-- EASTER POST-MORTEM + MOTHER'S DAY -->
 <section id="easter-postmortem" style="background:var(--brown);padding:60px 40px;">
   <div class="container">
+    <!-- MOTHER'S DAY COUNTDOWN -->
+    <div id="tm-mday-countdown" style="text-align:center;padding:24px 0 12px;"></div>
+
+
     <div class="section-label" style="color:var(--gold);">What Just Happened</div>
     <h2 class="section-title" style="color:var(--cream);">Easter: Why 10 TikTok Videos Drove Zero Orders</h2>
     <p class="section-intro" style="color:rgba(255,255,255,0.85);">You promoted Easter. You posted about it. You got almost nothing. That's not a demand problem — it's a platform mechanics problem. Here's exactly what happened and what to do differently for Mother's Day, which starts right now.</p>
@@ -1750,6 +2060,34 @@ document.getElementById('pw-input').focus();
       <strong style="color:var(--gold);">Content strategy for organic traffic:</strong> A simple blog or recipe section drives massive long-tail SEO for food brands. "S'mores board ideas," "hot cocoa bar recipes," "unique food gifts Arizona" — each post can rank and bring buyers you'd never reach with ads. You don't need to write essays. A 400-word post with a few photos, published monthly, compounds over time. Square Online has a native blog feature.
     </div>
   </div>
+
+    <!-- SEO GENERATOR -->
+    <div class="tm-gen-box" style="margin-top:32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Your Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.1rem;margin:0 0 6px;">SEO Title + Description Generator</h3>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">Enter a product or page name and get optimized title and meta description copy you can paste directly into WordPress.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Product or page name</label>
+          <input id="seo-product" type="text" placeholder="e.g. Birthday Marshmallow Gift Box" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Location (optional)</label>
+          <input id="seo-location" type="text" placeholder="Gilbert, AZ" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Search term you want to rank for</label>
+          <input id="seo-keyword" type="text" placeholder="e.g. gourmet marshmallow gift" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+      </div>
+      <button onclick="tmGenSEO()" style="background:var(--teal);color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Generate</button>
+      <div id="seo-gen-results" style="display:none;margin-top:16px;">
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);margin-bottom:4px;">Page Title <span id="seo-title-len" style="font-weight:400;color:#aaa;"></span></div>
+          <div class="tm-gen-output" id="seo-title-out"></div>
+          <button class="tm-copy-btn" onclick="tmCopyText('seo-title-out')">Copy title</button>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-mid);margin-bottom:4px;">Meta Description <span id="seo-desc-len" style="font-weight:400;color:#aaa;"></span></div>
+          <div class="tm-gen-output" id="seo-desc-out"></div>
+          <button class="tm-copy-btn" onclick="tmCopyText('seo-desc-out')">Copy description</button>
+        </div>
+      </div>
+    </div>
 </section>
 
 <!-- LEGAL/REGULATORY CHECKLIST -->
@@ -3052,6 +3390,27 @@ document.getElementById('pw-input').focus();
   </div>
 
 </div>
+
+    <!-- PRICING CALCULATOR -->
+    <div class="tm-pricing-calc" style="margin-top:32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Your Tool</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.1rem;margin:0 0 6px;">Margin + Pricing Calculator</h3>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">Enter what a product costs you to make. Get back the retail price, bundle prices, and subscription price that hit your margin target.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Product cost to make ($)</label>
+          <input id="pc-cogs" type="number" placeholder="4.50" step="0.01" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Target gross margin (%)</label>
+          <input id="pc-margin" type="number" placeholder="65" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
+      </div>
+      <button onclick="tmCalcPricing()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate prices</button>
+      <div class="tm-pricing-result" id="pc-results" style="display:none;">
+        <div class="tm-pr-box"><div class="val" id="pc-retail"></div><div class="lbl">Single unit retail</div></div>
+        <div class="tm-pr-box"><div class="val" id="pc-margin-out"></div><div class="lbl">Gross margin</div></div>
+        <div class="tm-pr-box"><div class="val" id="pc-bundle3"></div><div class="lbl">3-pack bundle (10% off)</div></div>
+        <div class="tm-pr-box"><div class="val" id="pc-bundle6"></div><div class="lbl">6-pack bundle (18% off)</div></div>
+        <div class="tm-pr-box"><div class="val" id="pc-sub"></div><div class="lbl">Monthly subscription (22% off)</div></div>
+      </div>
+    </div>
 </section>
 
 <!-- GIFTING -->
@@ -4662,6 +5021,66 @@ All grant eligibility verified against 2025–2026 program cycles as of April 20
       </div>
     </div>
 
+  </div>
+</section>
+
+
+<!-- FREE AI ADVISOR -->
+<section id="ai-advisor">
+  <div class="container">
+    <div class="section-label" style="color:rgba(255,255,255,0.5);">Free Tools</div>
+    <h2 class="section-title" style="color:white;">Get More Help — Free AI Advisors</h2>
+    <p class="section-intro" style="color:rgba(255,255,255,0.65);">Every tool below is free. Each one can answer follow-up questions about your specific situation, help you draft grant applications, write TikTok scripts, or talk through decisions. The prompts below are written for your business — copy one, paste it in, and go.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:32px;">
+
+      <div class="ai-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:32px;height:32px;background:#C05A10;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:14px;">C</div>
+          <h4 style="margin:0;">Claude (by Anthropic)</h4>
+        </div>
+        <p>Best for long documents, grant writing, and structured analysis. Free tier is generous. No account required for basic use.</p>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Copy this prompt to get started:</div>
+        <div class="ai-prompt-box" id="claude-prompt">I run The Toasted Mallow, an LGBTQ+- and women-owned artisan marshmallow shop in Gilbert, AZ that has been open since 2014. We have two locations, ship nationwide, have 270K TikTok followers, and have been featured on Arizona PBS, CBS 5, and FOX 10 Phoenix. I'm weighing three options: close 3 days/week to cut costs, drop our cupcake line, or pivot fully to e-commerce while keeping one location for milkshakes. What questions should I be asking before making this decision, and what data do I need to gather first?</div>
+        <button class="tm-copy-btn" onclick="tmCopyText('claude-prompt')">Copy prompt</button>
+        <br><a href="https://claude.ai" target="_blank" class="ai-open-btn ai-open-claude" style="margin-top:10px;display:inline-block;">Open Claude &rarr;</a>
+      </div>
+
+      <div class="ai-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:32px;height:32px;background:#10a37f;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:14px;">G</div>
+          <h4 style="margin:0;">ChatGPT (by OpenAI)</h4>
+        </div>
+        <p>Strong for TikTok content ideas, product descriptions, and email copy. Free tier works well for most tasks.</p>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Copy this prompt to get started:</div>
+        <div class="ai-prompt-box" id="chatgpt-prompt">I sell handmade artisan marshmallows and milkshakes at The Toasted Mallow in Gilbert, AZ. I have 270K TikTok followers. Write me 10 TikTok video hook lines (the first 2 seconds of a video) that would make someone stop scrolling. The hooks should be about: the process of making marshmallows, the story of a 10-year family business, or showing a product in a way that makes people want to buy it. Keep each hook under 12 words.</div>
+        <button class="tm-copy-btn" onclick="tmCopyText('chatgpt-prompt')">Copy prompt</button>
+        <br><a href="https://chatgpt.com" target="_blank" class="ai-open-btn ai-open-chatgpt" style="margin-top:10px;display:inline-block;">Open ChatGPT &rarr;</a>
+      </div>
+
+      <div class="ai-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:32px;height:32px;background:#5b5ef4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:14px;">P</div>
+          <h4 style="margin:0;">Perplexity</h4>
+        </div>
+        <p>Best for research with sources — grant deadlines, competitor data, grant requirements. Searches the live web and cites where it found things.</p>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Copy this prompt to get started:</div>
+        <div class="ai-prompt-box" id="perplexity-prompt">What grants are currently open for LGBTQ+-owned small food businesses in Arizona? Include: grant name, award amount, deadline, eligibility requirements, and application link. Focus on grants that are open right now or opening in the next 60 days in 2026.</div>
+        <button class="tm-copy-btn" onclick="tmCopyText('perplexity-prompt')">Copy prompt</button>
+        <br><a href="https://perplexity.ai" target="_blank" class="ai-open-btn ai-open-perplexity" style="margin-top:10px;display:inline-block;">Open Perplexity &rarr;</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:28px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px;">
+      <h4 style="color:white;margin:0 0 10px;">How to use these effectively</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">
+        <div><strong style="color:rgba(255,255,255,0.85);display:block;margin-bottom:3px;">Be specific</strong>Give it your actual numbers — rent, revenue, follower count. Generic questions get generic answers. Your situation has real specifics that change the advice.</div>
+        <div><strong style="color:rgba(255,255,255,0.85);display:block;margin-bottom:3px;">Push back</strong>If an answer feels off, say so. "That doesn't account for my lease situation" or "I already tried that — what else?" They handle pushback well and will adjust.</div>
+        <div><strong style="color:rgba(255,255,255,0.85);display:block;margin-bottom:3px;">Ask for drafts</strong>Grant applications, product descriptions, TikTok scripts, email campaigns — paste the prompt, get a draft, then edit it to sound like you. That's faster than starting from scratch.</div>
+        <div><strong style="color:rgba(255,255,255,0.85);display:block;margin-bottom:3px;">Save the thread</strong>Create a free account so your conversation history is saved. You can pick up where you left off, share a thread with a collaborator, or reference it later.</div>
+      </div>
+    </div>
   </div>
 </section>
 
