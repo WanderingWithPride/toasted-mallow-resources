@@ -1343,7 +1343,10 @@ document.getElementById('pw-input').focus();
     <!-- ESTIMATE LOADER -->
     <div style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
       <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;flex:1;min-width:200px;">Not sure where to start? We estimated your numbers from your TikTok, your two locations, and AZ retail benchmarks. Adjust anything that's off.</div>
-      <button onclick="tmLoadEstimates()" style="background:var(--gold);color:var(--brown);border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Load my estimates &rarr;</button>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="tmLoadEstimates()" style="background:var(--gold);color:var(--brown);border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Load my estimates &rarr;</button>
+        <button onclick="tmClearAll()" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:7px 14px;font-size:12px;cursor:pointer;white-space:nowrap;">Clear all</button>
+      </div>
     </div>
     <!-- TAB SWITCHER -->
     <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:8px;">
@@ -6736,6 +6739,28 @@ function tmLoadEstimates() {
   // Save + run analysis
   tmSaveAll();
   setTimeout(function() { tmRunCostAnalysis(true); }, 100);
+}
+
+function tmClearAll() {
+  TM_COST_FIELDS.forEach(function(k) {
+    var el = document.getElementById('tmf_' + k);
+    if (el) el.value = '';
+  });
+  // Also clear any fields not in TM_COST_FIELDS that are in the panel
+  ['tmf_aov','tmf_followers','tmf_email_list','tmf_staff1','tmf_staff2','tmf_owner_pay',
+   'tmf_shipping_supplies','tmf_pos_fees','tmf_insurance','tmf_debt','tmf_other_fixed',
+   'tmf_batches_day','tmf_units_batch','tmf_prod_days','tmf_waste_pct','tmf_cost_batch','tmf_units_sold_week'
+  ].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  localStorage.removeItem('tm_data');
+  Object.keys(TM).forEach(function(k) { delete TM[k]; });
+  // Remove any analysis output
+  var out = document.getElementById('tm-cost-analysis-output');
+  if (out) out.remove();
+  var note = document.getElementById('tm-saved-note');
+  if (note) { note.textContent = 'Cleared.'; note.style.opacity = '1'; setTimeout(function(){ note.style.opacity = '0'; note.textContent = 'Saved.'; }, 2000); }
 }
 
 function tmSaveAll() {
