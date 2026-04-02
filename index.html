@@ -6549,7 +6549,14 @@ YOUR ROLE:
 - Help write actual copy when asked (grant paragraphs, TikTok hooks, product descriptions, email subject lines)
 - Reference the business context above when relevant
 - Keep responses concise — this is a chat, not a document
-- Never be condescending or treat this as a charity case — Tricia runs a 10-year business and knows it better than any analysis does`;
+- Never be condescending or treat this as a charity case — Tricia runs a 10-year business and knows it better than any analysis does
+
+MATH RULES (critical — never violate):
+- When numbers are given, use them exactly. Do not recompute — the pre-computed values in the context are correct.
+- Never show arithmetic that contradicts the numbers provided. If the context says net is -$11,650, that is the net. Do not show a different number.
+- "New costs after consolidation" = total_costs minus savings_consolidate. This is already computed in the context — use it directly.
+- If COGS+packaging is above 50% of revenue, that is the most urgent problem, more urgent than rent. Say so first and clearly.
+- When you give a "after consolidation" projection, verify: revenue minus new costs = the net you state. Never say a loss is a surplus or vice versa.`;
 
 var TM_GEMINI_PROXY = 'https://tm-ai.michael-eisinger.workers.dev';
 
@@ -6936,7 +6943,15 @@ function tmRunCostAnalysis(autoRun) {
     cashCtx += ' — effective available cash: $'+effective_cash.toLocaleString()+'.';
     if (net < 0) cashCtx += ' At current burn that is ~'+Math.floor((effective_cash/Math.abs(net))*4.33)+' weeks of runway.';
   }
-  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo. Occupancy: $'+total_occupancy+'/mo. Labor: $'+payroll+'/mo'+(payroll2>0?' (Loc1: $'+payroll1+', Loc2: $'+payroll2+')':'')+'. COGS+packaging: $'+total_cogs+'/mo. Overhead: $'+total_overhead+'/mo. Consolidation (rent+util+staff) would save: $'+savings_consolidate+'/mo.'+cashCtx;
+  var cogs_pct_str = rev > 0 ? Math.round(total_cogs/rev*100)+'%' : 'n/a';
+  var occ_pct_str = rev > 0 ? Math.round(total_occupancy/rev*100)+'%' : 'n/a';
+  var labor_pct_str = rev > 0 ? Math.round(payroll/rev*100)+'%' : 'n/a';
+  var net_after_consolidate = net + savings_consolidate;
+  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo (that is a $'+Math.abs(net)+'/mo '+(net<0?'loss':'surplus')+'). Occupancy: $'+total_occupancy+'/mo ('+occ_pct_str+' of revenue). Labor: $'+payroll+'/mo ('+labor_pct_str+' of revenue)'+(payroll2>0?' — Location A: $'+payroll1+', Location B: $'+payroll2:'')+'.'
+    +' COGS+packaging: $'+total_cogs+'/mo ('+cogs_pct_str+' of revenue — IMPORTANT: healthy range is 25-35%; above 50% is a production cost crisis, not a rent problem).'
+    +' Overhead: $'+total_overhead+'/mo.'
+    +' If she consolidates to one location: saves $'+savings_consolidate+'/mo (rent+util+staff for Location B), new total costs would be $'+(total_costs-savings_consolidate)+'/mo, new monthly net would be $'+net_after_consolidate+'/mo (still a '+(net_after_consolidate<0?'LOSS of $'+Math.abs(net_after_consolidate):'SURPLUS of $'+net_after_consolidate)+').'
+    + cashCtx;
 }
 
 function tmAskAIAboutCosts() {
