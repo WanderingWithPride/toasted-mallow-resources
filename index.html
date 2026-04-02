@@ -1258,6 +1258,79 @@ document.getElementById('pw-input').focus();
           <div class="audit-fix">Enable Square Loyalty in your Square dashboard (Settings → Loyalty). Costs nothing, activates in minutes.</div>
         </div>
       </div>
+      <div class="audit-item">
+        <div class="audit-severity high">📺</div>
+        <div>
+          <h4>TV Credential Language Is Wrong on Your Site</h4>
+          <p>Your "Our Story" page lists your media appearances as "Cooking Network" and "Food Channel" — neither of which is the correct name for any TV network. This undermines the credibility the appearances actually earned.</p>
+          <div class="audit-fix">Update to accurate language: "Featured on Arizona Highways TV (Arizona PBS), CBS 5, and FOX 10 Phoenix." These are the verified appearances. Use specific, accurate names — vague or incorrect network names read as fabricated to any reviewer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security" style="background:var(--cream-dark);border-top:3px solid var(--border);">
+  <div class="container">
+    <div class="section-label">Website Security</div>
+    <h2 class="section-title">Security Audit — 5 Issues, 1 Plugin Fixes Most of Them</h2>
+    <p class="section-intro">Your payments are secure (Square handles all card processing — your site never touches credit card data). But your WordPress installation has five issues that could let someone take over your site or impersonate your email address. All are fixable free.</p>
+
+    <div style="background:var(--white);border-radius:16px;padding:20px;border:2px solid #e8a020;margin-bottom:24px;">
+      <div style="font-size:13px;font-weight:700;color:#e8a020;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">The One Fix That Covers Most of This</div>
+      <p style="font-size:14px;line-height:1.6;margin:0;">Install <strong>Wordfence Security</strong> (free WordPress plugin) — it blocks brute force attacks, disables XML-RPC, hides staff usernames, and adds firewall protection. Takes 5 minutes. Login to WordPress → Plugins → Add New → search "Wordfence" → Install → Activate. The two email issues require separate DNS changes (instructions below).</p>
+    </div>
+
+    <div class="audit-grid">
+      <div class="audit-item">
+        <div class="audit-severity critical">⚠️</div>
+        <div>
+          <h4>No DMARC Record — Anyone Can Fake Your Email <span class="free-pill">Free Fix</span></h4>
+          <p>Without a DMARC DNS record, anyone on the internet can send email that appears to come from hello@thetoastedmallow.com. Spammers and scammers use this to impersonate businesses, and it damages your email deliverability with providers like Gmail.</p>
+          <div class="audit-fix">In your Bluehost DNS panel, add a TXT record: Host: <code>_dmarc</code> / Value: <code>v=DMARC1; p=quarantine; rua=mailto:hello@thetoastedmallow.com</code>. Free, takes effect in 24-48 hours.</div>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-severity critical">⚠️</div>
+        <div>
+          <h4>Two Conflicting SPF Records Break Email Delivery <span class="free-pill">Free Fix</span></h4>
+          <p>You have two SPF records, which is invalid — email servers only accept one. This causes some of your legitimate outbound emails (order confirmations, marketing) to be marked as spam or rejected entirely.</p>
+          <div class="audit-fix">In Bluehost DNS, delete one SPF record and keep the other. If unsure which to keep, ask Bluehost support — they can identify which record covers your email provider. Free, 10 minutes.</div>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-severity high">🔒</div>
+        <div>
+          <h4>WordPress Login Has No Brute Force Protection <span class="free-pill">Free Fix</span></h4>
+          <p>Your WordPress admin login (/wp-admin) is accessible from anywhere with no rate limiting. Automated bots continuously attempt logins on exposed WordPress sites — this is not hypothetical, it's happening now on almost every public WordPress installation.</p>
+          <div class="audit-fix">Wordfence (free) enables login limiting automatically on install. Set it to lock out after 5 failed attempts for 1 hour.</div>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-severity high">🔒</div>
+        <div>
+          <h4>XML-RPC Enabled — Remote Attack Vector <span class="free-pill">Free Fix</span></h4>
+          <p>XML-RPC is a legacy WordPress feature that's almost never used by modern sites. It allows attackers to attempt thousands of password guesses in a single request, bypassing normal login rate limits.</p>
+          <div class="audit-fix">Wordfence disables XML-RPC automatically. Or disable manually in Wordfence settings → Firewall → Block XML-RPC requests.</div>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-severity high">👤</div>
+        <div>
+          <h4>Staff Usernames Publicly Visible <span class="free-pill">Free Fix</span></h4>
+          <p>WordPress's REST API exposes all user login names at a public URL. Attackers use these as the "username" half of a brute force attempt — they already have the username, they just need to guess the password.</p>
+          <div class="audit-fix">Wordfence blocks this endpoint by default. Or go to Wordfence → Tools → Diagnostics → Disable User Enumeration.</div>
+        </div>
+      </div>
+      <div class="audit-item">
+        <div class="audit-severity high">✅</div>
+        <div>
+          <h4>SSL and Payments Are Secure</h4>
+          <p>Your SSL certificate (Let's Encrypt) is valid and auto-renews. TLS 1.3 is active. Your Square Online shop (shop.thetoastedmallow.com) is separate — Square processes all payments on their infrastructure. Your WordPress site never handles payment data.</p>
+          <div class="audit-fix">No action needed. Domain expires 2027 — verify auto-renew is on in your Bluehost account to avoid accidental expiry.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1705,8 +1778,8 @@ document.getElementById('pw-input').focus();
       <div class="advantage-card">
         <div class="advantage-icon">📺</div>
         <div>
-          <h4>National Media Credibility</h4>
-          <p>National TV appearances are grant application gold. Reviewers see credibility before they read a word.</p>
+          <h4>TV-Featured Business</h4>
+          <p>Verified local and regional TV appearances: Arizona Highways TV (Arizona PBS), CBS 5, and FOX 10 Phoenix. Regional media credibility is a real differentiator — most small food businesses have none.</p>
         </div>
       </div>
       <div class="advantage-card">
