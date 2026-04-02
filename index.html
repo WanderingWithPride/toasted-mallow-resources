@@ -6547,6 +6547,34 @@ YOUR ROLE:
 
 var TM_GEMINI_PROXY = 'https://tm-ai.michael-eisinger.workers.dev';
 
+function tmRenderMd(text) {
+  // Escape HTML first
+  var s = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Bold
+  s = s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  // Inline code
+  s = s.replace(/`([^`]+)`/g,'<code style="background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;font-size:0.9em;">$1</code>');
+  // Bullet lists — collect consecutive - lines into <ul>
+  s = s.replace(/((?:^|\n)[ \t]*[-*] .+)+/g, function(block) {
+    var items = block.trim().split(/\n/).map(function(line) {
+      return '<li style="margin-bottom:4px;">' + line.replace(/^[ \t]*[-*] /,'') + '</li>';
+    }).join('');
+    return '<ul style="margin:6px 0 6px 16px;padding:0;">' + items + '</ul>';
+  });
+  // Numbered lists
+  s = s.replace(/((?:^|\n)[ \t]*\d+\. .+)+/g, function(block) {
+    var items = block.trim().split(/\n/).map(function(line) {
+      return '<li style="margin-bottom:4px;">' + line.replace(/^[ \t]*\d+\. /,'') + '</li>';
+    }).join('');
+    return '<ol style="margin:6px 0 6px 16px;padding:0;">' + items + '</ol>';
+  });
+  // Double newline → paragraph break
+  s = s.replace(/\n{2,}/g,'</p><p style="margin:0 0 8px;">');
+  // Single newline → line break (but not inside lists)
+  s = s.replace(/\n/g,'<br>');
+  return '<p style="margin:0 0 8px;">' + s + '</p>';
+}
+
 function tmChatToggle() {
   var w = document.getElementById('tm-chat-window');
   w.classList.toggle('open');
@@ -6596,7 +6624,7 @@ function tmChatSend() {
     TM_CHAT_HISTORY.push({role:'model', parts:[{text: text}]});
     var botDiv = document.createElement('div');
     botDiv.className = 'tm-msg-bot';
-    botDiv.textContent = text;
+    botDiv.innerHTML = tmRenderMd(text);
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
     tmSpeak(text);
@@ -6606,7 +6634,7 @@ function tmChatSend() {
     if (think) think.remove();
     var botDiv = document.createElement('div');
     botDiv.className = 'tm-msg-bot';
-    botDiv.textContent = 'Connection issue — try again in a moment.';
+    botDiv.innerHTML = tmRenderMd('Connection issue — try again in a moment.');
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
   });
@@ -6652,6 +6680,7 @@ function tmSaveAll() {
   if (Object.keys(updates).length) { tmSetData(updates); }
   var note = document.getElementById('tm-saved-note');
   if (note) { note.style.opacity=1; setTimeout(function(){ note.style.opacity=0; }, 2000); }
+  tmRunCostAnalysis(true);
 }
 
 function tmLoadAll() {
@@ -6663,8 +6692,8 @@ function tmLoadAll() {
 }
 
 // ── Cost analysis engine ──────────────────────────────────────────────────────
-function tmRunCostAnalysis() {
-  tmSaveAll();
+function tmRunCostAnalysis(autoRun) {
+  if (!autoRun) tmSaveAll();
   var rev = (parseFloat(TM.revenue_store||0) + parseFloat(TM.revenue_online||0)) ||
             parseFloat(TM.revenue||0) || 0;
   var rent1 = parseFloat(TM.rent1||TM.rent||0);
@@ -6691,7 +6720,7 @@ function tmRunCostAnalysis() {
   var net = rev - total_costs;
 
   if (!rev && !total_costs) {
-    alert('Enter some numbers first — at least your revenue and main costs.');
+    if (!autoRun) alert('Enter some numbers first — at least your revenue and main costs.');
     return;
   }
 
@@ -6873,7 +6902,7 @@ function tmAskAIAboutCosts() {
     var think=document.getElementById('tm-thinking'); if(think) think.remove();
     var text=(data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0].text)||'Try again in a moment.';
     TM_CHAT_HISTORY.push({role:'model',parts:[{text:text}]});
-    var botDiv=document.createElement('div'); botDiv.className='tm-msg-bot'; botDiv.textContent=text;
+    var botDiv=document.createElement('div'); botDiv.className='tm-msg-bot'; botDiv.innerHTML=tmRenderMd(text);
     msgs.appendChild(botDiv); msgs.scrollTop=msgs.scrollHeight; tmSpeak(text);
   }).catch(function(){
     var think=document.getElementById('tm-thinking'); if(think) think.remove();
@@ -7092,7 +7121,7 @@ function tmStartGuide() {
     TM_CHAT_HISTORY.push({role:'model', parts:[{text: text}]});
     var botDiv = document.createElement('div');
     botDiv.className = 'tm-msg-bot';
-    botDiv.textContent = text;
+    botDiv.innerHTML = tmRenderMd(text);
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
     tmSpeak(text);
@@ -7103,7 +7132,7 @@ function tmStartGuide() {
     if (think) think.remove();
     var botDiv = document.createElement('div');
     botDiv.className = 'tm-msg-bot';
-    botDiv.textContent = "Let's start simple: what feels most urgent right now — the money side, or figuring out what to do with the business?";
+    botDiv.innerHTML = tmRenderMd("Let's start simple: what feels most urgent right now — the money side, or figuring out what to do with the business?");
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
   });
