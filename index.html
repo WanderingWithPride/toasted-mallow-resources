@@ -2934,9 +2934,9 @@ document.getElementById('pw-input').focus();
     <div style="background:var(--cream-dark);border:2px solid #C05A10;border-radius:14px;padding:24px 28px;margin-top:32px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C05A10;margin-bottom:8px;">Critical Tool</div>
       <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.1rem;margin:0 0 6px;">Cash Runway Calculator</h3>
-      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">How many weeks can you operate at current burn? Enter your actual numbers to find out — and see what changes if you cut costs.</p>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 16px;">How many weeks can you operate at current burn? Enter your actual numbers to find out — and see what changes if you cut costs. <button onclick="tmPrefillCashFlow()" style="background:none;border:1px solid #C05A10;color:#C05A10;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;vertical-align:middle;">Fill from my numbers</button></p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;">
-        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Cash on hand now ($)</label>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Effective cash available ($)<br><span style="font-weight:400;font-size:10px;color:var(--text-mid);">Cash + receivables − one-time bills</span></label>
           <input id="cf-cash" type="number" placeholder="8000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
         <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly revenue ($)</label>
           <input id="cf-revenue" type="number" placeholder="15000" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
@@ -6982,6 +6982,32 @@ document.addEventListener('click', function(e) {
 });
 
 // ── Cash flow runway ──────────────────────────────────────────────────────────
+function tmPrefillCashFlow() {
+  var cash = parseFloat(TM.cash||0);
+  var ar = parseFloat(TM.ar||0);
+  var one_time_out = parseFloat(TM.one_time_out||0);
+  var effective_cash = cash + ar - one_time_out;
+  var rev = (parseFloat(TM.revenue_store||0) + parseFloat(TM.revenue_online||0)) || parseFloat(TM.revenue||0) || 0;
+  var rent = parseFloat(TM.rent1||TM.rent||0) + parseFloat(TM.rent2||0);
+  var util = parseFloat(TM.util1||0) + parseFloat(TM.util2||0);
+  var payroll = (parseFloat(TM.payroll1||0) + parseFloat(TM.payroll2||0)) || parseFloat(TM.payroll||0);
+  var owner_pay = parseFloat(TM.owner_pay||0);
+  var insurance = parseFloat(TM.insurance||0);
+  var software = parseFloat(TM.software||0);
+  var marketing = parseFloat(TM.marketing||0);
+  var debt = parseFloat(TM.debt||0);
+  var other = parseFloat(TM.other_fixed||0);
+  var fixed = rent + util + payroll + owner_pay + insurance + software + marketing + debt + other;
+  var cogs = parseFloat(TM.cogs_dollar||0);
+  var packaging = parseFloat(TM.packaging||0);
+  var variable = cogs + packaging;
+  if (effective_cash > 0) document.getElementById('cf-cash').value = Math.round(effective_cash);
+  if (rev > 0) document.getElementById('cf-revenue').value = Math.round(rev);
+  if (fixed > 0) document.getElementById('cf-fixed').value = Math.round(fixed);
+  if (variable > 0) document.getElementById('cf-variable').value = Math.round(variable);
+  if (effective_cash > 0 || rev > 0) tmCalcCashFlow();
+}
+
 function tmCalcCashFlow() {
   var cash = parseFloat(document.getElementById('cf-cash').value) || 0;
   var rev = parseFloat(document.getElementById('cf-revenue').value) || 0;
