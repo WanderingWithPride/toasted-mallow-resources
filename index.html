@@ -1122,6 +1122,16 @@ document.getElementById('pw-input').focus();
     <h2 style="font-family:'Playfair Display',serif;color:white;font-size:1.5rem;margin-bottom:6px;line-height:1.3;">Start Here: Your 3 Jobs This Week</h2>
     <p style="color:rgba(255,255,255,0.65);font-size:0.82rem;margin-bottom:24px;">Everything else in this package is reference material. These three actions cost nothing and can move money in days, not months.</p>
 
+    
+    <!-- GUIDED WALKTHROUGH TRIGGER -->
+    <div style="margin-top:20px;padding:16px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;gap:12px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:white;margin-bottom:3px;">Not sure where to start?</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);">The AI advisor will ask you 3 quick questions and tell you exactly what to focus on first.</div>
+      </div>
+      <button onclick="tmStartGuide()" style="background:var(--gold);color:var(--brown);border:none;border-radius:100px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Guide me through this</button>
+    </div>
+
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;">
 
       <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:20px;">
@@ -4933,9 +4943,10 @@ All grant eligibility verified against 2025–2026 program cycles as of April 20
   </div>
   <div id="tm-chat-input-row">
     <textarea id="tm-chat-input" placeholder="Ask anything about your business..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();tmChatSend();}"></textarea>
+    <button id="tm-chat-voice" onclick="tmChatVoice()" title="Speak instead of type" style="background:#f5f0eb;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-size:16px;cursor:pointer;flex-shrink:0;" aria-label="Voice input">&#127908;</button>
     <button id="tm-chat-send" onclick="tmChatSend()">Send</button>
   </div>
-  <div id="tm-chat-privacy">Conversations are not saved. Nothing is stored or sent to anyone except Google Gemini.</div>
+  <div id="tm-chat-privacy">Conversations are not saved. Nothing is sent except to Google Gemini. Voice stays on your device until you send.</div>
 </div>
 
 <script>
@@ -4997,7 +5008,7 @@ YOUR ROLE:
 - Keep responses concise — this is a chat, not a document
 - Never be condescending or treat this as a charity case — Tricia runs a 10-year business and knows it better than any analysis does`;
 
-var TM_GEMINI_PROXY = 'https://tm-ai.wanderingwithpride.workers.dev';
+var TM_GEMINI_PROXY = 'https://tm-ai.michael-eisinger.workers.dev';
 
 function tmChatToggle() {
   var w = document.getElementById('tm-chat-window');
@@ -5061,6 +5072,121 @@ function tmChatSend() {
     msgs.appendChild(botDiv);
     msgs.scrollTop = msgs.scrollHeight;
   });
+}
+
+
+
+// ── Guided walkthrough ────────────────────────────────────────────────────────
+function tmStartGuide() {
+  // Open chat and send a guide-mode opener
+  var w = document.getElementById('tm-chat-window');
+  if (!w.classList.contains('open')) w.classList.add('open');
+  var msgs = document.getElementById('tm-chat-messages');
+
+  var guideMsg = document.createElement('div');
+  guideMsg.className = 'tm-msg-user';
+  guideMsg.textContent = "I just opened this page and I'm not sure where to start. Can you guide me through it?";
+  msgs.appendChild(guideMsg);
+
+  var thinkDiv = document.createElement('div');
+  thinkDiv.className = 'tm-msg-thinking';
+  thinkDiv.id = 'tm-thinking';
+  thinkDiv.textContent = 'Thinking...';
+  msgs.appendChild(thinkDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  TM_CHAT_HISTORY.push({role:'user', parts:[{text: "I just opened this page and I'm not sure where to start. Guide me — ask me what I need to know to point me in the right direction. Keep it short, ask one question at a time."}]});
+
+  var body = {
+    system_instruction: {parts:[{text: TM_CHAT_SYSTEM + "\n\nSPECIAL MODE: The user just opened the page and feels overwhelmed. Your job is to guide them to the right section. Ask ONE question first: what is most pressing right now — cash flow survival, getting grants, improving the website, planning the pivot, or something else? Based on their answer, tell them exactly which section to open first and what to do there. Be warm, direct, and brief. Max 3 sentences per message."}]},
+    contents: TM_CHAT_HISTORY,
+    generationConfig: {temperature: 0.7, maxOutputTokens: 250}
+  };
+
+  fetch(TM_GEMINI_PROXY + '/chat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    var think = document.getElementById('tm-thinking');
+    if (think) think.remove();
+    var text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || "Let's start simple: what feels most urgent right now — the money side, or figuring out what to do with the business?";
+    TM_CHAT_HISTORY.push({role:'model', parts:[{text: text}]});
+    var botDiv = document.createElement('div');
+    botDiv.className = 'tm-msg-bot';
+    botDiv.textContent = text;
+    msgs.appendChild(botDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+    document.getElementById('tm-chat-input').focus();
+  })
+  .catch(function() {
+    var think = document.getElementById('tm-thinking');
+    if (think) think.remove();
+    var botDiv = document.createElement('div');
+    botDiv.className = 'tm-msg-bot';
+    botDiv.textContent = "Let's start simple: what feels most urgent right now — the money side, or figuring out what to do with the business?";
+    msgs.appendChild(botDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+}
+
+// ── Voice input (Web Speech API) ─────────────────────────────────────────────
+var tmVoiceRecognition = null;
+var tmVoiceActive = false;
+
+function tmChatVoice() {
+  var btn = document.getElementById('tm-chat-voice');
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Voice input is not supported in this browser. Try Chrome on desktop or Android.');
+    return;
+  }
+  if (tmVoiceActive) {
+    if (tmVoiceRecognition) tmVoiceRecognition.stop();
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  tmVoiceRecognition = new SR();
+  tmVoiceRecognition.lang = 'en-US';
+  tmVoiceRecognition.interimResults = false;
+  tmVoiceRecognition.maxAlternatives = 1;
+
+  tmVoiceActive = true;
+  btn.style.background = '#C05A10';
+  btn.style.color = 'white';
+  btn.title = 'Listening... click to stop';
+
+  tmVoiceRecognition.onresult = function(event) {
+    var transcript = event.results[0][0].transcript;
+    var input = document.getElementById('tm-chat-input');
+    input.value = transcript;
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 80)+'px';
+  };
+
+  tmVoiceRecognition.onend = function() {
+    tmVoiceActive = false;
+    btn.style.background = '#f5f0eb';
+    btn.style.color = '';
+    btn.title = 'Speak instead of type';
+    // Auto-send if we got something
+    var input = document.getElementById('tm-chat-input');
+    if (input.value.trim()) tmChatSend();
+  };
+
+  tmVoiceRecognition.onerror = function(e) {
+    tmVoiceActive = false;
+    btn.style.background = '#f5f0eb';
+    btn.style.color = '';
+    if (e.error !== 'aborted') {
+      var input = document.getElementById('tm-chat-input');
+      input.placeholder = 'Voice error (' + e.error + ') — type instead';
+      setTimeout(function(){ input.placeholder = 'Ask anything about your business...'; }, 3000);
+    }
+  };
+
+  tmVoiceRecognition.start();
 }
 
 // Auto-resize textarea
