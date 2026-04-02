@@ -1290,11 +1290,11 @@ document.getElementById('pw-input').focus();
       </div>
     </div>
 
-    <div class="consolidation-note" style="margin-top: 20px;">
+    <div id="consol-advice-main" class="consolidation-note" style="margin-top: 20px;">
       <strong>On consolidation:</strong> Don't close both locations — close one. The remaining location becomes your marshmallow fulfillment hub and milkshake bar. In-person milkshake revenue is high-impulse and keeps the brand visible locally while e-commerce scales nationally. The physical space also serves as your content studio for TikTok production.
     </div>
 
-    <div style="background:#FEF0E4;border:1px solid #C05A10;border-radius:12px;padding:20px 24px;margin-top:16px;font-size:14px;line-height:1.7;color:#7A3010;">
+    <div id="consol-advice-checklist" style="background:#FEF0E4;border:1px solid #C05A10;border-radius:12px;padding:20px 24px;margin-top:16px;font-size:14px;line-height:1.7;color:#7A3010;">
       <strong style="color:#C05A10;">Before committing to consolidation — check these first:</strong><br>
       <strong>Lease exit cost:</strong> Early termination in AZ typically carries a 2–6 month rent penalty. If your second location has 12+ months left on the lease, the break cost changes the math significantly — find out the exact figure before making this call.<br><br>
       <strong>Staff impact:</strong> Consolidation likely means reducing headcount. Budget time and emotional bandwidth for that conversation. At under 10 employees you're below WARN Act thresholds, but how you handle it will affect your reputation in the local community and your ability to hire again.
@@ -1580,6 +1580,57 @@ document.getElementById('pw-input').focus();
       verdictEl.style.background = bg;
       verdictEl.style.color = color;
       document.getElementById('calc-results').style.display = 'block';
+      tmUpdateConsolAdvice({
+        nameA: nameA, rentA: rentA, utilA: utilA, revA: revA, penA: penA, staffA: staffA, monthsA: parseFloat(document.getElementById('loc-a-months').value)||0,
+        nameB: nameB, rentB: rentB, utilB: utilB, revB: revB, penB: penB, staffB: staffB, monthsB: parseFloat(document.getElementById('loc-b-months').value)||0,
+        exitA: exitA, exitB: exitB, savingsA: savingsA, savingsB: savingsB, beA: beA, beB: beB,
+        closeName: closeName, keepName: keepName, closeBe: closeBe, closeSavings: closeSavings, closeRevenue: closeRevenue,
+        notice: notice
+      });
+    }
+
+    function tmUpdateConsolAdvice(d) {
+      // --- Main advice block ---
+      var mainEl = document.getElementById('consol-advice-main');
+      var totalRev = (d.revA || 0) + (d.revB || 0);
+      var keepRev = d.closeName === d.nameA ? d.revB : d.revA;
+      var keepSavings = d.closeName === d.nameA ? d.savingsA : d.savingsB;
+      var keepMonths = d.closeName === d.nameA ? d.monthsA : d.monthsB;
+      var revenueGap = d.closeRevenue > 0 ? Math.round(d.closeRevenue) : 0;
+      var annualSavings = Math.round(keepSavings * 12);
+
+      var mainHTML = '<strong>Your situation:</strong> Close ' + d.closeName + ', keep ' + d.keepName + '.';
+      mainHTML += ' ' + d.keepName + ' becomes your fulfillment hub, milkshake bar, and TikTok studio.';
+      mainHTML += ' You free up <strong>$' + Math.round(keepSavings).toLocaleString() + '/mo</strong> ($' + annualSavings.toLocaleString() + '/yr) in fixed overhead.';
+      if (revenueGap > 0) {
+        var revenueGapPct = totalRev > 0 ? Math.round((revenueGap / totalRev) * 100) : 0;
+        mainHTML += ' The trade-off: you give up <strong>$' + revenueGap.toLocaleString() + '/mo</strong> (' + revenueGapPct + '% of total revenue) from ' + d.closeName + ' — that needs to shift online or to ' + d.keepName + ' to maintain your overall position.';
+      }
+      if (keepMonths > 0 && keepMonths <= 6) {
+        mainHTML += ' <strong style="color:#C05A10;">Note: ' + d.closeName + ' has only ' + keepMonths + ' months left on the lease — you may be able to let it expire rather than pay the termination penalty at all.</strong>';
+      }
+      mainEl.innerHTML = mainHTML;
+
+      // --- Checklist block ---
+      var checkEl = document.getElementById('consol-advice-checklist');
+      var penaltyMonths = d.closeName === d.nameA ? d.penA : d.penB;
+      var exitCost = d.closeName === d.nameA ? d.exitA : d.exitB;
+      var staffCount = d.closeName === d.nameA ? d.staffA : d.staffB;
+      var leaseMonths = d.closeName === d.nameA ? d.monthsA : d.monthsB;
+
+      var penaltyNote = penaltyMonths > 0
+        ? 'Your lease exit cost for ' + d.closeName + ' is <strong>$' + Math.round(exitCost).toLocaleString() + '</strong> (' + penaltyMonths + ' months rent'
+          + (d.notice > 0 && staffCount > 0 ? ' + ' + staffCount + ' staff x ' + d.notice + ' weeks notice pay' : '') + ').'
+          + (penaltyMonths >= 4 ? ' That is on the high end — negotiate with your landlord. Offer a lump sum of 1–2 months to exit clean; many AZ landlords will take it in a soft retail market.' : ' That is manageable and within normal range for AZ leases.')
+        : 'You entered no termination penalty for ' + d.closeName + '. Confirm this in your actual lease — standard AZ leases carry 2–4 months. If correct, your exit cost is just staff notice pay.';
+
+      var staffNote = staffCount > 0
+        ? 'You have ' + staffCount + ' staff at ' + d.closeName + '. With ' + d.notice + ' weeks of notice pay budgeted, that is $' + Math.round(staffCount * (d.closeName === d.nameA ? d.wagesA||0 : d.wagesB||0) * d.notice).toLocaleString() + '. Under 10 total employees you are below WARN Act thresholds, but how you handle this will affect your reputation locally and your ability to hire at ' + d.keepName + '.'
+        : 'You entered 0 staff at ' + d.closeName + '. If you have staff there, add them — it changes the total exit cost.';
+
+      checkEl.innerHTML = '<strong style="color:#C05A10;">Before committing to closing ' + d.closeName + ' — verify these:</strong><br>'
+        + '<strong>Lease exit cost:</strong> ' + penaltyNote + '<br><br>'
+        + '<strong>Staff impact:</strong> ' + staffNote;
     }
     </script>
   </div>
