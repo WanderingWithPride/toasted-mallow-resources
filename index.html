@@ -4997,7 +4997,7 @@ YOUR ROLE:
 - Keep responses concise — this is a chat, not a document
 - Never be condescending or treat this as a charity case — Tricia runs a 10-year business and knows it better than any analysis does`;
 
-var TM_GEMINI_KEY = 'AIzaSyDqSJfkTT2BOIy9Va-QaYPYK9QDvnOsP5M';
+var TM_GEMINI_PROXY = 'https://tm-ai.wanderingwithpride.workers.dev';
 
 function tmChatToggle() {
   var w = document.getElementById('tm-chat-window');
@@ -5035,7 +5035,7 @@ function tmChatSend() {
     generationConfig: {temperature: 0.7, maxOutputTokens: 600}
   };
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + TM_GEMINI_KEY, {
+  fetch(TM_GEMINI_PROXY + '/chat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(body)
