@@ -6759,16 +6759,50 @@ function tmRunCostAnalysis(autoRun) {
       detail: prodDetail
     });
 
-    // If low utilization — flag as opportunity
-    if (utilization !== null && utilization < 60 && units_sold_week > 0) {
+    // Low utilization: two levers — cut batches OR sell more online
+    if (utilization !== null && utilization < 75) {
       var headroom = weekly_capacity - units_sold_week;
+      var optimal_batches = Math.ceil(units_sold_week / (units_batch * prod_days));
+      var batch_saving_detail = '';
+      if (cost_batch > 0 && optimal_batches < batches_day) {
+        var saved_batches_week = (batches_day - optimal_batches) * prod_days;
+        var saved_ingredient_mo = Math.round(saved_batches_week * cost_batch * 4.33);
+        batch_saving_detail = ' Cutting from ' + batches_day + ' to ' + optimal_batches + ' batches/day on current sell-through would save ~$' + saved_ingredient_mo.toLocaleString() + '/mo in ingredients alone.';
+      }
       recs.push({
-        title: 'Unused production capacity = wholesale opportunity',
-        saving: headroom.toLocaleString() + ' units/week available',
+        title: 'Cut production OR grow online — pick one',
+        saving: headroom.toLocaleString() + ' units/week unused',
         saving_num: 0,
-        detail: 'You have capacity to produce ' + headroom.toLocaleString() + ' more units per week without adding staff or equipment. That headroom is exactly what makes wholesale and subscription feasible — you can fulfill both without new capital investment.'
+        detail: 'You are producing more than you are currently selling (' + utilization + '% utilization). Two paths: (1) Reduce batches to match actual sell-through — lower ingredient waste, same revenue.' + batch_saving_detail + ' (2) Keep production as-is and route excess capacity into online orders (Goldbelly, TikTok Shop, subscription boxes) — no new equipment or staff needed, just more orders filling capacity you are already paying for.'
       });
     }
+  }
+
+  // COGS-based signal even without production field data
+  var rev_online = parseFloat(TM.revenue_online||0);
+  var rev_store = parseFloat(TM.revenue_store||0);
+  if (cogs > 0 && !batches_day) {
+    // No production data — fire a general signal based on COGS alone
+    var cogs_pct_rev = rev > 0 ? Math.round((cogs+packaging)/rev*100) : null;
+    if (cogs_pct_rev !== null && cogs_pct_rev > 30) {
+      recs.push({
+        title: 'High ingredient costs — production volume worth examining',
+        saving: cogs_pct_rev + '% of revenue in COGS',
+        saving_num: 0,
+        detail: 'Ingredients + packaging are eating ' + cogs_pct_rev + '% of your revenue ($' + (cogs+packaging).toLocaleString() + '/mo). If you are producing more than you sell — which is common when in-store foot traffic drops — cutting batch frequency on slow days directly reduces this cost. Online orders (Goldbelly, subscriptions, TikTok Shop) can also absorb existing production without adding overhead. Fill in the Production fields above to get a specific batch-reduction number.'
+      });
+    }
+  }
+
+  // Online revenue gap signal — fires regardless of production data
+  if (rev_store > 0 && rev_online < rev_store * 0.15) {
+    var online_gap = Math.round(rev_store * 0.3) - rev_online;
+    recs.push({
+      title: 'Online revenue is almost zero — production capacity sitting idle',
+      saving: '$' + Math.round(rev_store * 0.3).toLocaleString() + '/mo reachable online',
+      saving_num: Math.round(rev_store * 0.3),
+      detail: 'Your online channel is generating ' + (rev_online > 0 ? '$' + rev_online.toLocaleString() : 'nothing') + '/mo vs. $' + rev_store.toLocaleString() + '/mo in-store. Every online order fulfills from production capacity you are already running — it adds revenue without adding staff, equipment, or production time. Getting online to 30% of in-store volume ($' + Math.round(rev_store * 0.3).toLocaleString() + '/mo) requires zero new overhead. That is a Goldbelly listing, TikTok Shop, or a weekly shipping batch.'
+    });
   }
 
   // Build recommendations
