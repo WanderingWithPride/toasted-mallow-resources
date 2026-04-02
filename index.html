@@ -1089,7 +1089,10 @@ document.getElementById('pw-input').focus();
     <span id="tm-panel-arrow">Click to enter your numbers</span>
   </div>
   <div id="tm-numbers-body">
-    <p style="color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:0;">These numbers are saved only in your browser and used to pre-fill every calculator on this page. Nothing is sent anywhere.</p>
+    <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 16px;margin-bottom:4px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Your privacy</div>
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">Everything you enter here is stored <strong style="color:white;">only in your browser</strong> using localStorage — the same way a site remembers your preferences. Nothing is transmitted to any server, stored in any database, or accessible to me or anyone else. I have no backend. Clearing your browser data removes it entirely. This is a static page hosted on GitHub — there is no server-side processing of any kind.</p>
+    </div>
     <div class="tm-input-grid">
       <div class="tm-field"><label>Monthly rent — location to keep</label><input id="tmf_rent" type="number" placeholder="3500"></div>
       <div class="tm-field"><label>Current monthly revenue (all)</label><input id="tmf_revenue" type="number" placeholder="15000"></div>
@@ -5240,8 +5243,18 @@ All grant eligibility verified against 2025–2026 program cycles as of April 20
 
     </div>
 
-    <div style="margin-top:36px;background:var(--brown);color:white;border-radius:14px;padding:28px 32px;text-align:center;">
+    <!-- SHARE THIS TOOLKIT -->
+    <div style="background:var(--cream-dark);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-top:32px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Share this toolkit</div>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.05rem;margin:0 0 8px;">This page is yours — share it however makes sense</h3>
+      <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin:0 0 14px;">If you find this useful, you are welcome to link to it from your site, share it with other business owners you know, or bookmark it for yourself. There is no login, no account, and no cost to access it. If you do share it and it ends up helping someone else, that is a good outcome — no credit needed.</p>
+      <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:13px;color:var(--text);word-break:break-all;" id="toolkit-url">https://wanderingwithpride.github.io/toasted-mallow-resources/</div>
+      <button class="tm-copy-btn" style="margin-top:8px;" onclick="tmCopyText('toolkit-url')">Copy link</button>
+    </div>
+
+    <div style="margin-top:24px;background:var(--brown);color:white;border-radius:14px;padding:28px 32px;text-align:center;">
       <p style="font-size:16px;line-height:1.7;margin-bottom:16px;">All of it is offered, none of it is required. If any of this sounds useful, the easiest next step is a DM or email — just say which part, and we can figure out together whether it makes sense.</p>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:20px;line-height:1.6;">I do not charge for any of this. If it leads to Tricia's business still existing in a year, that is the outcome I was going for.</div>
       <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
         <a href="https://tiktok.com/@wanderingceo" target="_blank" style="background:var(--gold);color:var(--brown);text-decoration:none;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:700;">DM @wanderingceo on TikTok</a>
         <a href="mailto:michael.eisinger@wanderingwithpride.com" style="background:rgba(255,255,255,0.15);color:white;text-decoration:none;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:600;border:1px solid rgba(255,255,255,0.3);">michael.eisinger@wanderingwithpride.com</a>
