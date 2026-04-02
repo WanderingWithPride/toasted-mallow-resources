@@ -999,7 +999,7 @@ function tmCalcSub() {
   document.getElementById('sub-breakeven').textContent = subs_for_rent > 0 ? subs_for_rent+' subscribers' : 'Enter rent above';
   var verd = document.getElementById('sub-verdict');
   var msg = 'At '+target+' subscribers, the subscription generates $'+mrr.toFixed(0)+'/month in recurring revenue with a '+margin.toFixed(0)+'% gross margin per box. ';
-  if (subs_for_rent > 0) { msg += 'To cover one location's rent alone, you need '+subs_for_rent+' subscribers. '; }
+  if (subs_for_rent > 0) { msg += 'To cover one location\'s rent alone, you need '+subs_for_rent+' subscribers. '; }
   msg += 'Average subscriber stays '+(churn > 0 ? Math.round(100/churn)+' months' : 'indefinitely')+' before churning — each one is worth $'+ltv.toFixed(0)+' in lifetime gross profit.';
   verd.textContent = msg;
   document.getElementById('sub-results').style.display = 'block';
@@ -1066,7 +1066,7 @@ document.getElementById('pw-input').focus();
 <div style="background:linear-gradient(135deg,#3A1A08,#5C2810);padding:36px 40px;text-align:center;border-top:3px solid var(--gold);">
   <div style="max-width:720px;margin:0 auto;color:white;">
     <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:0.7;margin-bottom:12px;">From Michael Eisinger · @wanderingceo</div>
-    <p style="font-size:17px;line-height:1.8;opacity:0.95;">Hey Tricia — I saw your video about the three paths you're weighing and it stuck with me. I'm a tech person with 11+ years in nonprofits and grants, and I went down a full rabbit hole on your situation. This is what I built. Take what's useful, ignore the rest — it's yours, no strings, no follow-up required from you.</p>
+    <p style="font-size:17px;line-height:1.8;opacity:0.95;">Hey Tricia — I saw your video about the three paths you\'re weighing and it stuck with me. I'm a tech person with 11+ years in nonprofits and grants, and I went down a full rabbit hole on your situation. This is what I built. Take what's useful, ignore the rest — it's yours, no strings, no follow-up required from you.</p>
     <p style="font-size:15px;line-height:1.7;opacity:0.8;margin-top:12px;"><strong style="color:var(--gold-light);">Where to start:</strong> Scroll down to "Start Here" — three things to do this week, no money required. After that, the Grants section has the most time-sensitive items. If you want hands-on help with any of it, scroll to "How I Can Help" at the bottom.</p>
     <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="https://wanderingwithpride.com" target="_blank" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;text-decoration:none;padding:8px 18px;border-radius:100px;font-size:13px;font-weight:600;">wanderingwithpride.com</a>
@@ -2001,8 +2001,8 @@ document.getElementById('pw-input').focus();
       <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--brown);margin-bottom:8px;">Time-Sensitive — Act This Week</div>
       <h3 style="font-size:1.5rem;font-weight:800;color:var(--brown);margin:0 0 12px 0;">Mother's Day Is May 11. The Window Opens Today.</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button onclick="tmAddToCalendar('Last day to ship for Mother's Day','20260504','Last safe ship date for The Toasted Mallow Mother's Day orders. Promote through April 30.')" style="background:#C05A10;color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add ship deadline to calendar</button>
-            <button onclick="tmAddToCalendar('Mother's Day','20260511','The Toasted Mallow — your biggest gift holiday. Have orders fulfilled and shipped.')" style="background:var(--brown);color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add Mother's Day to calendar</button>
+            <button onclick="tmAddToCalendar('Last day to ship for Mother\'s Day','20260504','Last safe ship date for The Toasted Mallow Mother's Day orders. Promote through April 30.')" style="background:#C05A10;color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add ship deadline to calendar</button>
+            <button onclick="tmAddToCalendar('Mother\'s Day','20260511','The Toasted Mallow — your biggest gift holiday. Have orders fulfilled and shipped.')" style="background:var(--brown);color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add Mother's Day to calendar</button>
           </div>
       <p style="font-size:14px;color:var(--brown);line-height:1.7;margin-bottom:16px;">The 6–8 week early-gift window for Mother's Day starts now. <strong>Last safe ship date for standard delivery: approximately May 2–4.</strong> You have about four weeks of effective selling time. This is the highest-revenue food gift holiday after Christmas — artisan confectioners consistently report it as their second-largest order week of the year.</p>
 
@@ -5039,7 +5039,7 @@ All grant eligibility verified against 2025–2026 program cycles as of April 20
     </div>
   </div>
   <div id="tm-chat-messages">
-    <div class="tm-msg-bot">Hi Tricia. I have context on your business situation from this toolkit — your two locations, the three paths you're weighing, your TikTok following, and the grants in this package. Ask me anything: grant writing help, TikTok script ideas, pricing questions, or just talking through a decision. What's on your mind?</div>
+    <div class="tm-msg-bot">Hi Tricia. I have context on your business situation from this toolkit — your two locations, the three paths you\'re weighing, your TikTok following, and the grants in this package. Ask me anything: grant writing help, TikTok script ideas, pricing questions, or just talking through a decision. What's on your mind?</div>
   </div>
   <div id="tm-chat-input-row">
     <textarea id="tm-chat-input" placeholder="Ask anything about your business..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();tmChatSend();}"></textarea>
@@ -6046,7 +6046,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
             <div style="min-width:100px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);">August 10</div><div style="font-size:13px;font-weight:700;color:white;margin-top:2px;">National S'mores Day</div></div>
             <div style="flex:1;min-width:200px;"><p style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin:0;">One of the biggest food days on TikTok for anything marshmallow-related. Plan a full content week around this — process videos, s'mores builds, flavor spotlights, behind-the-scenes. TikTok Shop product tags in every video. Start building content July 27.</p></div>
-            <div style="text-align:right;white-space:nowrap;"><div style="font-size:11px;color:rgba(255,255,255,0.4);">Content week starts</div><div style="font-size:13px;font-weight:700;color:var(--gold);">Aug 4</div><button onclick="tmAddToCalendar('National S'mores Day — content week','20260810','The Toasted Mallow: full content week. TikTok Shop tags on every video.')" style="display:block;margin-top:6px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;">Add to calendar</button></div>
+            <div style="text-align:right;white-space:nowrap;"><div style="font-size:11px;color:rgba(255,255,255,0.4);">Content week starts</div><div style="font-size:13px;font-weight:700;color:var(--gold);">Aug 4</div><button onclick="tmAddToCalendar('National S\'mores Day — content week','20260810','The Toasted Mallow: full content week. TikTok Shop tags on every video.')" style="display:block;margin-top:6px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;">Add to calendar</button></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
             <div style="min-width:100px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);">August 30</div><div style="font-size:13px;font-weight:700;color:white;margin-top:2px;">National Toasted Marshmallow Day</div></div>
@@ -6380,7 +6380,7 @@ thetoastedmallow.com
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Share this toolkit</div>
       <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.05rem;margin:0 0 8px;">This page is yours — share it however makes sense</h3>
       <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin:0 0 14px;">If you find this useful, you are welcome to link to it from your site, share it with other business owners you know, or bookmark it for yourself. There is no login, no account, and no cost to access it. If you do share it and it ends up helping someone else, that is a good outcome — no credit needed.</p>
-      <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:13px;color:var(--text);word-break:break-all;" id="toolkit-url">https://wanderingwithpride.github.io/toasted-mallow-resources/</div>
+      <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:13px;color:var(--text);word-break:break-all;overflow-wrap:anywhere;white-space:normal;" id="toolkit-url">https://wanderingwithpride.github.io/toasted-mallow-resources/</div>
       <button class="tm-copy-btn" style="margin-top:8px;" onclick="tmCopyText('toolkit-url')">Copy link</button>
     </div>
 
