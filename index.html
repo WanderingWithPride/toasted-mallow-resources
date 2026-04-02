@@ -796,6 +796,8 @@ document.getElementById('pw-input').focus();
     <a class="nav-link" href="#calendar">Content Calendar</a>
     <a class="nav-link" href="#advantages">Your Advantages</a>
     <a class="nav-link" href="#resources">Free Resources</a>
+    <a class="nav-link" href="#events">Events</a>
+    <a class="nav-link" href="#build-package" style="color:var(--teal);">Build My Plan</a>
     <a class="nav-link" href="#help" style="color:var(--gold);">How I Can Help</a>
   </div>
 </nav>
@@ -1987,6 +1989,599 @@ document.getElementById('pw-input').focus();
       <strong>Methodology:</strong> Five independent AI models (Claude Opus 4.6, Claude Sonnet 4.6, Gemini 2.5 Pro, OpenAI GPT-4o, local Llama) ran separate projections using Gilbert AZ commercial lease rates ($25-35/sqft East Valley), Arizona minimum wage ($14.35/hr), and live TikTok Shop revenue ramp data from Perplexity Pro. The uncensored local model's projections ($148K/mo best case) were flagged as unrealistic and excluded from the synthesis. The remaining four models clustered within 20% of each other on expected and worst case; best case variance was wider. All grant timing based on verified program cycle lengths.
     </div>
   </div>
+</section>
+
+<!-- BUILD MY PACKAGE -->
+<section id="build-package" style="background:var(--cream-dark);padding:60px 40px;">
+  <div class="container">
+    <div class="section-label">Personalized Toolkit</div>
+    <h2 class="section-title">Build Your Action Plan</h2>
+    <p class="section-intro">Check the items you want to act on. Then click <strong>Generate My Package</strong> to get a clean, printable document — just those items, with pre-drafted grant narratives, step-by-step instructions, and editable fields you can fill in before applying or submitting.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:32px;">
+
+      <!-- GRANTS -->
+      <div style="background:white;border-radius:14px;padding:24px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;">Grants</div>
+        <label class="pkg-item"><input type="checkbox" value="grant_nglcc" checked> NGLCC / Grubhub Community Impact ($5K–$25K)</label>
+        <label class="pkg-item"><input type="checkbox" value="grant_amber" checked> Amber Grant for Women ($1K–$25K, rolling)</label>
+        <label class="pkg-item"><input type="checkbox" value="grant_doordash" checked> DoorDash / Hello Alice Relief ($5K–$15K)</label>
+        <label class="pkg-item"><input type="checkbox" value="grant_founders"> Founders First CDC Pride ($1K + program)</label>
+        <label class="pkg-item"><input type="checkbox" value="grant_kiva"> Kiva 0% Loan (up to $10K)</label>
+        <label class="pkg-item"><input type="checkbox" value="grant_wfsa"> Women's Foundation Arizona (WFSA)</label>
+      </div>
+
+      <!-- SITE FIXES -->
+      <div style="background:white;border-radius:14px;padding:24px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:14px;">Site Quick Fixes</div>
+        <label class="pkg-item"><input type="checkbox" value="fix_bar" checked> Update announcement bar</label>
+        <label class="pkg-item"><input type="checkbox" value="fix_shipping" checked> Add shipping to hero + nav</label>
+        <label class="pkg-item"><input type="checkbox" value="fix_reviews" checked> Add reviews to product pages</label>
+        <label class="pkg-item"><input type="checkbox" value="fix_email"> Add email capture incentive</label>
+        <label class="pkg-item"><input type="checkbox" value="fix_checkout"> Fix checkout click path</label>
+        <label class="pkg-item"><input type="checkbox" value="fix_bundles"> Add product bundles</label>
+      </div>
+
+      <!-- REVENUE -->
+      <div style="background:white;border-radius:14px;padding:24px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Revenue Channels</div>
+        <label class="pkg-item"><input type="checkbox" value="rev_tiktok" checked> Set up TikTok Shop</label>
+        <label class="pkg-item"><input type="checkbox" value="rev_goldbelly" checked> Apply to Goldbelly</label>
+        <label class="pkg-item"><input type="checkbox" value="rev_subscription"> Launch Mallow of the Month subscription</label>
+        <label class="pkg-item"><input type="checkbox" value="rev_corporate"> Build corporate gifting page</label>
+        <label class="pkg-item"><input type="checkbox" value="rev_faire"> Apply to Faire wholesale</label>
+        <label class="pkg-item"><input type="checkbox" value="rev_wholesale"> Pitch local coffee shops wholesale</label>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px;text-align:center;">
+      <button onclick="generatePackage()" style="background:var(--brown);color:white;border:none;padding:16px 40px;border-radius:100px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;">Generate My Package</button>
+      <p style="margin-top:12px;font-size:13px;opacity:0.6;">Opens a new tab with a clean, printable document — only what you checked.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+.pkg-item {
+  display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.5;
+  color:var(--text);padding:6px 0;cursor:pointer;border-bottom:1px solid var(--cream-dark);
+}
+.pkg-item:last-child { border-bottom:none; }
+.pkg-item input { margin-top:3px;accent-color:var(--brown);flex-shrink:0; }
+</style>
+
+<script>
+function generatePackage() {
+  const checked = [...document.querySelectorAll('#build-package input:checked')].map(i=>i.value);
+  if (!checked.length) { alert('Check at least one item first.'); return; }
+
+  const GRANTS = {
+    grant_nglcc: {
+      name: 'NGLCC / Grubhub Community Impact Grant',
+      amount: '$5,000–$25,000',
+      url: 'nglcc.org + about.grubhub.com',
+      deadline: 'Rolling — watch nglcc.org for 2026 cycle',
+      narrative: `As a LGBTQ+- and women-owned food business, The Toasted Mallow has served the Phoenix East Valley community since 2014. We were Arizona's first artisan marshmallow shop, and over [FILL IN: X] years of operation we've built [FILL IN: describe your customer community and any events/community partnerships]. Our business has been featured on national television and ships artisan marshmallow products nationwide to customers who can't visit us in person.
+
+The NGLCC / Grubhub grant would allow us to [FILL IN: describe specific use of funds — e.g., fund the e-commerce infrastructure to scale our online channel / cover overhead costs during a consolidation transition / hire a part-time fulfillment staff member]. As a queer-owned business employing members of the local community, this funding directly supports LGBTQ+ economic visibility in Arizona and beyond.
+
+We currently have [FILL IN: X] employees and serve [FILL IN: describe customer base, events, wholesale accounts if any]. This grant would [FILL IN: specific measurable impact].
+
+Attached: LGBTQ+ ownership documentation, press coverage links, business summary.`
+    },
+    grant_amber: {
+      name: 'Amber Grant for Women',
+      amount: '$1,000–$25,000',
+      url: 'ambergrantsforwomen.com',
+      deadline: 'Rolling monthly deadline',
+      narrative: `I founded The Toasted Mallow in 2014 with a simple vision: bring something genuinely creative and joyful to the Phoenix food scene. We became Arizona's first artisan marshmallow shop, and over [FILL IN: X] years we've grown from a single concept into two locations in Gilbert and Chandler, with nationwide shipping and appearances on national television.
+
+What I've built is not just a product business — it's a place where the LGBTQ+ community, families, and food lovers feel welcome. As a queer- and women-owned business, we've operated with that identity at our core from day one.
+
+Right now, we're at a pivot point. The overhead model that worked for a decade needs to evolve — and the opportunity in front of us (e-commerce, TikTok Shop, subscription products) is real and documented. The Amber Grant would provide the bridge capital to execute that transition without losing what we've built.
+
+[FILL IN: Add one personal sentence about why you started or what the business means to you and your community.]
+
+Use of funds: [FILL IN: specific allocation — e.g., 60% e-commerce infrastructure, 40% operating costs during transition].`
+    },
+    grant_doordash: {
+      name: 'DoorDash / Hello Alice Small Business Relief',
+      amount: '$5,000–$15,000',
+      url: 'helloalice.com/grants/doordash/',
+      deadline: 'Rolling',
+      narrative: `The Toasted Mallow is a locally rooted, nationally recognized food business that has been part of the Phoenix East Valley food ecosystem since 2014. As Arizona's first artisan marshmallow shop, we have served as a gathering place, a local employer, and a source of genuinely unique food products that reflect the creativity and character of our community.
+
+We have [FILL IN: X] employees who depend on this business. We participate in [FILL IN: local events, markets, partnerships if applicable]. We ship nationwide, which means our local production supports customers across the country.
+
+The current overhead challenge we face is not a product problem or a demand problem — it is a fixed-cost problem during a period of rising expenses. The DoorDash / Hello Alice relief grant would allow us to [FILL IN: specific use — e.g., cover one quarter of rent during our location consolidation / fund the TikTok Shop setup and initial product photography / bridge operating costs while grant applications process].
+
+Our Yelp rating is 4.7 stars across 689 reviews. Our Facebook community is [FILL IN: X] followers. The demand is there. We need the runway to reach it.`
+    },
+    grant_founders: {
+      name: 'Founders First CDC National Pride Grant',
+      amount: '$1,000 + program access',
+      url: 'foundersfirstcdc.org',
+      deadline: 'Opens April 2026 — watch foundersfirstcdc.org for close date',
+      narrative: `The Toasted Mallow qualifies for the Founders First CDC Pride Grant as an LGBTQ+-owned business with at least 2 employees and revenue in the $100K–$5M range.
+
+This grant is notable not for the cash amount alone ($1,000) but for the program access and network it provides. At 10+ years of operation, we are at a growth inflection point — moving from a primarily in-store model to a hybrid e-commerce model with TikTok Shop, subscription products, and national wholesale. The Founders First network and mentorship would help us execute that transition with guidance from founders who have done it.
+
+[FILL IN: Describe your growth plans in 2-3 sentences — what does success look like in 12 months?]
+
+Business summary: LGBTQ+- and women-owned, founded 2014, two locations (Gilbert + Chandler AZ), ships nationally, nationally TV-featured, 689 Yelp reviews at 4.7 stars.`
+    },
+    grant_kiva: {
+      name: 'Kiva 0% Loan (via LISC Phoenix)',
+      amount: 'Up to $10,000 at 0% interest',
+      url: 'lisc.org/phoenix',
+      deadline: 'Rolling',
+      narrative: `The Toasted Mallow is applying for a Kiva 0% loan through LISC Phoenix as bridge capital to support our transition from a dual-location in-store model to a hybrid e-commerce operation.
+
+We have [FILL IN: X] years of operating history, a loyal customer base (689 Yelp reviews at 4.7 stars, [FILL IN: Facebook followers] Facebook followers), and national TV credibility. This is not a struggling startup — it's a proven business with a documented demand signal seeking capital to adapt its overhead model.
+
+Proposed use of funds: [FILL IN: specific allocation — e.g., $4,000 TikTok Shop setup and product photography; $3,000 one month operating bridge; $3,000 e-commerce marketing].
+
+Repayment confidence: [FILL IN: describe revenue trajectory, any signed wholesale accounts, subscription projections, or other forward-looking revenue you can document].
+
+LGBTQ+- and women-owned. Phoenix metro, East Valley. Underrepresented owner priority eligible.`
+    },
+    grant_wfsa: {
+      name: "Women's Foundation for the State of Arizona (WFSA)",
+      amount: 'Active 2025–2026 cycle',
+      url: 'womengiving.org',
+      deadline: 'Check womengiving.org for 2026 cycle close date',
+      narrative: `The Toasted Mallow is a women-owned business serving the Phoenix East Valley community since 2014. Founded by [FILL IN: Tricia — add your personal founding story in 1-2 sentences].
+
+As a women-owned employer in Arizona, we [FILL IN: describe your workforce — e.g., employ primarily women, offer flexible scheduling for caregivers, serve as a model for women entrepreneurship in the food industry].
+
+[FILL IN: Describe economic impact — jobs created, community events, charitable contributions if any].
+
+This grant would support [FILL IN: specific use of funds aligned with WFSA's economic equity focus — e.g., overhead costs during a business model pivot that will create more stable employment / e-commerce infrastructure that increases revenue without increasing staff overhead / marketing costs to reach new customer segments].
+
+We are committed to [FILL IN: describe long-term vision for the business and its community role].`
+    }
+  };
+
+  const FIXES = {
+    fix_bar: {
+      name: 'Update the Announcement Bar',
+      time: '5 minutes',
+      steps: `<ol>
+<li>Log in to your WordPress admin at thetoastedmallow.com/wp-admin</li>
+<li>Go to <strong>Elementor → My Templates</strong> or find your active header template</li>
+<li>Look for the announcement bar widget at the top of the header</li>
+<li>Change the current text (<em>"Order by 3/23 for orders to arrive in time for Easter"</em>) to:<br><br>
+<strong style="background:#f5f5f5;padding:6px 10px;border-radius:4px;display:inline-block;font-family:monospace;">[FILL IN: your message — e.g., "Ships nationwide — order by Monday for delivery by Friday" or "New Spring flavors now available — Shop Online"]</strong></li>
+<li>Click Update / Save</li>
+<li>View your site in a private browser tab to confirm it changed</li>
+</ol>
+<p style="margin-top:12px;font-size:13px;background:#fff8e1;padding:10px;border-radius:6px;">Note: If your announcement bar is in a plugin (like Hello Bar, Hustle, or a Elementor popup), check Plugins in WordPress admin first.</p>`
+    },
+    fix_shipping: {
+      name: 'Add Nationwide Shipping to Hero + Nav',
+      time: '20 minutes',
+      steps: `<p style="margin-bottom:12px;">Your most powerful selling point (ships nationwide) only appears after clicking ORDER NOW → popup. It should be visible immediately.</p>
+<ol>
+<li>In Elementor, open your homepage for editing</li>
+<li><strong>Announcement bar:</strong> Change text to include "Ships Nationwide" — e.g., "Now shipping nationwide — order by Monday, delivered by Friday"</li>
+<li><strong>Hero section:</strong> Add a line under your main headline: <em>"Shipping nationwide from Gilbert, AZ — get it in 2-3 days"</em></li>
+<li><strong>Nav bar:</strong> Add a direct "Shop Online" link to your navigation pointing to shop.thetoastedmallow.com (see checkout fix for full nav instructions)</li>
+<li>On mobile, confirm the shipping message is visible above the fold</li>
+</ol>`
+    },
+    fix_reviews: {
+      name: 'Add Social Proof to Product Pages',
+      time: '1–2 hours',
+      steps: `<p style="margin-bottom:12px;">You have 689 Yelp reviews at 4.7 stars and thousands of Facebook reviews. None of this appears on product pages. Here's how to add it.</p>
+<p style="font-weight:600;margin-bottom:8px;">Option A — Quick (15 min): Static badge</p>
+<ol>
+<li>In Square Online (shop.thetoastedmallow.com), go to your product page editor</li>
+<li>Add a text block above or below the product description</li>
+<li>Copy/paste: <em>"Rated 4.7 stars by 689 customers on Yelp"</em> with a link to your Yelp page</li>
+</ol>
+<p style="font-weight:600;margin:12px 0 8px;">Option B — Better (1–2 hrs): Review widget</p>
+<ol>
+<li>Sign up for a free Elfsight or EmbedReviews account</li>
+<li>Connect your Yelp or Google Business profile</li>
+<li>Get the embed code and add it to your WordPress product page sidebar or footer</li>
+<li>Set it to show your top 5–6 reviews with star ratings</li>
+</ol>`
+    },
+    fix_email: {
+      name: 'Add Email Capture Incentive',
+      time: '30 minutes',
+      steps: `<p style="margin-bottom:12px;">Your current email signup offers nothing in return. A simple offer will 3–5x signups.</p>
+<ol>
+<li>Decide on your offer: <strong>10% off first order</strong> is standard, or "Free shipping on your first order over $[FILL IN: your threshold]"</li>
+<li>In Square Online or your email platform (Mailchimp, Klaviyo, Square Marketing), create a welcome automation that sends the discount code immediately on signup</li>
+<li>In Elementor, update your email form widget text from "Subscribe" to:<br><em>"Get 10% off your first order — join our list"</em></li>
+<li>Connect the form to your email platform if not already done (Square Marketing or Mailchimp)</li>
+<li>Test: submit a test email, confirm you receive the code within 2 minutes</li>
+</ol>`
+    },
+    fix_checkout: {
+      name: 'Fix the Checkout Click Path',
+      time: '15 minutes',
+      steps: `<p style="margin-bottom:12px;">Current path: Homepage → ORDER NOW → popup modal → shop subdomain → product → add to cart → checkout. That's 2 extra clicks. Fix:</p>
+<ol>
+<li>In Elementor, open your nav/header template for editing</li>
+<li>Add a new nav item labeled <strong>"Shop Online"</strong></li>
+<li>Set the URL to: <strong>https://shop.thetoastedmallow.com</strong></li>
+<li>Style it to stand out — consider a light background or gold color to differentiate from other nav items</li>
+<li>Save and confirm the link works on both desktop and mobile</li>
+</ol>
+<p style="margin-top:12px;font-size:13px;background:#fff8e1;padding:10px;border-radius:6px;">You can keep the ORDER NOW popup for in-store ordering — just add the direct shop link alongside it so online customers have a one-click path.</p>`
+    },
+    fix_bundles: {
+      name: 'Add Product Bundles',
+      time: '1–2 hours',
+      steps: `<p style="margin-bottom:12px;">You have 55 individual SKUs but only one bundle. Bundles increase average order value significantly.</p>
+<p style="font-weight:600;margin-bottom:8px;">Recommended bundles to create in Square Online:</p>
+<ol>
+<li><strong>Best Seller 6-Pack</strong> — [FILL IN: pick your 6 best-selling flavors], price at [FILL IN: $X — typically $50–$60 for a 6-pack based on individual prices]</li>
+<li><strong>Hot Cocoa + Mallows Gift Set</strong> — cocoa + 2 marshmallow packs, price at [FILL IN: $X]</li>
+<li><strong>Build Your Own Box</strong> — pick 4 flavors, flat price [FILL IN: $X]</li>
+</ol>
+<p style="font-weight:600;margin:12px 0 8px;">How to create in Square Online:</p>
+<ol>
+<li>Go to Items in your Square Dashboard</li>
+<li>Click "Create Item" — select "Bundle" if available, or create as a standard item with the bundle name</li>
+<li>Add a photo of the assembled bundle (this matters — shoot it like a gift)</li>
+<li>Write a description that emphasizes it as a gift or discovery set</li>
+<li>Tag it as a Featured Item so it appears prominently in your shop</li>
+</ol>`
+    }
+  };
+
+  const REVENUE = {
+    rev_tiktok: {
+      name: 'Set Up TikTok Shop',
+      time: '2–3 days for approval',
+      steps: `<p style="margin-bottom:12px;">TikTok Shop lets viewers buy directly from your videos without leaving the app. Your product is ideal for this — artisan marshmallow pulls, flavor reveals, and process videos perform extremely well. XO Marshmallow (Chicago, same product category) reports $1M+ in TikTok Shop revenue.</p>
+<ol>
+<li>Go to <strong>seller.tiktok.com</strong> and click "Sign Up as a Seller"</li>
+<li>Select United States → Individual or Business seller</li>
+<li>Complete identity verification (takes 1–2 business days to approve)</li>
+<li>Once approved, connect your existing TikTok account (@toastedmallow or similar)</li>
+<li>Add your top 5 marshmallow SKUs first — focus on your bestsellers, not your full catalog</li>
+<li>In every TikTok video you post, tag the products from your Shop</li>
+<li>Consider a "Shop Now" link in your bio pointing to your TikTok Shop</li>
+</ol>
+<p style="font-size:13px;background:#e8f5e9;padding:10px;border-radius:6px;margin-top:10px;"><strong>Cost: $0</strong> to set up. TikTok takes a small commission on sales (currently 2–8% depending on category).</p>`
+    },
+    rev_goldbelly: {
+      name: 'Apply to Goldbelly',
+      time: '1 hour to apply',
+      steps: `<p style="margin-bottom:12px;">Goldbelly is a national marketplace for artisan food shipped from local restaurants and shops. Average order value is $65–$150 (gifters buying premium). You are an ideal candidate: artisan product, national TV credibility, strong reviews, established shipping operation.</p>
+<ol>
+<li>Go to <strong>goldbelly.com/sell</strong></li>
+<li>Complete the vendor application — they will ask for:
+  <ul style="margin:8px 0 8px 20px;">
+    <li>Business description and founding story</li>
+    <li>Product photos (high quality — shoot a hero image if you don't have one)</li>
+    <li>Proof of media coverage (your TV appearances)</li>
+    <li>Current shipping capability</li>
+  </ul>
+</li>
+<li>Mention specifically: 10+ years of operation, nationally TV-featured, LGBTQ+- and women-owned, Arizona's first artisan marshmallow shop</li>
+<li>Goldbelly reviews applications in batches — follow up if no response in 3 weeks</li>
+</ol>
+<p style="font-size:13px;background:#e8f5e9;padding:10px;border-radius:6px;margin-top:10px;"><strong>Cost: $0</strong> to apply. Goldbelly takes a platform commission on sales — confirm current rate in their vendor agreement.</p>`
+    },
+    rev_subscription: {
+      name: 'Launch Mallow of the Month Subscription',
+      time: '1 week to set up',
+      steps: `<p style="margin-bottom:12px;">Marshmallows last 4+ months, they're consumable, and your customers are repeat buyers. A subscription creates predictable monthly revenue that doesn't depend on one-time purchases.</p>
+<p style="font-weight:600;margin-bottom:8px;">Recommended product:</p>
+<ul style="margin:0 0 12px 20px;">
+  <li><strong>Mallow of the Month</strong> — curated 6-pack (one of each of your current seasonal + classic flavors) + a small cocoa packet or pairing suggestion, $35/month</li>
+</ul>
+<p style="font-weight:600;margin-bottom:8px;">How to set up in Square:</p>
+<ol>
+<li>In Square Online, go to Items → Create Item → select "Subscription" product type if available</li>
+<li>If Square doesn't support subscriptions natively, use <strong>Subbly</strong> (subbly.com — free tier available) or <strong>Bold Subscriptions</strong> as an add-on</li>
+<li>Price: [FILL IN: confirm your margins — $35/month is suggested based on typical artisan food subscription pricing]</li>
+<li>Ship on the 1st of each month — set a subscription cutoff date (e.g., subscribe by the 20th for next month's box)</li>
+<li>Announce via TikTok and email: "Mallow of the Month is live — first month [FILL IN: discount or free shipping offer]"</li>
+</ol>`
+    },
+    rev_corporate: {
+      name: 'Build a Corporate Gifting Page',
+      time: '2–4 hours',
+      steps: `<p style="margin-bottom:12px;">Phoenix metro has one of the largest corporate event markets in the Southwest. Custom branded marshmallow boxes are premium, memorable, and have no competition in this niche. A single corporate holiday order can be worth $2,000–$10,000.</p>
+<p style="font-weight:600;margin-bottom:8px;">Page structure:</p>
+<ol>
+<li>Create a new page at thetoastedmallow.com/corporate-gifts (or /wholesale)</li>
+<li>Include: hero image of a gift-wrapped box, headline ("Custom marshmallow gifts for your team and clients")</li>
+<li>Pricing tiers: [FILL IN: e.g., Classic Box $75 (4 flavors), Premium Box $150 (8 flavors + branded ribbon), Corporate Bundle $300 (12 boxes, custom logo card)]</li>
+<li>Add a contact/inquiry form (name, company, quantity, date needed)</li>
+<li>Add a note: "Minimum order: [FILL IN] boxes. Orders placed [FILL IN: X] weeks in advance for custom branding."</li>
+</ol>
+<p style="font-weight:600;margin-bottom:8px;">Marketing (no paid ads needed to start):</p>
+<ul style="margin:0 0 0 20px;">
+  <li>Direct outreach to 10 Phoenix-area HR departments and event planners via LinkedIn</li>
+  <li>Post on your Google Business profile: "Now accepting corporate gift orders for [season]"</li>
+  <li>Message your existing email list about the new page</li>
+</ul>`
+    },
+    rev_faire: {
+      name: 'Apply to Faire Wholesale Marketplace',
+      time: '1–2 hours to apply',
+      steps: `<p style="margin-bottom:12px;">Faire is a wholesale marketplace where boutiques, gift shops, and specialty retailers place wholesale orders. Your marshmallows as a gift item or coffee shop add-on is a natural fit.</p>
+<ol>
+<li>Go to <strong>faire.com/brand/apply</strong></li>
+<li>Create a brand account — you'll need:
+  <ul style="margin:8px 0 8px 20px;">
+    <li>Product photos (lifestyle shots work well)</li>
+    <li>Wholesale pricing (typically 50% of retail)</li>
+    <li>Minimum order amounts</li>
+    <li>Lead time for fulfillment</li>
+  </ul>
+</li>
+<li>List your top 10 SKUs first — don't try to list everything at once</li>
+<li>Faire charges 15% on new retailers and 0% on repeat orders (they take the credit risk)</li>
+<li>Once live, search for Arizona coffee shops, gift shops, and boutiques on Faire and message them directly</li>
+</ol>`
+    },
+    rev_wholesale: {
+      name: 'Pitch Local Coffee Shops for Wholesale',
+      time: '1 week of outreach',
+      steps: `<p style="margin-bottom:12px;">Your marshmallows as a hot chocolate topping or s'mores-themed specialty drink add-on is a story any independent coffee shop can tell. This channel requires zero infrastructure — you already ship.</p>
+<ol>
+<li>Make a list of 10–15 independent coffee shops in Phoenix metro (avoid chains — focus on independents with a specialty/artisan identity)</li>
+<li>Create a one-page PDF: "Toasted Mallow — Wholesale for Coffee Shops" with:
+  <ul style="margin:8px 0 8px 20px;">
+    <li>Your story (10 years, LGBTQ+-owned, nationally TV-featured)</li>
+    <li>Product photos of mallows on hot chocolate</li>
+    <li>Pricing and minimums</li>
+    <li>Contact info</li>
+  </ul>
+</li>
+<li>Visit (or email) each shop — barista-to-owner conversation is fastest</li>
+<li>Lead with: "We're local, we've been doing this 10 years, and your customers will love putting these on their hot chocolate"</li>
+<li>Offer a sample pack at cost to any shop that wants to try before ordering</li>
+</ol>`
+    }
+  };
+
+  // Build the printable document
+  const items = [];
+  const grants = [], fixes = [], revenue = [];
+  checked.forEach(v => {
+    if (v.startsWith('grant_') && GRANTS[v]) grants.push(GRANTS[v]);
+    if (v.startsWith('fix_') && FIXES[v]) fixes.push(FIXES[v]);
+    if (v.startsWith('rev_') && REVENUE[v]) revenue.push(REVENUE[v]);
+  });
+
+  let html = `<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Toasted Mallow — My Action Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --brown:#4A2410;--gold:#C8821A;--gold-light:#E8A83A;--cream:#FDF6EC;--teal:#1A6070;--orange:#C05A10;--text:#2C1408;--border:#E0C8A8; }
+  * { box-sizing:border-box;margin:0;padding:0; }
+  body { font-family:'Inter',sans-serif;background:white;color:var(--text);line-height:1.6;font-size:15px; }
+  .page { max-width:800px;margin:0 auto;padding:48px 40px; }
+  h1 { font-family:'Playfair Display',serif;font-size:32px;color:var(--brown);margin-bottom:6px; }
+  .subtitle { color:var(--gold);font-size:15px;font-weight:600;margin-bottom:32px; }
+  .category { margin-top:40px;border-top:2px solid var(--border);padding-top:24px; }
+  .category-label { font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:0.5;margin-bottom:6px; }
+  .category h2 { font-family:'Playfair Display',serif;font-size:22px;color:var(--brown);margin-bottom:20px; }
+  .item { margin-bottom:32px;padding:24px;border:1px solid var(--border);border-radius:12px;page-break-inside:avoid; }
+  .item h3 { font-size:17px;font-weight:700;color:var(--brown);margin-bottom:4px; }
+  .item .meta { font-size:12px;color:var(--gold);font-weight:600;margin-bottom:12px; }
+  .item .url { font-size:12px;color:#555;margin-bottom:14px; }
+  .narrative { background:var(--cream);border-radius:8px;padding:16px;font-size:14px;line-height:1.8;white-space:pre-wrap;border:1px dashed var(--border); }
+  .fill-instruction { font-size:12px;background:#fff8e1;border:1px solid #f0d060;padding:8px 12px;border-radius:6px;margin-bottom:12px; }
+  .steps { font-size:14px;line-height:1.8; }
+  .steps ol { padding-left:20px; }
+  .steps li { margin-bottom:6px; }
+  .deadline-badge { display:inline-block;background:var(--gold);color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px;margin-left:8px;vertical-align:middle; }
+  .print-btn { position:fixed;bottom:24px;right:24px;background:var(--brown);color:white;border:none;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(74,36,16,0.3); }
+  .fill { background:#fffde7;padding:2px 4px;border-radius:3px;font-style:italic;color:#b8860b; }
+  footer { margin-top:60px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:#888; }
+  @media print {
+    .print-btn { display:none; }
+    .narrative,[contenteditable] { border:1px dashed #ccc !important; }
+    body { font-size:13px; }
+  }
+</style>
+</head><body>
+<div class="page">
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:4px;">
+  <div>
+    <h1>The Toasted Mallow — My Action Plan</h1>
+    <div class="subtitle">Generated ${new Date().toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})} · Fill in the highlighted fields before using</div>
+  </div>
+</div>
+<p style="font-size:14px;color:#555;margin-bottom:8px;">This document contains only the items you selected. Edit any text directly in your browser before printing. Fields marked <span class="fill">[FILL IN]</span> must be completed with your actual information.</p>
+<p class="fill-instruction">How to use: click any text to edit it, fill in the [FILL IN] placeholders, then click Print (bottom right). Everything here is pre-drafted — you are filling in specific details, not writing from scratch.</p>
+`;
+
+  if (grants.length) {
+    html += `<div class="category"><div class="category-label">Section 1</div><h2>Grant Applications</h2>
+<p style="font-size:14px;color:#555;margin-bottom:20px;">Pre-drafted narratives for each grant you selected. Fill in the highlighted fields with your actual numbers and details. You may use the same business description across multiple applications — just adjust the use-of-funds section for each one.</p>
+<div class="fill-instruction" style="margin-bottom:20px;"><strong>Application assets to prepare once and reuse:</strong> LGBTQ+ ownership documentation · women-owned certification · TV press links · 3-sentence business summary · use-of-funds narrative · annual revenue range (most programs only need "under $350K" — exact number usually not required)</div>`;
+    grants.forEach(g => {
+      html += `<div class="item">
+<h3>${g.name}</h3>
+<div class="meta">Award: ${g.amount} &nbsp;|&nbsp; Deadline: ${g.deadline}</div>
+<div class="url">Apply at: ${g.url}</div>
+<p style="font-size:13px;margin-bottom:10px;color:#555;">Suggested narrative — edit directly, fill in highlighted fields:</p>
+<div class="narrative" contenteditable="true">${g.narrative.replace(/\[FILL IN:[^\]]*\]/g, m => `<span class="fill">${m}</span>`)}</div>
+</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (fixes.length) {
+    html += `<div class="category"><div class="category-label">Section 2</div><h2>Site Quick Fixes</h2>
+<p style="font-size:14px;color:#555;margin-bottom:20px;">Step-by-step instructions for each fix. Most of these take under an hour. Do the announcement bar first — it's visible to every visitor right now.</p>`;
+    fixes.forEach(f => {
+      html += `<div class="item">
+<h3>${f.name}</h3>
+<div class="meta">Estimated time: ${f.time}</div>
+<div class="steps">${f.steps}</div>
+</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (revenue.length) {
+    html += `<div class="category"><div class="category-label">Section 3</div><h2>Revenue Channels</h2>
+<p style="font-size:14px;color:#555;margin-bottom:20px;">Action steps for each revenue channel you selected. TikTok Shop first — it's free to set up and has the fastest path to revenue.</p>`;
+    revenue.forEach(r => {
+      html += `<div class="item">
+<h3>${r.name}</h3>
+<div class="meta">Time to set up: ${r.time}</div>
+<div class="steps">${r.steps}</div>
+</div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<footer>Generated from The Toasted Mallow Business Support Package · wanderingwithpride.com · michael.eisinger@wanderingwithpride.com<br>
+All grant eligibility verified against 2025–2026 program cycles as of April 2026. Verify deadlines before applying. Not legal or financial advice.</footer>
+</div>
+<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+}
+</script>
+
+<!-- EVENTS + MARKETS -->
+<section id="events" style="background:var(--cream);padding:60px 40px;">
+<div class="container">
+  <div class="section-label">In-Person Sales</div>
+  <h2 class="section-title">Events and Markets — What's Worth Doing</h2>
+  <p class="section-intro">Not all events are created equal. The Toasted Mallow has appeared at events that reviewers called out as highlights — and some that weren't worth the setup. The difference isn't random. Here's the framework for choosing and maximizing in-person sales.</p>
+
+  <!-- WHY SOME EVENTS FAIL -->
+  <div style="background:var(--orange-light);border-left:4px solid var(--orange);padding:20px 24px;border-radius:8px;margin:32px 0;">
+    <h3 style="font-family:'Playfair Display',serif;color:var(--orange);font-size:1.1rem;margin-bottom:8px;">Why Some Events Don't Pay Off</h3>
+    <p style="font-size:0.93rem;color:var(--text);margin:0;">The most common cause of a bad event: the audience came for something else. Artisan marshmallows are an impulse buy — visitors need to be in a buying mindset, not just browsing. Generic craft fairs, art shows, and community fairs where food isn't the draw consistently underperform. High booth fees ($300+) at low-foot-traffic events kill the math even when sales are decent. And in Phoenix, outdoor summer events with heat above 95°F are a product risk — marshmallows don't hold up.</p>
+  </div>
+
+  <!-- EVENT TIER TABLE -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--brown);margin-bottom:16px;">Event Tier Ranking</h3>
+  <div style="overflow-x:auto;margin-bottom:36px;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+      <thead>
+        <tr style="background:var(--brown);color:white;">
+          <th style="padding:10px 14px;text-align:left;font-weight:600;">Event Type</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;">Tier</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;">Why It Works (or Doesn't)</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:600;">Watch For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:var(--cream);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Holiday gift markets (Nov–Dec)</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 1</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Buyers arrive with wallets open specifically to buy gifts. Artisan food is a top gifting category. Your product boxes beautifully. Average transaction is highest here.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Booth fees spike in Nov–Dec. Negotiate early or look for non-profit/community markets with lower fees.</td>
+        </tr>
+        <tr style="background:var(--gold-pale);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Artisan food festivals</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 1</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Audience self-selected for food interest. High impulse conversion when sampling is allowed. Your product has visual appeal that wins in a food crowd.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Watch outdoor heat windows (Oct–April in AZ). Summer food festivals are hard unless indoor/shaded.</td>
+        </tr>
+        <tr style="background:var(--cream);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">LGBTQ+ Pride events</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 1</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Community identity match. LGBTQ+-owned business at a Pride event gets loyalty and story-driven purchases, not just impulse. Online follow-up conversion is higher from this audience.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Phoenix Pride in April is the main anchor. Tempe, Mesa, and Tucson have smaller events worth evaluating by booth cost vs. expected traffic.</td>
+        </tr>
+        <tr style="background:var(--gold-pale);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Bridal expos / wedding fairs</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#cce5ff;color:#004085;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 2</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Custom marshmallow favors and dessert table add-ons are an underserved niche. High average order potential ($200–$1,000+ per wedding booking). Requires a branded favor sample kit at the booth.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Lead time is long — weddings book 6–18 months out. Bring a sign-up form for "wedding consult" rather than trying to close same-day.</td>
+        </tr>
+        <tr style="background:var(--cream);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Farmers markets (recurring)</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#cce5ff;color:#004085;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 2</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">The value is the repeat customer, not the one-time sale. A loyal farmers market customer who buys a $20 bag every two weeks is worth $500/year. Takes 4–6 weeks to build regulars. Don't evaluate a farmers market on week one.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Gilbert Farmers Market and Chandler-area markets are the obvious first targets. Avoid markets more than 20 minutes away — the labor math breaks unless volume is very high.</td>
+        </tr>
+        <tr style="background:var(--gold-pale);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Corporate vendor fairs</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#cce5ff;color:#004085;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 2</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">HR departments host internal vendor fairs for holiday gifting. One corporate account found here can be worth $2,000–$10,000 in bulk orders. The event itself may break even — the follow-up is where the value is.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Bring a corporate gifting menu (pricing tiers, custom branding options) and collect business cards. The sale doesn't happen at the booth.</td>
+        </tr>
+        <tr style="background:var(--cream);">
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;">Generic craft fairs / art shows</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">TIER 3</span></td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Audience is browsing handmade goods, not specifically food. Conversion rate is lower. Can still work if booth fee is under $75 and setup is quick — but should not be the primary event strategy.</td>
+          <td style="padding:10px 14px;border-bottom:1px solid var(--border);">Only worth doing if it's local (under 15 min away), fee is low, and it can be staffed without pulling from a primary shift.</td>
+        </tr>
+        <tr style="background:var(--gold-pale);">
+          <td style="padding:10px 14px;font-weight:600;">Outdoor events, summer (June–Sept AZ)</td>
+          <td style="padding:10px 14px;"><span style="background:#f8d7da;color:#721c24;padding:2px 8px;border-radius:4px;font-weight:600;font-size:0.8rem;">AVOID</span></td>
+          <td style="padding:10px 14px;">Product integrity risk at 100°F+. Marshmallows soften, packaging can sweat. Even if you manage product with a cooler, the customer experience suffers. This is AZ-specific — skip summer outdoor events entirely.</td>
+          <td style="padding:10px 14px;">Exception: shaded or fully indoor events with AC even in summer months are fine. Verify venue conditions before committing.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ROI FRAMEWORK -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:36px 0;">
+
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);">
+      <h4 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.05rem;margin-bottom:12px;">The Break-Even Math</h4>
+      <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:12px;">Before committing to any event, run this quick check:</p>
+      <div style="background:var(--cream-dark);padding:14px;border-radius:8px;font-size:0.85rem;font-family:monospace;color:var(--text);">
+        <div style="margin-bottom:6px;">Booth fee: $[X]</div>
+        <div style="margin-bottom:6px;">Staff (hours x rate): $[Y]</div>
+        <div style="margin-bottom:6px;">Product cost at cost: $[Z]</div>
+        <div style="margin-bottom:6px;border-top:1px solid var(--border);padding-top:6px;font-weight:600;">Total out: $[X+Y+Z]</div>
+        <div style="margin-bottom:6px;">Avg transaction: $[T]</div>
+        <div style="font-weight:600;color:var(--brown);">Break-even sales needed: (X+Y+Z) / T</div>
+      </div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-top:10px;">If break-even requires more than 40% of expected foot traffic to buy, the event is too risky at that booth fee.</p>
+    </div>
+
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);">
+      <h4 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.05rem;margin-bottom:12px;">Booth Setup That Converts</h4>
+      <ul style="font-size:0.88rem;color:var(--text);list-style:none;padding:0;">
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Samples are non-negotiable — taste converts faster than any sign</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Height variation: elevate product at different levels so the table reads as abundant, not flat</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Bundle pricing at events: "3 bags for $X" increases avg transaction by 40–60%</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Pre-made gift sets in clear bags with ribbon — no decision-making required, impulse-buy format</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">A single clear price sign per product — decision paralysis at events kills sales</li>
+        <li style="padding:5px 0;">Cash and tap-to-pay both available — lost sales from "cash only" are real</li>
+      </ul>
+    </div>
+
+    <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow);">
+      <h4 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.05rem;margin-bottom:12px;">Converting Visitors to Online Customers</h4>
+      <p style="font-size:0.88rem;color:var(--text-mid);margin-bottom:10px;">The event sale is not the end of the transaction — it's the beginning of a customer relationship.</p>
+      <ul style="font-size:0.88rem;color:var(--text);list-style:none;padding:0;">
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">QR code on every bag and on the table: goes directly to online shop or email signup</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Insert card in every purchase: "Ships nationwide — send a box to someone you love" with URL</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">Text/email signup at the booth: "10% off your next online order" in exchange for their info</li>
+        <li style="padding:5px 0;border-bottom:1px solid var(--border);">TikTok handle on all signage — event visitors who follow you see every future video</li>
+        <li style="padding:5px 0;">Film the event for TikTok content: setup, samples, crowd reactions, "pack an order" at the booth</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- CONTENT AT EVENTS -->
+  <div style="background:var(--teal-light);border-left:4px solid var(--teal);padding:20px 24px;border-radius:8px;margin-top:24px;">
+    <h3 style="font-family:'Playfair Display',serif;color:var(--teal);font-size:1.05rem;margin-bottom:8px;">Events as Content, Not Just Revenue</h3>
+    <p style="font-size:0.88rem;color:var(--text);margin:0;">Every event is a TikTok video. Booth setup time-lapses, sample reactions, the crowd, the behind-the-scenes of packing and unpacking — this content consistently performs. A single well-filmed event appearance can drive more online sales than the event itself. Assign one person to be product/customer-facing and one to document. If there's only one person, film the setup before it gets busy.</p>
+  </div>
+
+</div>
 </section>
 
 <!-- HOW I CAN HELP -->
