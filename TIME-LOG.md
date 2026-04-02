@@ -37,3 +37,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 04:53 | Secure API key via Cloudflare Worker proxy, add voice input, add guided walkthro
   - 2026-04-02 04:58 | Add free local resources, email templates, direct apply links, calendar buttons,
   - 2026-04-02 05:01 | Apply council fixes: privacy, framing, cupcake caveat, cash flow tool, TTS voice
+  - 2026-04-02 05:04 | Add full cost breakdown panel with personalized cost analysis engine and AI cost

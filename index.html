@@ -812,14 +812,7 @@ function tmLoad() {
   });
 }
 
-function tmSave() {
-  TM_FIELDS.forEach(function(k) {
-    var el = document.getElementById('tmf_'+k);
-    if (el && el.value) { TM[k] = el.value; localStorage.setItem('tm_'+k, el.value); }
-  });
-  var note = document.getElementById('tm-saved-note');
-  if (note) { note.style.opacity=1; setTimeout(function(){ note.style.opacity=0; }, 2000); }
-}
+// tmSave() merged into tmSaveAll()
 
 function tmTogglePanel() {
   var body = document.getElementById('tm-numbers-body');
@@ -1138,6 +1131,13 @@ document.getElementById('pw-input').focus();
         <div class="tm-field"><label>Marketing / ads</label><input id="tmf_marketing" type="number" placeholder="200"></div>
         <div class="tm-field"><label>Loan / debt payments</label><input id="tmf_debt" type="number" placeholder="0"></div>
         <div class="tm-field"><label>Other fixed costs</label><input id="tmf_other_fixed" type="number" placeholder="300"></div>
+        <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Production & Waste</div>
+        <div class="tm-field"><label>Batches made per day</label><input id="tmf_batches_day" type="number" placeholder="3"></div>
+        <div class="tm-field"><label>Units per batch (marshmallows)</label><input id="tmf_units_batch" type="number" placeholder="48"></div>
+        <div class="tm-field"><label>Days per week you produce</label><input id="tmf_prod_days" type="number" placeholder="5"></div>
+        <div class="tm-field"><label>Waste rate (% of batch)</label><input id="tmf_waste_pct" type="number" placeholder="8"></div>
+        <div class="tm-field"><label>Ingredient cost per batch ($)</label><input id="tmf_cost_batch" type="number" placeholder="18"></div>
+        <div class="tm-field"><label>Units sold per week (avg)</label><input id="tmf_units_sold_week" type="number" placeholder="200"></div>
       </div>
     </div>
 
@@ -5160,7 +5160,8 @@ function tmChatSend() {
 var TM_COST_FIELDS = ['revenue_store','revenue_online','aov','followers','email_list','cash',
   'rent1','rent2','util1','util2','payroll','staff','owner_pay',
   'cogs_dollar','packaging','shipping_supplies',
-  'pos_fees','insurance','software','marketing','debt','other_fixed'];
+  'pos_fees','insurance','software','marketing','debt','other_fixed',
+  'batches_day','units_batch','prod_days','waste_pct','cost_batch','units_sold_week'];
 
 function tmTab(which) {
   document.getElementById('tm-tab-basic').style.display = which === 'basic' ? '' : 'none';
@@ -5221,6 +5222,50 @@ function tmRunCostAnalysis() {
   if (!rev && !total_costs) {
     alert('Enter some numbers first — at least your revenue and main costs.');
     return;
+  }
+
+
+  // Production & waste analysis
+  var batches_day = parseFloat(TM.batches_day||0);
+  var units_batch = parseFloat(TM.units_batch||0);
+  var prod_days = parseFloat(TM.prod_days||5);
+  var waste_pct = parseFloat(TM.waste_pct||0);
+  var cost_batch = parseFloat(TM.cost_batch||0);
+  var units_sold_week = parseFloat(TM.units_sold_week||0);
+
+  if (batches_day && units_batch) {
+    var weekly_capacity = batches_day * units_batch * prod_days;
+    var weekly_waste_units = Math.round(weekly_capacity * (waste_pct/100));
+    var weekly_waste_cost = cost_batch > 0 ? (weekly_waste_units / units_batch * cost_batch).toFixed(2) : null;
+    var monthly_waste_cost = weekly_waste_cost ? (weekly_waste_cost * 4.33).toFixed(0) : null;
+    var utilization = units_sold_week > 0 ? Math.round(units_sold_week/weekly_capacity*100) : null;
+
+    var prodDetail = 'Your production capacity is ' + weekly_capacity.toLocaleString() + ' units/week (' + batches_day + ' batches × ' + units_batch + ' units × ' + prod_days + ' days).';
+    if (waste_pct > 0) prodDetail += ' At ' + waste_pct + '% waste, you lose ~' + weekly_waste_units + ' units/week';
+    if (monthly_waste_cost) prodDetail += ' — roughly $' + monthly_waste_cost + '/mo in ingredient cost going to waste.';
+    if (utilization !== null) {
+      prodDetail += ' You are running at ' + utilization + '% of capacity.';
+      if (utilization < 50) prodDetail += ' That means you have significant headroom to grow online/wholesale volume without adding production days or staff.';
+      else if (utilization > 85) prodDetail += ' You are near capacity — scaling online sales will require either more production days, a second production team, or streamlining the product mix.';
+    }
+
+    recs.push({
+      title: 'Production & Waste',
+      saving: monthly_waste_cost ? '$'+monthly_waste_cost+'/mo in waste' : 'See detail',
+      saving_num: monthly_waste_cost ? parseFloat(monthly_waste_cost) : 0,
+      detail: prodDetail
+    });
+
+    // If low utilization — flag as opportunity
+    if (utilization !== null && utilization < 60 && units_sold_week > 0) {
+      var headroom = weekly_capacity - units_sold_week;
+      recs.push({
+        title: 'Unused production capacity = wholesale opportunity',
+        saving: headroom.toLocaleString() + ' units/week available',
+        saving_num: 0,
+        detail: 'You have capacity to produce ' + headroom.toLocaleString() + ' more units per week without adding staff or equipment. That headroom is exactly what makes wholesale and subscription feasible — you can fulfill both without new capital investment.'
+      });
+    }
   }
 
   // Build recommendations
