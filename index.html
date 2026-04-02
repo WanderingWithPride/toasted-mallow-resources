@@ -1160,12 +1160,12 @@ document.getElementById('pw-input').focus();
 
     <!-- BASIC TAB -->
     <div id="tm-tab-basic" class="tm-input-grid">
-      <div class="tm-field"><label>Monthly revenue — in-store</label><input id="tmf_revenue_store" type="number" placeholder="12000"></div>
-      <div class="tm-field"><label>Monthly revenue — online</label><input id="tmf_revenue_online" type="number" placeholder="3000"></div>
-      <div class="tm-field"><label>Average online order value ($)</label><input id="tmf_aov" type="number" placeholder="45"></div>
-      <div class="tm-field"><label>TikTok followers</label><input id="tmf_followers" type="number" placeholder="270900"></div>
-      <div class="tm-field"><label>Email list size</label><input id="tmf_email_list" type="number" placeholder="500"></div>
-      <div class="tm-field"><label>Cash on hand right now ($)</label><input id="tmf_cash" type="number" placeholder="8000"></div>
+      <div class="tm-field"><label>Monthly revenue — in-store</label><input id="tmf_revenue_store" type="number" min="0" placeholder="12000"></div>
+      <div class="tm-field"><label>Monthly revenue — online</label><input id="tmf_revenue_online" type="number" min="0" placeholder="3000"></div>
+      <div class="tm-field"><label>Average online order value ($)</label><input id="tmf_aov" type="number" min="0" placeholder="45"></div>
+      <div class="tm-field"><label>TikTok followers</label><input id="tmf_followers" type="number" min="0" placeholder="270900"></div>
+      <div class="tm-field"><label>Email list size</label><input id="tmf_email_list" type="number" min="0" placeholder="500"></div>
+      <div class="tm-field"><label>Cash on hand right now ($)</label><input id="tmf_cash" type="number" min="0" placeholder="8000"></div>
     </div>
 
     <!-- COST BREAKDOWN TAB -->
@@ -1173,35 +1173,35 @@ document.getElementById('pw-input').focus();
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px;line-height:1.5;">Enter your actual monthly costs. The more detail you add, the more specific the recommendations will be. Leave blank what you don't know — the tool works with partial data.</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Occupancy</div>
-        <div class="tm-field"><label>Rent — Location 1 (keep)</label><input id="tmf_rent1" type="number" placeholder="3500"></div>
-        <div class="tm-field"><label>Rent — Location 2 (close?)</label><input id="tmf_rent2" type="number" placeholder="3200"></div>
-        <div class="tm-field"><label>Utilities — Location 1</label><input id="tmf_util1" type="number" placeholder="400"></div>
-        <div class="tm-field"><label>Utilities — Location 2</label><input id="tmf_util2" type="number" placeholder="380"></div>
+        <div class="tm-field"><label>Rent — Location 1 (keep)</label><input id="tmf_rent1" type="number" min="0" placeholder="3500"></div>
+        <div class="tm-field"><label>Rent — Location 2 (close?)</label><input id="tmf_rent2" type="number" min="0" placeholder="3200"></div>
+        <div class="tm-field"><label>Utilities — Location 1</label><input id="tmf_util1" type="number" min="0" placeholder="400"></div>
+        <div class="tm-field"><label>Utilities — Location 2</label><input id="tmf_util2" type="number" min="0" placeholder="380"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Labor</div>
-        <div class="tm-field"><label>Total payroll (all staff)</label><input id="tmf_payroll" type="number" placeholder="7000"></div>
-        <div class="tm-field"><label>Staff count</label><input id="tmf_staff" type="number" placeholder="4"></div>
-        <div class="tm-field"><label>Your own pay (if any)</label><input id="tmf_owner_pay" type="number" placeholder="0"></div>
+        <div class="tm-field"><label>Total payroll (all staff)</label><input id="tmf_payroll" type="number" min="0" placeholder="7000"></div>
+        <div class="tm-field"><label>Staff count</label><input id="tmf_staff" type="number" min="0" placeholder="4"></div>
+        <div class="tm-field"><label>Your own pay (if any)</label><input id="tmf_owner_pay" type="number" min="0" placeholder="0"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Product Costs</div>
-        <div class="tm-field"><label>Ingredients / COGS ($)</label><input id="tmf_cogs_dollar" type="number" placeholder="3500"></div>
-        <div class="tm-field"><label>Packaging materials</label><input id="tmf_packaging" type="number" placeholder="400"></div>
-        <div class="tm-field"><label>Shipping supplies</label><input id="tmf_shipping_supplies" type="number" placeholder="200"></div>
+        <div class="tm-field"><label>Ingredients / COGS ($)</label><input id="tmf_cogs_dollar" type="number" min="0" placeholder="3500"></div>
+        <div class="tm-field"><label>Packaging materials</label><input id="tmf_packaging" type="number" min="0" placeholder="400"></div>
+        <div class="tm-field"><label>Shipping supplies</label><input id="tmf_shipping_supplies" type="number" min="0" placeholder="200"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Fees & Services</div>
-        <div class="tm-field"><label>Square / POS fees</label><input id="tmf_pos_fees" type="number" placeholder="300"></div>
-        <div class="tm-field"><label>Insurance</label><input id="tmf_insurance" type="number" placeholder="250"></div>
-        <div class="tm-field"><label>Subscriptions / software</label><input id="tmf_software" type="number" placeholder="150"></div>
-        <div class="tm-field"><label>Marketing / ads</label><input id="tmf_marketing" type="number" placeholder="200"></div>
-        <div class="tm-field"><label>Loan / debt payments</label><input id="tmf_debt" type="number" placeholder="0"></div>
-        <div class="tm-field"><label>Other fixed costs</label><input id="tmf_other_fixed" type="number" placeholder="300"></div>
+        <div class="tm-field"><label>Square / POS fees</label><input id="tmf_pos_fees" type="number" min="0" placeholder="300"></div>
+        <div class="tm-field"><label>Insurance</label><input id="tmf_insurance" type="number" min="0" placeholder="250"></div>
+        <div class="tm-field"><label>Subscriptions / software</label><input id="tmf_software" type="number" min="0" placeholder="150"></div>
+        <div class="tm-field"><label>Marketing / ads</label><input id="tmf_marketing" type="number" min="0" placeholder="200"></div>
+        <div class="tm-field"><label>Loan / debt payments</label><input id="tmf_debt" type="number" min="0" placeholder="0"></div>
+        <div class="tm-field"><label>Other fixed costs</label><input id="tmf_other_fixed" type="number" min="0" placeholder="300"></div>
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Production & Waste</div>
-        <div class="tm-field"><label>Batches made per day</label><input id="tmf_batches_day" type="number" placeholder="3"></div>
-        <div class="tm-field"><label>Units per batch (marshmallows)</label><input id="tmf_units_batch" type="number" placeholder="48"></div>
-        <div class="tm-field"><label>Days per week you produce</label><input id="tmf_prod_days" type="number" placeholder="5"></div>
-        <div class="tm-field"><label>Waste rate (% of batch)</label><input id="tmf_waste_pct" type="number" placeholder="8"></div>
-        <div class="tm-field"><label>Ingredient cost per batch ($)</label><input id="tmf_cost_batch" type="number" placeholder="18"></div>
-        <div class="tm-field"><label>Units sold per week (avg)</label><input id="tmf_units_sold_week" type="number" placeholder="200"></div>
+        <div class="tm-field"><label>Batches made per day</label><input id="tmf_batches_day" type="number" min="0" placeholder="3"></div>
+        <div class="tm-field"><label>Units per batch (marshmallows)</label><input id="tmf_units_batch" type="number" min="0" placeholder="48"></div>
+        <div class="tm-field"><label>Days per week you produce</label><input id="tmf_prod_days" type="number" min="0" placeholder="5"></div>
+        <div class="tm-field"><label>Waste rate (% of batch)</label><input id="tmf_waste_pct" type="number" min="0" placeholder="8"></div>
+        <div class="tm-field"><label>Ingredient cost per batch ($)</label><input id="tmf_cost_batch" type="number" min="0" placeholder="18"></div>
+        <div class="tm-field"><label>Units sold per week (avg)</label><input id="tmf_units_sold_week" type="number" min="0" placeholder="200"></div>
       </div>
     </div>
 
@@ -2017,7 +2017,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-number">Grant #10</div>
           <h3>QBA (Queer Business Alliance)</h3>
           <div class="grant-why">LGBTQ+ business, new and established. Rolling program.</div>
-          <a class="grant-url" href="#" target="_blank">qba.org</a>
+          <a class="grant-url" href="https://qba.org" target="_blank">qba.org</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="sba" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="sba" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="sba" data-status="received">Received</button></div>
         </div>
         <div>
@@ -2347,7 +2347,7 @@ document.getElementById('pw-input').focus();
           <input id="croi-cogs" type="number" placeholder="35" style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:8px 10px;color:white;font-size:13px;outline:none;box-sizing:border-box;"></div>
       </div>
       <button onclick="tmCalcCampaign()" style="background:var(--gold);color:var(--brown);border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate ROI</button>
-      <div id="croi-results" style="display:none;margin-top:16px;display:none;">
+      <div id="croi-results" style="display:none;margin-top:16px;">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
           <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-revenue" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Revenue</div></div>
           <div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;text-align:center;"><div id="croi-profit" style="font-size:1.3rem;font-weight:800;color:var(--gold);"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Gross profit</div></div>
@@ -6427,6 +6427,9 @@ function tmRunCostAnalysis() {
   }
 
 
+  // Recommendations array — must be initialized before production block that pushes to it
+  var recs = [];
+
   // Production & waste analysis
   var batches_day = parseFloat(TM.batches_day||0);
   var units_batch = parseFloat(TM.units_batch||0);
@@ -6471,7 +6474,6 @@ function tmRunCostAnalysis() {
   }
 
   // Build recommendations
-  var recs = [];
   var savings_consolidate = rent2+util2;
 
   if (rent2 > 0) {
@@ -6480,7 +6482,7 @@ function tmRunCostAnalysis() {
       title: 'Consolidate to one location',
       saving: '$'+savings_consolidate.toLocaleString()+'/mo',
       saving_num: savings_consolidate,
-      detail: 'Closing Location 2 removes $'+savings_consolidate.toLocaleString()+'/mo in fixed overhead immediately. Occupancy drops from '+(occ_pct)+'% of revenue to '+Math.round(rent1/rev*100)+'%. That single move'+( net < 0 && savings_consolidate > Math.abs(net) ? ' alone would make you cash-flow positive.' : ' is the largest single lever available.')
+      detail: 'Closing Location 2 removes $'+savings_consolidate.toLocaleString()+'/mo in fixed overhead immediately. Occupancy drops from '+(occ_pct)+'% of revenue to '+(rev > 0 ? Math.round(rent1/rev*100) : 0)+'%. That single move'+( net < 0 && savings_consolidate > Math.abs(net) ? ' alone would make you cash-flow positive.' : ' is the largest single lever available.')
     });
   }
   if (marketing < 100 && rev > 5000) {
