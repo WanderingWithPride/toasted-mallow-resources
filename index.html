@@ -744,6 +744,46 @@
   .assets-list-item::before { content: "✓"; color: var(--teal); font-weight: 700; flex-shrink: 0; }
 </style>
 
+<!-- GRANT DRAFTER MODAL CSS -->
+<style>
+#grant-modal { display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity 0.2s; }
+#grant-modal.gd-visible { opacity:1; }
+#grant-modal-card { background:#fff;border-radius:16px;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);display:flex;flex-direction:column; }
+.gd-header { display:flex;align-items:flex-start;justify-content:space-between;padding:22px 24px 16px;border-bottom:1px solid var(--border);gap:16px; }
+.gd-grant-name { font-size:16px;font-weight:800;color:var(--brown);line-height:1.3; }
+.gd-grant-url { font-size:12px;color:var(--gold);text-decoration:none;margin-top:4px;display:block; }
+.gd-grant-url:hover { text-decoration:underline; }
+.gd-close { background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;margin-top:-2px; }
+.gd-close:hover { color:var(--brown); }
+.gd-body { padding:20px 24px 28px;display:flex;flex-direction:column;gap:20px; }
+.gd-saved-info { background:var(--cream-dark,#fef6e4);border:1px solid var(--border);border-radius:10px;padding:14px 16px; }
+.gd-saved-label { font-size:11px;font-weight:700;color:var(--text-light);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px; }
+.gd-saved-chips { display:flex;flex-wrap:wrap;gap:8px; }
+.gd-chip { font-size:12px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--text); }
+.gd-chip strong { color:var(--brown); }
+.gd-saved-note { font-size:11px;color:var(--text-light);margin-top:10px;font-style:italic; }
+.gd-section-title { font-size:13px;font-weight:700;color:var(--brown);margin-bottom:12px; }
+.gd-fields-section { display:flex;flex-direction:column;gap:14px; }
+.gd-field { display:flex;flex-direction:column;gap:5px; }
+.gd-label { font-size:13px;font-weight:600;color:var(--text);line-height:1.4; }
+.gd-input { width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--text);background:#fff;resize:vertical;transition:border-color 0.15s;box-sizing:border-box; }
+.gd-input:focus { outline:none;border-color:var(--gold); }
+.gd-generate-btn { background:var(--brown);color:#fff;border:none;border-radius:10px;padding:13px 24px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:0.3px;transition:opacity 0.15s;align-self:flex-start; }
+.gd-generate-btn:hover { opacity:0.87; }
+.gd-output { display:flex;flex-direction:column;gap:14px; }
+.gd-output-header { font-size:15px;font-weight:800;color:var(--brown); }
+.gd-output-note { font-size:12px;color:var(--text-light);background:var(--cream-dark,#fef6e4);border-radius:8px;padding:10px 14px;line-height:1.5; }
+.gd-section-block { background:#fef9f0;border:1px solid #e8d9b8;border-radius:10px;padding:16px; }
+.gd-section-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.gd-section-name { font-size:12px;font-weight:800;color:var(--brown);letter-spacing:0.04em;text-transform:uppercase; }
+.gd-copy-btn { background:var(--gold);color:var(--brown);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:opacity 0.15s; }
+.gd-copy-btn:hover { opacity:0.8; }
+.gd-copy-btn.gd-copied { background:#3a9;color:#fff; }
+.gd-section-text { font-size:13px;line-height:1.65;color:var(--text);white-space:pre-wrap; }
+.gd-copy-all-btn { background:transparent;border:2px solid var(--brown);color:var(--brown);border-radius:10px;padding:11px 20px;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.15s;align-self:flex-start; }
+.gd-copy-all-btn:hover { background:var(--brown);color:#fff; }
+</style>
+
 <!-- TOOLKIT STYLES -->
 <style>
 /* Master Numbers Panel */
@@ -774,6 +814,10 @@ body { padding-bottom: 52px; }
 .tm-check input[type=checkbox] { width:16px;height:16px;accent-color:var(--gold);cursor:pointer; }
 .tm-check span { font-size:12px;color:rgba(255,255,255,0.5); }
 .timeline-item.done .timeline-item-text { opacity:0.45;text-decoration:line-through; }
+
+/* Grant draft button */
+.grant-draft-btn { display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:var(--brown);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.3px;transition:opacity 0.15s; }
+.grant-draft-btn:hover { opacity:0.85; }
 
 /* Grant tracker buttons */
 .grant-status-row { display:flex;gap:8px;margin-top:12px;flex-wrap:wrap; }
@@ -1837,6 +1881,7 @@ document.getElementById('pw-input').focus();
           <a class="grant-url" href="https://nglcc.org" target="_blank">nglcc.org</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="nglcc" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="nglcc" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="nglcc" data-status="received">Received</button></div>
           <span style="font-size:12px;color:var(--text-light);margin-left:8px;">· also about.grubhub.com</span>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('nglcc')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">$5K–$25K+</div>
@@ -1851,6 +1896,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-why">LGBTQ+-owned, active US business, 1+ year in business, 2–100 employees, revenue under $5M. Award is $1,000 cash + free program access (valued at $1,499–$1,699) — 20 winners selected. Pre-registration is open now; full application opens April 2026.</div>
           <a class="grant-url" href="https://foundersfirstcdc.org/pride-grant" target="_blank">foundersfirstcdc.org/pride-grant</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="founders" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="founders" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="founders" data-status="received">Received</button></div>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('founders')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">$1,000 + program</div>
@@ -1865,6 +1911,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-why">Small food business, emergency relief focus. Rolling deadline means you can apply right now.</div>
           <a class="grant-url" href="https://helloalice.com/grants/doordash/" target="_blank">helloalice.com/grants/doordash/</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="doordash" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="doordash" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="doordash" data-status="received">Received</button></div>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('doordash')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">$5K–$15K</div>
@@ -1879,6 +1926,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-why">Women-owned. Food &amp; Beverage is a recent focus category — your timing is good. Monthly rolling deadline.</div>
           <a class="grant-url" href="https://ambergrantsforwomen.com" target="_blank">ambergrantsforwomen.com</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="amber" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="amber" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="amber" data-status="received">Received</button></div>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('amber')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">$1K–$25K</div>
@@ -1893,6 +1941,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-why">Phoenix metro, underrepresented owner priority. <strong>0% interest</strong> — useful as bridge capital while grants process.</div>
           <a class="grant-url" href="https://lisc.org/phoenix" target="_blank">lisc.org/phoenix</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="kiva" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="kiva" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="kiva" data-status="received">Received</button></div>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('kiva')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">Up to $10K</div>
@@ -1912,6 +1961,7 @@ document.getElementById('pw-input').focus();
           <div class="grant-why">Active 2025–2026 grantmaking cycle. Arizona-based, gender and economic equity focus.</div>
           <a class="grant-url" href="https://womengiving.org" target="_blank">womengiving.org</a>
         <div class="grant-status-row"><button class="grant-status-btn gsb-not-started" data-grant="wfsa" data-status="not_started">Not started</button><button class="grant-status-btn gsb-applied" data-grant="wfsa" data-status="applied">Applied</button><button class="grant-status-btn gsb-received" data-grant="wfsa" data-status="received">Received</button></div>
+          <button class="grant-draft-btn" onclick="grantDrafter.openModal('wfsa')">Draft My Application</button>
         </div>
         <div>
           <div class="grant-amount">Varies</div>
@@ -6716,6 +6766,230 @@ document.addEventListener('DOMContentLoaded', function() {
     this.style.height = Math.min(this.scrollHeight, 80)+'px';
   });
 });
+</script>
+
+<!-- GRANT DRAFTER MODAL -->
+<div id="grant-modal" onclick="if(event.target===this)grantDrafter.closeModal()">
+  <div id="grant-modal-card"></div>
+</div>
+
+<!-- GRANT DRAFTER SCRIPT -->
+<script>
+var grantDrafter = (function() {
+  var GRANTS = {
+    nglcc: {
+      name: 'NGLCC / Grubhub Community Impact Grant',
+      url: 'https://nglcc.org',
+      fields: [
+        { id: 'story', label: 'In 2-3 sentences, describe what The Toasted Mallow means to the Phoenix LGBTQ+ community:', placeholder: 'e.g., The Toasted Mallow has been a safe, joyful space for queer families in the East Valley since we opened...', rows: 3 },
+        { id: 'challenge', label: 'What specific challenge are you facing right now? (2-3 sentences, plain language):', placeholder: 'e.g., Rising rent at both locations has created a cash flow gap that is threatening our ability to make payroll...', rows: 3 },
+        { id: 'use_of_funds', label: 'How would you specifically use this grant?', placeholder: 'e.g., Funds would go toward e-commerce infrastructure and lease consolidation costs to stabilize the business...', rows: 2 },
+        { id: 'community_impact', label: 'What does winning mean for your team and community? (2 sentences)', placeholder: 'e.g., It would allow us to retain all staff through the transition and continue being a visible queer business in the East Valley...', rows: 2 },
+      ],
+      sections: [
+        { title: 'Business Overview', gen: function(d, tm) { return 'The Toasted Mallow is Arizona\u2019s first and only artisan marshmallow shop, LGBTQ+- and women-owned, with ' + tm.years + ' years of operation across two Arizona locations. We ship nationally and have been featured on national television. With ' + tm.staff + ' team members, we are an active employer and community presence in the greater Phoenix area.'; } },
+        { title: 'LGBTQ+ Story & Community Presence', gen: function(d, tm) { return d.story || 'The Toasted Mallow has been a visible, joyful LGBTQ+-owned business in the Phoenix East Valley for over a decade \u2014 a place where the queer community has gathered, celebrated, and felt welcome. We have employed LGBTQ+ team members throughout our history and built our brand around inclusive, affirming values.'; } },
+        { title: 'Current Challenge', gen: function(d, tm) { return d.challenge || 'We are navigating a significant fixed overhead challenge driven by rising rents across both retail locations. Despite strong brand recognition and loyal customers, the cost structure has compressed margins to the point where the business requires a strategic restructuring to remain viable long-term.'; } },
+        { title: 'Use of Funds', gen: function(d, tm) { return (d.use_of_funds || 'Grant funds would be directed toward e-commerce infrastructure development, marketing investment to grow online revenue, and operational costs associated with consolidating to our strongest-performing location.') + ' We have a clear 90-day action plan and have already identified the specific platforms and investments that would produce the fastest return.'; } },
+        { title: 'Community Impact', gen: function(d, tm) { return (d.community_impact || 'This grant would allow us to retain our full team through a business transition and continue serving as one of the few openly LGBTQ+-owned food businesses in the East Valley.') + ' The Toasted Mallow has proven that queer-owned businesses can build lasting community anchors \u2014 this grant helps us prove it again.'; } },
+      ]
+    },
+    founders: {
+      name: 'Founders First CDC National Pride Grant',
+      url: 'https://foundersfirstcdc.org/pride-grant',
+      fields: [
+        { id: 'owner_name', label: 'Your full name (owner/applicant):', placeholder: 'Tricia Arce', rows: 1 },
+        { id: 'founded_year', label: 'Year the business was founded:', placeholder: '2014', rows: 1 },
+        { id: 'business_summary', label: 'Business description in 2-3 sentences (what you make, who you serve, what makes you unique):', placeholder: 'The Toasted Mallow creates handcrafted artisan marshmallows and marshmallow-based confections...', rows: 3 },
+        { id: 'program_goals', label: 'What specific business goal would you work on in the Founders First program?', placeholder: 'e.g., Building a scalable online sales channel to reduce dependency on physical retail locations...', rows: 3 },
+      ],
+      sections: [
+        { title: 'Business Summary', gen: function(d, tm) { return (d.business_summary || 'The Toasted Mallow is Arizona\u2019s first artisan marshmallow shop, creating handcrafted marshmallow products for retail, wholesale, and online customers. We are LGBTQ+- and women-owned, based in the Phoenix East Valley, and have been featured on national television.') + ' We have operated for ' + tm.years + '+ years and currently employ ' + tm.staff + ' people across two locations.'; } },
+        { title: 'Owner Identity & Qualifications', gen: function(d, tm) { return (d.owner_name || 'The founder') + ' is the founder and owner of The Toasted Mallow. As a queer woman who built Arizona\u2019s first artisan marshmallow business from the ground up without outside funding, she brings ' + tm.years + '+ years of food business expertise, product development, and retail operations experience to this program.'; } },
+        { title: 'Employees & Revenue', gen: function(d, tm) { return 'The Toasted Mallow currently employs ' + tm.staff + ' team members' + (tm.revenue !== '\u2014' ? ', with monthly revenue of $' + Number(tm.revenue).toLocaleString() : '') + '. We operate within the Founders First CDC program eligibility range (2\u2013100 employees, under $5M annual revenue) and are an active, established business seeking strategic growth support.'; } },
+        { title: 'Program Goals', gen: function(d, tm) { return d.program_goals || 'I would use the Founders First program to build a scalable online sales strategy that reduces our reliance on physical retail foot traffic \u2014 creating a business model resilient to future cost pressures while maintaining our community presence in the East Valley.'; } },
+      ]
+    },
+    doordash: {
+      name: 'DoorDash Local Biz Relief (via Hello Alice)',
+      url: 'https://helloalice.com/grants/doordash/',
+      fields: [
+        { id: 'crisis', label: 'Describe your current business crisis in plain language (2-3 sentences):', placeholder: 'e.g., Rising rent at both locations has created a cash flow gap that is threatening our ability to make payroll...', rows: 3 },
+        { id: 'what_failed', label: 'What specific event or trend created this challenge?', placeholder: 'e.g., Post-COVID rent increases of 40% at our primary location starting in 2024...', rows: 2 },
+        { id: 'relief_use', label: 'Exactly how would you use this relief grant? (be specific)', placeholder: 'e.g., $10,000 would cover 3 months of rent at our Gilbert location while we transition to an online-first model...', rows: 3 },
+        { id: 'recovery', label: 'What is your plan to be stable in 6 months?', placeholder: 'e.g., We are launching a TikTok Shop and Goldbelly partnership in May, and consolidating to our strongest location by July...', rows: 3 },
+      ],
+      sections: [
+        { title: 'Crisis Narrative', gen: function(d, tm) { return (d.crisis || 'The Toasted Mallow is facing a critical cash flow challenge driven by rising fixed overhead costs across two retail locations. Despite strong brand recognition, national TV exposure, and loyal local customers, rent increases have compressed margins to the point where the business cannot sustain its current footprint.') + (d.what_failed ? ' ' + d.what_failed : ''); } },
+        { title: 'Business Description', gen: function(d, tm) { return 'The Toasted Mallow is Arizona\u2019s first artisan marshmallow shop, LGBTQ+- and women-owned, with ' + tm.years + '+ years of operation in the Phoenix East Valley. We employ ' + tm.staff + ' people and serve customers through two retail locations, online shipping, and wholesale accounts. We have been featured on national television and are a recognized anchor of the local LGBTQ+ business community.'; } },
+        { title: 'How Relief Funds Would Be Used', gen: function(d, tm) { return d.relief_use || 'Relief funds would be directed toward immediate fixed overhead costs (rent and utilities) to create a 90-day runway while we execute a planned consolidation and online sales expansion. This preserves our team\u2019s employment and keeps the business operational through the transition period.'; } },
+        { title: 'Recovery Plan', gen: function(d, tm) { return d.recovery || 'Within 90 days we will consolidate to our strongest-performing location, launch online sales through TikTok Shop and Goldbelly, and establish a corporate gifting program targeting the Phoenix East Valley business community. These three channels together are projected to replace the revenue lost from closing one physical location.'; } },
+      ]
+    },
+    amber: {
+      name: 'Amber Grant for Women',
+      url: 'https://ambergrantsforwomen.com',
+      fields: [
+        { id: 'origin_story', label: 'In 3-4 sentences: Why did you start The Toasted Mallow? What moment made you do it?', placeholder: 'e.g., I started The Toasted Mallow because I believed Arizona deserved...', rows: 4 },
+        { id: 'passion', label: 'What keeps you going when it\'s hard? What do marshmallows mean to you beyond the product?', placeholder: 'e.g., Every batch I make is a tiny act of joy...', rows: 3 },
+        { id: 'use_of_funds', label: 'How would you use this grant? What would change?', placeholder: 'e.g., This grant would fund 3 months of our online store buildout...', rows: 3 },
+      ],
+      sections: [
+        { title: 'Founder Story', gen: function(d, tm) { return (d.origin_story || 'I started The Toasted Mallow because I believed that artisan confectionery \u2014 something handcrafted with real ingredients and real love \u2014 deserved a permanent home in Arizona. I built it from scratch, without outside funding, and grew it into the state\u2019s first dedicated marshmallow shop.') + ' That was ' + tm.years + '+ years ago. I\u2019m still here.'; } },
+        { title: 'What This Business Means', gen: function(d, tm) { return (d.passion || 'The Toasted Mallow has always been about more than marshmallows. It\u2019s been about proving that a queer woman can build something lasting in a traditionally difficult industry \u2014 and that joy is a legitimate business model.') + ' The business employs ' + tm.staff + ' people who count on it as their livelihood.'; } },
+        { title: 'Use of Grant Funds', gen: function(d, tm) { return d.use_of_funds || 'This grant would fund the e-commerce infrastructure and marketing investment needed to build a scalable online sales channel. Our online presence significantly underperforms our brand strength \u2014 an investment in the right tools would let us reach the national audience that already knows our name and wants to buy from us.'; } },
+      ]
+    },
+    kiva: {
+      name: 'Kiva 0% Loan (via LISC Phoenix)',
+      url: 'https://lisc.org/phoenix',
+      fields: [
+        { id: 'business_summary', label: 'Describe your business and why it matters to the Phoenix community (3-4 sentences):', placeholder: 'The Toasted Mallow is...', rows: 4 },
+        { id: 'loan_purpose', label: 'What exactly would the loan fund? (be specific)', placeholder: 'e.g., $8,000 toward lease exit costs and $2,000 toward online store setup...', rows: 3 },
+        { id: 'repayment', label: 'How will you repay the loan? What revenue stream covers it?', placeholder: 'e.g., Monthly online sales revenue projected to reach $X within 90 days of launch...', rows: 3 },
+      ],
+      sections: [
+        { title: 'Business Overview', gen: function(d, tm) { return d.business_summary || 'The Toasted Mallow is Arizona\u2019s first artisan marshmallow shop, LGBTQ+- and women-owned, with over a decade of operation in the Phoenix East Valley. We employ ' + tm.staff + ' people, operate two retail locations, and ship our products nationwide. We have been featured on national television and are an active member of the Phoenix LGBTQ+ business community.'; } },
+        { title: 'Loan Purpose', gen: function(d, tm) { return d.loan_purpose || 'This loan would bridge a cash flow gap during a planned business consolidation \u2014 covering lease exit costs and the initial investment in e-commerce infrastructure. The 0% rate allows us to invest in growth without adding interest burden during a transitional period.'; } },
+        { title: 'Repayment Plan', gen: function(d, tm) { return d.repayment || 'Repayment will be funded by online sales revenue. Our current online channel significantly underperforms our brand recognition. We project that a focused 90-day buildout will produce consistent monthly online revenue sufficient to service this loan. We have ' + tm.years + '+ years of business operations and a clear financial plan.'; } },
+      ]
+    },
+    wfsa: {
+      name: "Women's Foundation for the State of Arizona",
+      url: 'https://womengiving.org',
+      fields: [
+        { id: 'gender_impact', label: 'How does your business specifically advance gender equity? (3-4 sentences)', placeholder: 'e.g., As a queer woman-owned business in food manufacturing, we employ a majority-women team and demonstrate that women can build and sustain manufacturing businesses...', rows: 4 },
+        { id: 'community_benefit', label: 'What community does your business serve beyond customers? (2-3 sentences)', placeholder: 'e.g., The Toasted Mallow serves as a gathering point for the East Valley LGBTQ+ community...', rows: 3 },
+        { id: 'use_of_funds', label: 'How would grant funds advance gender equity and community impact?', placeholder: 'e.g., Funds would stabilize operations and preserve our team of ' + '8 positions, the majority held by women...', rows: 3 },
+      ],
+      sections: [
+        { title: 'Business Overview', gen: function(d, tm) { return 'The Toasted Mallow is Arizona\u2019s first artisan marshmallow shop, LGBTQ+- and women-owned, with ' + tm.years + '+ years of operation. We employ ' + tm.staff + ' people across two East Valley locations and ship products nationwide. We have been featured on national television and are a recognized community presence.'; } },
+        { title: 'Gender Equity Impact', gen: function(d, tm) { return d.gender_impact || 'As a queer woman who founded and built a food manufacturing business without outside funding, I represent the kind of entrepreneurship the Women\u2019s Foundation exists to support. The Toasted Mallow employs a majority-women team and our 10+ year track record demonstrates that women-led food businesses can achieve sustained growth and national brand recognition.'; } },
+        { title: 'Community Benefit', gen: function(d, tm) { return d.community_benefit || 'The Toasted Mallow functions as more than a retail shop \u2014 it is a gathering point for the East Valley LGBTQ+ community, a visible demonstration that queer businesses can build lasting brands, and a local employer that offers stable wages in a sector where women are often undercompensated.'; } },
+        { title: 'Use of Funds', gen: function(d, tm) { return d.use_of_funds || 'Grant funds would stabilize operations during a business consolidation, preserving all current employment through the transition. Funds would also support e-commerce infrastructure investment, extending the business\u2019s reach and creating revenue resilience that benefits the entire team.'; } },
+      ]
+    }
+  };
+
+  var currentGrantId = null;
+
+  function tmData() {
+    var raw = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.startsWith('tm_')) { raw[k.replace('tm_', '')] = localStorage.getItem(k); }
+    }
+    return {
+      staff: raw.staff || '\u2014',
+      revenue: raw.revenue_store || raw.revenue || '\u2014',
+      locA: raw.loc_a_name || (window.TM && TM.loc_a_name) || 'Location A',
+      locB: raw.loc_b_name || (window.TM && TM.loc_b_name) || 'Location B',
+      years: '10+',
+      founded: '2014',
+    };
+  }
+
+  function openModal(grantId) {
+    var grant = GRANTS[grantId];
+    if (!grant) return;
+    currentGrantId = grantId;
+    var tm = tmData();
+    var modal = document.getElementById('grant-modal');
+    var card = document.getElementById('grant-modal-card');
+
+    var revenueDisplay = tm.revenue !== '\u2014' ? ('$' + parseFloat(tm.revenue).toLocaleString() + '/mo') : '\u2014';
+    var savedInfo = '<div class="gd-saved-info">'
+      + '<div class="gd-saved-label">Your saved numbers</div>'
+      + '<div class="gd-saved-chips">'
+      + '<span class="gd-chip">Staff: <strong>' + tm.staff + '</strong></span>'
+      + '<span class="gd-chip">Monthly Revenue: <strong>' + revenueDisplay + '</strong></span>'
+      + '<span class="gd-chip">Location A: <strong>' + tm.locA + '</strong></span>'
+      + '<span class="gd-chip">Location B: <strong>' + tm.locB + '</strong></span>'
+      + '</div>'
+      + (tm.staff === '\u2014' ? '<div class="gd-saved-note">Tip: fill in the Numbers Panel at the top of this page and click \u201cSave my numbers\u201d to auto-fill these fields.</div>' : '')
+      + '</div>';
+
+    var fieldsHtml = grant.fields.map(function(f) {
+      var input = f.rows > 1
+        ? '<textarea class="gd-input" id="gd_' + f.id + '" rows="' + f.rows + '" placeholder="' + f.placeholder.replace(/"/g,'&quot;') + '"></textarea>'
+        : '<input class="gd-input" type="text" id="gd_' + f.id + '" placeholder="' + f.placeholder.replace(/"/g,'&quot;') + '">';
+      return '<div class="gd-field"><label class="gd-label" for="gd_' + f.id + '">' + f.label + '</label>' + input + '</div>';
+    }).join('');
+
+    card.innerHTML = '<div class="gd-header"><div><div class="gd-grant-name">' + grant.name + '</div><a class="gd-grant-url" href="' + grant.url + '" target="_blank">' + grant.url.replace('https://','') + '</a></div><button class="gd-close" onclick="grantDrafter.closeModal()">&#x2715;</button></div>'
+      + '<div class="gd-body">'
+      + savedInfo
+      + '<div class="gd-fields-section"><div class="gd-section-title">Tell me about your situation</div>' + fieldsHtml + '</div>'
+      + '<button class="gd-generate-btn" onclick="grantDrafter.generateDraft()">Generate My Draft</button>'
+      + '<div id="gd-output" class="gd-output" style="display:none;"></div>'
+      + '</div>';
+
+    modal.style.display = 'flex';
+    setTimeout(function() { modal.classList.add('gd-visible'); }, 10);
+  }
+
+  function generateDraft() {
+    var grant = GRANTS[currentGrantId];
+    if (!grant) return;
+    var tm = tmData();
+    var data = {};
+    grant.fields.forEach(function(f) {
+      var el = document.getElementById('gd_' + f.id);
+      if (el) data[f.id] = el.value.trim();
+    });
+
+    var sectionsHtml = grant.sections.map(function(s, i) {
+      var text = s.gen(data, tm);
+      return '<div class="gd-section-block">'
+        + '<div class="gd-section-header"><div class="gd-section-name">' + s.title + '</div>'
+        + '<button class="gd-copy-btn" onclick="grantDrafter.copySection(this,' + i + ')">Copy</button></div>'
+        + '<div class="gd-section-text" id="gd-sec-' + i + '">' + text + '</div>'
+        + '</div>';
+    }).join('');
+
+    var output = document.getElementById('gd-output');
+    output.innerHTML = '<div class="gd-output-header">Your Draft</div>'
+      + '<div class="gd-output-note">These are starting drafts based on your inputs and known facts about your business. Read each section, make it sound more like you, then copy and paste into the application form.</div>'
+      + sectionsHtml
+      + '<button class="gd-copy-all-btn" onclick="grantDrafter.copyAll()">Copy All Sections</button>';
+    output.style.display = 'flex';
+    output.style.flexDirection = 'column';
+    output.style.gap = '14px';
+    setTimeout(function() { output.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+  }
+
+  function copySection(btn, idx) {
+    var el = document.getElementById('gd-sec-' + idx);
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('gd-copied');
+      setTimeout(function() { btn.textContent = orig; btn.classList.remove('gd-copied'); }, 2000);
+    });
+  }
+
+  function copyAll() {
+    var grant = GRANTS[currentGrantId];
+    if (!grant) return;
+    var parts = grant.sections.map(function(s, i) {
+      var el = document.getElementById('gd-sec-' + i);
+      return '=== ' + s.title + ' ===\n' + (el ? el.textContent : '');
+    });
+    navigator.clipboard.writeText(parts.join('\n\n')).then(function() {
+      var btn = document.querySelector('.gd-copy-all-btn');
+      if (btn) { btn.textContent = 'Copied all!'; setTimeout(function() { btn.textContent = 'Copy All Sections'; }, 2000); }
+    });
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('grant-modal');
+    modal.classList.remove('gd-visible');
+    setTimeout(function() { modal.style.display = 'none'; }, 220);
+  }
+
+  return { openModal: openModal, closeModal: closeModal, generateDraft: generateDraft, copySection: copySection, copyAll: copyAll };
+})();
 </script>
 
 
