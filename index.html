@@ -1193,7 +1193,7 @@ document.getElementById('pw-input').focus();
     <a class="nav-link" href="#events">Events</a>
     <a class="nav-link" href="#free-reach">Free Reach</a>
     <a class="nav-link" href="#build-package" style="color:var(--teal);">Build My Plan</a>
-    <a class="nav-link" href="#ai-advisor">Free AI Tools</a><a class="nav-link" href="#help" style="color:var(--gold);">How I Can Help</a>
+    <a class="nav-link" href="#free-resources">Free Resources</a><a class="nav-link" href="#ai-advisor">Free AI Tools</a><a class="nav-link" href="#help" style="color:var(--gold);">How I Can Help</a>
   </div>
 </nav>
 
@@ -1419,6 +1419,7 @@ document.getElementById('pw-input').focus();
   <div class="container">
     <div class="section-label">Execution Plan</div>
     <h2 class="section-title">Your 90-Day Survival Plan</h2>
+    <div style="margin-bottom:12px;"><button onclick="tmPrintChecklist()" style="background:var(--cream-dark);border:1px solid var(--border);color:var(--brown);border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Print my action checklist</button></div>
     <p class="section-intro">Sequenced for speed. The first week is triage and narrative control. Month one is execution. Months two and three are stabilization and scale.</p>
 
     <div class="timeline">
@@ -1960,6 +1961,10 @@ document.getElementById('pw-input').focus();
     <div style="background:var(--gold);border-radius:16px;padding:28px 32px;margin-top:8px;">
       <div style="font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--brown);margin-bottom:8px;">Time-Sensitive — Act This Week</div>
       <h3 style="font-size:1.5rem;font-weight:800;color:var(--brown);margin:0 0 12px 0;">Mother's Day Is May 11. The Window Opens Today.</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button onclick="tmAddToCalendar('Last day to ship for Mother's Day','20260504','Last safe ship date for The Toasted Mallow Mother's Day orders. Promote through April 30.')" style="background:#C05A10;color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add ship deadline to calendar</button>
+            <button onclick="tmAddToCalendar('Mother's Day','20260511','The Toasted Mallow — your biggest gift holiday. Have orders fulfilled and shipped.')" style="background:var(--brown);color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;">Add Mother's Day to calendar</button>
+          </div>
       <p style="font-size:14px;color:var(--brown);line-height:1.7;margin-bottom:16px;">The 6–8 week early-gift window for Mother's Day starts now. <strong>Last safe ship date for standard delivery: approximately May 2–4.</strong> You have about four weeks of effective selling time. This is the highest-revenue food gift holiday after Christmas — artisan confectioners consistently report it as their second-largest order week of the year.</p>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px;">
@@ -5076,6 +5081,48 @@ function tmChatSend() {
 
 
 
+
+// ── Google Calendar links ─────────────────────────────────────────────────────
+function tmAddToCalendar(title, dateStr, description) {
+  // dateStr format: YYYYMMDD
+  var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(title)
+    + '&dates=' + dateStr + 'T090000/' + dateStr + 'T100000'
+    + '&details=' + encodeURIComponent(description)
+    + '&location=Gilbert%2C+AZ';
+  window.open(url, '_blank');
+}
+
+// ── Print checklist ───────────────────────────────────────────────────────────
+function tmPrintChecklist() {
+  var tasks = document.querySelectorAll('.timeline-item');
+  var lines = [];
+  tasks.forEach(function(item) {
+    var txt = item.querySelector('.timeline-item-text');
+    var chk = item.querySelector('.tm-task-check');
+    if (txt) {
+      var done = chk && chk.checked;
+      var strong = txt.querySelector('strong');
+      var title = strong ? strong.textContent : txt.textContent.substring(0, 80);
+      lines.push((done ? '[x] ' : '[ ] ') + title.trim());
+    }
+  });
+  var win = window.open('', '_blank');
+  win.document.write('<html><head><title>My Toasted Mallow Action List</title>'
+    + '<style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;color:#2c1408;}'
+    + 'h2{color:#7A3010;}li{margin:8px 0;font-size:15px;line-height:1.5;}'
+    + 'li.done{text-decoration:line-through;color:#999;}@media print{button{display:none}}'
+    + '</style></head><body>'
+    + '<h2>The Toasted Mallow — Action Checklist</h2>'
+    + '<p style="font-size:13px;color:#888;">Printed from your toolkit. Check off as you go.</p><ul>'
+    + lines.map(function(l){ return '<li' + (l.startsWith('[x]') ? ' class="done"' : '') + '>'
+      + l.replace(/^\[.\] /,'') + '</li>'; }).join('')
+    + '</ul><p style="font-size:12px;color:#aaa;margin-top:30px;">toasted mallow toolkit &mdash; wanderingwithpride.github.io/toasted-mallow-resources/</p>'
+    + '<button onclick="window.print()" style="background:#7A3010;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:14px;margin-top:10px;">Print this list</button>'
+    + '</body></html>');
+  win.document.close();
+}
+
 // ── Guided walkthrough ────────────────────────────────────────────────────────
 function tmStartGuide() {
   // Open chat and send a guide-mode opener
@@ -5492,6 +5539,181 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </section>
 
+
+
+<!-- FREE RESOURCES & TOOLS -->
+<section id="free-resources" style="background:var(--cream);padding:60px 40px;">
+  <div class="container">
+    <div class="section-label">Zero Cost</div>
+    <h2 class="section-title">Free Tools and Local Resources</h2>
+    <p class="section-intro">Every item here is free. Most people running a business like yours don't know half of these exist. The CATALYST Gilbert entry alone is worth reading — it is a free professional content studio five minutes from your shop.</p>
+
+    <!-- LOCAL AZ RESOURCES -->
+    <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.2rem;margin:32px 0 16px;">Free Local Support — Phoenix/Gilbert Area</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:32px;">
+
+      <div style="background:white;border-radius:12px;padding:20px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">Free Mentoring</div>
+        <h4 style="color:var(--brown);margin:0 0 8px;">SCORE Greater Phoenix</h4>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">Volunteer mentors — retired executives and business owners — meet with you one-on-one at no charge. Virtual or in-person. 48-hour response time. Strong match record for food and retail businesses.</p>
+        <a href="https://www.score.org/greaterphoenix" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);text-decoration:none;">score.org/greaterphoenix &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:20px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">Free Consulting</div>
+        <h4 style="color:var(--brown);margin:0 0 8px;">Arizona SBDC — Maricopa</h4>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">State-funded small business development center. Free one-on-one advising on business planning, cash flow, grant applications, and e-commerce. No pitch, no upsell — it is a public service.</p>
+        <a href="https://www.maricopa-sbdc.com/" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);text-decoration:none;">maricopa-sbdc.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:20px;border:2px solid var(--gold);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px;">Free Studio Space — Gilbert</div>
+        <h4 style="color:var(--brown);margin:0 0 8px;">The CATALYST — Gilbert Business Resource Center</h4>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">This one is worth calling about. Free workspace with a professional content creation suite — lighting, audio, video equipment — available to Gilbert business owners. You could film a month of TikTok content here in one afternoon at no cost.</p>
+        <a href="https://gilbertaz.com/catalystgilbert" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);text-decoration:none;">gilbertaz.com/catalystgilbert &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:20px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">LGBTQ+ Business Network</div>
+        <h4 style="color:var(--brown);margin:0 0 8px;">Greater Phoenix Equality Chamber of Commerce</h4>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:12px;">LGBTQ+ business network for Phoenix metro. Networking, education, visibility. Worth connecting with as you expand — and they can amplify your grant applications and press outreach.</p>
+        <a href="https://www.equalitychamber.org/" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);text-decoration:none;">equalitychamber.org &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- FREE TOOLS -->
+    <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.2rem;margin:0 0 16px;">Free Tools for Your Business</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:32px;">
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Buffer — Social Scheduling</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Schedule TikTok, Instagram, and Facebook posts in one place. Free for up to 3 channels, 10 queued posts each.</p>
+        <a href="https://buffer.com" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">buffer.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">CapCut — TikTok Editing</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free video editor built for TikTok. Auto-captions, templates, trending sounds. Works in browser, no download needed.</p>
+        <a href="https://www.capcut.com" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">capcut.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Canva — Graphics & Marketing</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free templates for TikTok, Instagram, gift box labels, Mother's Day promotions. Thousands of food brand templates.</p>
+        <a href="https://www.canva.com/templates/s/food/" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">canva.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Klaviyo — Email Marketing</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free up to 250 contacts and 500 emails/month. Best-in-class for e-commerce. Integrates directly with Square. Better than Mailchimp for product-based businesses.</p>
+        <a href="https://www.klaviyo.com" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">klaviyo.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Wave — Accounting</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free cloud accounting, invoicing, and financial reports. No monthly fee ever. Good alternative to QuickBooks if cost is a factor.</p>
+        <a href="https://www.waveapps.com" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">waveapps.com &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Hello Alice — Grant Matching</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free account gives you personalized grant recommendations, a community of 1M+ entrepreneurs, and rotating corporate grant opportunities you won't find elsewhere.</p>
+        <a href="https://helloalice.com" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">helloalice.com &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- APPLY DIRECTLY -->
+    <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.2rem;margin:0 0 16px;">Apply to These Directly — All Free to Apply</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Goldbelly — National Food Marketplace</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">No Arizona marshmallow brand is on Goldbelly. You would be the first. Connects artisan food makers to customers who specifically want to buy from small producers. Application is a 10-minute form.</p>
+        <a href="https://sellers.goldbelly.com/apply-to-sell" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">Apply to Goldbelly &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">TikTok Shop — Sell via Your Videos</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">24–48 hour approval. 6% fee. With 270K followers, this could generate meaningful revenue immediately. Every video you already post becomes a storefront. Free to apply and set up.</p>
+        <a href="https://seller-us.tiktok.com/" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">Apply to TikTok Shop &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">Faire — Wholesale to Boutiques</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">100,000+ independent retailers browse Faire for products like yours. Create a free seller account, list your marshmallows as wholesale SKUs. Faire handles payment and net-60 terms. 15% commission on new retailer orders.</p>
+        <a href="https://www.faire.com/brand/signup" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">Apply to Faire &rarr;</a>
+      </div>
+
+      <div style="background:white;border-radius:10px;padding:16px;border:1px solid var(--border);">
+        <h4 style="font-size:0.9rem;color:var(--brown);margin:0 0 6px;">IFundWomen — LGBTQ+ Grant Community</h4>
+        <p style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:8px;">Free universal grant application. 550,000+ member community. Rotating corporate-sponsored grants for LGBTQ+/women-owned businesses. One application, ongoing matches.</p>
+        <a href="https://www.ifundwomen.com/" target="_blank" style="font-size:12px;font-weight:700;color:var(--teal);">ifundwomen.com &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRE-DRAFTED EMAILS -->
+<section id="email-templates" style="background:var(--cream-dark);padding:60px 40px;">
+  <div class="container">
+    <div class="section-label">Ready to Send</div>
+    <h2 class="section-title">Email Templates — Copy, Edit, Send</h2>
+    <p class="section-intro">These are pre-drafted for your specific situation. Edit the brackets, adjust the tone to match how you talk, and send. The hardest part is usually starting — this removes that barrier.</p>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+
+      <div style="background:white;border-radius:12px;padding:24px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#C05A10;margin-bottom:8px;">Landlord Negotiation</div>
+        <h4 style="color:var(--brown);margin:0 0 12px;">Subject: Lease discussion — The Toasted Mallow</h4>
+        <div class="tm-gen-output" id="email-landlord" style="white-space:pre-wrap;">Hi [Landlord name],
+
+I wanted to reach out directly about our lease at [address]. As you know, we've been at this location since [year] and we've worked hard to be good tenants.
+
+We're going through a transition right now — restructuring from two locations to one as part of a planned shift to e-commerce — and I wanted to have an honest conversation about the next few months before things become more complicated.
+
+I'm not asking to break the lease. What I'm asking is whether there's flexibility on timing or payment structure during the transition. Options that would help us: a 30-60 day deferral on [month] rent, or a temporary rent reduction while we complete the consolidation.
+
+I'd rather have this conversation now, openly, than wait until we're in a harder position. You know us — we've maintained the space well and paid on time. I'd like to keep that relationship intact.
+
+Would you be open to a call this week?
+
+Thank you,
+Tricia Arce
+The Toasted Mallow
+[phone]</div>
+        <button class="tm-copy-btn" style="margin-top:10px;" onclick="tmCopyText('email-landlord')">Copy this email</button>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:24px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:8px;">Goldbelly Application Cover Note</div>
+        <h4 style="color:var(--brown);margin:0 0 12px;">Subject: The Toasted Mallow — Application to Sell on Goldbelly</h4>
+        <div class="tm-gen-output" id="email-goldbelly" style="white-space:pre-wrap;">Hi Goldbelly team,
+
+I'm submitting The Toasted Mallow for consideration as a seller on your platform.
+
+We're an LGBTQ+- and women-owned artisan marshmallow shop based in Gilbert, Arizona, founded in 2014. We make handcrafted flavored marshmallows, s'mores bars, and hot cocoa pairings. We have been shipping nationally through our Square online store and currently have 270,000 followers on TikTok.
+
+We've been featured on Arizona Highways TV (Arizona PBS), CBS 5, and FOX 10 Phoenix. We have 689 Yelp reviews at 4.7 stars.
+
+I checked your platform and there is no Arizona marshmallow brand currently listed. We think there is an audience for what we make — the product ships well and has a strong regional identity that translates nationally.
+
+I've attached [photos / product list]. Happy to send samples.
+
+Thank you for your time.
+
+Tricia Arce
+The Toasted Mallow
+thetoastedmallow.com
+[phone]</div>
+        <button class="tm-copy-btn" style="margin-top:10px;" onclick="tmCopyText('email-goldbelly')">Copy this email</button>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- FREE AI ADVISOR -->
 <section id="ai-advisor">

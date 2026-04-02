@@ -34,3 +34,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 04:45 | Add explicit privacy statement, share-this-toolkit section, strengthen free offe
   - 2026-04-02 04:50 | Add floating Gemini AI chat widget — pre-loaded with full business context
   - 2026-04-02 04:51 | Remove hardcoded API key — proxy routing pending
+  - 2026-04-02 04:53 | Secure API key via Cloudflare Worker proxy, add voice input, add guided walkthro
