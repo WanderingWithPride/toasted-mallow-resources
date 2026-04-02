@@ -1377,7 +1377,7 @@ document.getElementById('pw-input').focus();
         <div class="tm-field"><label>Your own pay (if any)</label><input id="tmf_owner_pay" type="number" min="0" placeholder="0"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Product Costs</div>
-        <div class="tm-field"><label>Ingredients / <span class="tm-tip" data-tip="Cost of Goods Sold — the direct cost of making what you sell (ingredients, packaging inserts). Does NOT include rent or labor.">COGS</span> ($)</label><input id="tmf_cogs_dollar" type="number" min="0" placeholder="3500"></div>
+        <div class="tm-field"><label><span class="tm-tip" data-tip="The direct cost to make what you sell — sugar, gelatin, flavorings, fillings. Does NOT include packaging, rent, or labor.">Monthly ingredient costs</span> ($)</label><input id="tmf_cogs_dollar" type="number" min="0" placeholder="3500"></div>
         <div class="tm-field"><label>Packaging materials</label><input id="tmf_packaging" type="number" min="0" placeholder="400"></div>
         <div class="tm-field"><label>Shipping supplies</label><input id="tmf_shipping_supplies" type="number" min="0" placeholder="200"></div>
 
@@ -3890,7 +3890,7 @@ document.getElementById('pw-input').focus();
       <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:8px;color:var(--brown);">Key Assumptions (All Scenarios)</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px;">
         <div>• Post-consolidation fixed costs: <strong>$12,200/mo</strong> (rent + labor + utilities)</div>
-        <div>• COGS: <strong>~40%</strong> of revenue (marshmallows, better margin than cupcakes)</div>
+        <div>• Ingredient costs: <strong>~40%</strong> of revenue (marshmallows, better margin than cupcakes)</div>
         <div>• In-store milkshake baseline: <strong>~$8,000/mo</strong> (one location, 4.7★ / 689 reviews)</div>
         <div>• TikTok Shop, Goldbelly, subscriptions all starting from zero</div>
         <div>• Breakeven: <strong>~$25,000–$35,000/mo</strong> (range reflects actual AZ kitchen lease + labor variability — verify with your real numbers)</div>
@@ -3990,7 +3990,7 @@ document.getElementById('pw-input').focus();
           <div style="font-size:13px;opacity:0.8;margin-bottom:12px;">Breakeven math:</div>
           <div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:16px;font-size:14px;line-height:2;">
             <div>Model fixed costs: <strong>$12,200/mo</strong></div>
-            <div>COGS: <strong>40% of revenue</strong></div>
+            <div>Ingredient costs: <strong>40% of revenue</strong></div>
             <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:8px;margin-top:4px;">Breakeven range: <strong style="color:var(--gold-light);font-size:16px;">~$25K–$35K/mo</strong></div>
             <div style="font-size:12px;opacity:0.75;line-height:1.5;margin-top:4px;">Range reflects AZ lease + labor variability. Run this against your actual fixed cost number.</div>
           </div>
@@ -6555,7 +6555,7 @@ MATH RULES (critical — never violate):
 - When numbers are given, use them exactly. Do not recompute — the pre-computed values in the context are correct.
 - Never show arithmetic that contradicts the numbers provided. If the context says net is -$11,650, that is the net. Do not show a different number.
 - "New costs after consolidation" = total_costs minus savings_consolidate. This is already computed in the context — use it directly.
-- If COGS+packaging is above 50% of revenue, that is the most urgent problem, more urgent than rent. Say so first and clearly.
+- If ingredient & supply costs are above 50% of revenue, that is the most urgent problem, more urgent than rent. Say so first and clearly. Do not use the term "COGS" — say "ingredient costs" or "the cost to make your product."
 - When you give a "after consolidation" projection, verify: revenue minus new costs = the net you state. Never say a loss is a surplus or vice versa.`;
 
 var TM_GEMINI_PROXY = 'https://tm-ai.michael-eisinger.workers.dev';
@@ -6948,7 +6948,7 @@ function tmRunCostAnalysis(autoRun) {
   var labor_pct_str = rev > 0 ? Math.round(payroll/rev*100)+'%' : 'n/a';
   var net_after_consolidate = net + savings_consolidate;
   window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo (that is a $'+Math.abs(net)+'/mo '+(net<0?'loss':'surplus')+'). Occupancy: $'+total_occupancy+'/mo ('+occ_pct_str+' of revenue). Labor: $'+payroll+'/mo ('+labor_pct_str+' of revenue)'+(payroll2>0?' — Location A: $'+payroll1+', Location B: $'+payroll2:'')+'.'
-    +' COGS+packaging: $'+total_cogs+'/mo ('+cogs_pct_str+' of revenue — IMPORTANT: healthy range is 25-35%; above 50% is a production cost crisis, not a rent problem).'
+    +' Ingredient & supply costs (ingredients + packaging): $'+total_cogs+'/mo ('+cogs_pct_str+' of revenue — IMPORTANT: healthy range is 25-35%; above 50% is a production cost crisis, not a rent problem).'
     +' Overhead: $'+total_overhead+'/mo.'
     +' If she consolidates to one location: saves $'+savings_consolidate+'/mo (rent+util+staff for Location B), new total costs would be $'+(total_costs-savings_consolidate)+'/mo, new monthly net would be $'+net_after_consolidate+'/mo (still a '+(net_after_consolidate<0?'LOSS of $'+Math.abs(net_after_consolidate):'SURPLUS of $'+net_after_consolidate)+').'
     + cashCtx;
