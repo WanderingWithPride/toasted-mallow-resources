@@ -27,3 +27,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 03:25 | Add merch expansion section + nav link: Mallow Fam POD plan, 6 new product ideas
   - 2026-04-02 03:34 | Add product photography audit finding with 5-shot session guide
   - 2026-04-02 03:47 | Update Founders First grant: pre-register now, correct eligibility, fix URL to /
+  - 2026-04-02 04:16 | Fix contradictions, humanize photography + TV language, add consolidation calcul
