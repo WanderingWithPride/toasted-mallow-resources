@@ -223,13 +223,15 @@
     border-top: 1px solid var(--border);
   }
   .option-meta-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0,45%) minmax(0,55%);
+    gap: 6px;
     font-size: 12px;
     margin-bottom: 4px;
+    align-items: baseline;
   }
-  .option-meta-row span:first-child { color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .option-meta-row span:last-child { color: var(--text); font-weight: 500; }
+  .option-meta-row span:first-child { color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4; }
+  .option-meta-row span:last-child { color: var(--text); font-weight: 500; line-height: 1.4; }
 
   .consolidation-note {
     background: var(--cream-dark);
@@ -900,7 +902,8 @@ function tmSetData(updates) {
 }
 function tmMigrateFromLegacy() {
   var allKeys = ['rent','revenue','aov','cogs_pct','staff','followers','email_list',
-    'revenue_store','revenue_online','cash','rent1','rent2','util1','util2','payroll','owner_pay',
+    'revenue_store','revenue_online','cash','rent1','rent2','util1','util2',
+    'payroll','payroll1','payroll2','staff1','staff2','owner_pay',
     'cogs_dollar','packaging','shipping_supplies','pos_fees','insurance','software','marketing',
     'debt','other_fixed','batches_day','units_batch','prod_days','waste_pct','cost_batch','units_sold_week'];
   var unified = tmGetData();
@@ -1325,9 +1328,13 @@ document.getElementById('pw-input').focus();
     <span id="tm-panel-arrow">Click to enter your numbers</span>
   </div>
   <div id="tm-numbers-body">
-    <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 16px;margin-bottom:4px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Your privacy</div>
-      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">The numbers you enter here are stored <strong style="color:white;">only in your browser</strong> using localStorage — never sent to me or any third party. This page loads Google Fonts (a standard IP-only request to Google). The AI chat routes through a proxy I control to Groq (Llama 3.3) — your messages go to Groq for processing but no history is kept on my end. On a shared device, use incognito mode. Clearing browser data removes all saved numbers. <button onclick="tmExportData()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin-left:4px;">Export my data</button></p>
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;margin-bottom:4px;display:flex;gap:12px;align-items:flex-start;">
+      <div style="font-size:18px;opacity:0.5;flex-shrink:0;line-height:1.4;">&#128274;</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;">Your numbers stay on your device</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:12px;line-height:1.55;">Stored in browser localStorage only — never sent anywhere. The AI chat routes to Groq (Llama 3.3) via a proxy; no history is kept on my end. On a shared computer, use incognito.</div>
+        <button onclick="tmExportData()" style="margin-top:7px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;">Export my data</button>
+      </div>
     </div>
     <!-- TAB SWITCHER -->
     <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:8px;">
@@ -1357,8 +1364,10 @@ document.getElementById('pw-input').focus();
         <div class="tm-field"><label>Utilities — Location 2</label><input id="tmf_util2" type="number" min="0" placeholder="380"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Labor</div>
-        <div class="tm-field"><label>Total payroll (all staff)</label><input id="tmf_payroll" type="number" min="0" placeholder="7000"></div>
-        <div class="tm-field"><label>Staff count</label><input id="tmf_staff" type="number" min="0" placeholder="4"></div>
+        <div class="tm-field"><label>Payroll — Location 1 (keep)</label><input id="tmf_payroll1" type="number" min="0" placeholder="4000"></div>
+        <div class="tm-field"><label>Payroll — Location 2 (close?)</label><input id="tmf_payroll2" type="number" min="0" placeholder="3000"></div>
+        <div class="tm-field"><label>Staff count — Location 1</label><input id="tmf_staff1" type="number" min="0" placeholder="2"></div>
+        <div class="tm-field"><label>Staff count — Location 2</label><input id="tmf_staff2" type="number" min="0" placeholder="2"></div>
         <div class="tm-field"><label>Your own pay (if any)</label><input id="tmf_owner_pay" type="number" min="0" placeholder="0"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Product Costs</div>
@@ -6612,7 +6621,7 @@ function tmChatSend() {
 
 // ── Extended numbers panel ────────────────────────────────────────────────────
 var TM_COST_FIELDS = ['revenue_store','revenue_online','aov','followers','email_list','cash',
-  'rent1','rent2','util1','util2','payroll','staff','owner_pay',
+  'rent1','rent2','util1','util2','payroll1','payroll2','staff1','staff2','owner_pay',
   'cogs_dollar','packaging','shipping_supplies',
   'pos_fees','insurance','software','marketing','debt','other_fixed',
   'batches_day','units_batch','prod_days','waste_pct','cost_batch','units_sold_week'];
@@ -6637,6 +6646,8 @@ function tmSaveAll() {
   if (rev1||rev2) { updates.revenue = String(rev1+rev2); TM.revenue = updates.revenue; localStorage.setItem('tm_revenue', TM.revenue); }
   var r1 = parseFloat(TM.rent1||0);
   if (r1) { updates.rent = String(r1); TM.rent = updates.rent; localStorage.setItem('tm_rent', String(r1)); }
+  var s1 = parseFloat(TM.staff1||0), s2 = parseFloat(TM.staff2||0);
+  if (s1||s2) { updates.staff = String(s1+s2); TM.staff = updates.staff; localStorage.setItem('tm_staff', String(s1+s2)); }
   // Write to unified key + fire event
   if (Object.keys(updates).length) { tmSetData(updates); }
   var note = document.getElementById('tm-saved-note');
@@ -6660,7 +6671,9 @@ function tmRunCostAnalysis() {
   var rent2 = parseFloat(TM.rent2||0);
   var util1 = parseFloat(TM.util1||0);
   var util2 = parseFloat(TM.util2||0);
-  var payroll = parseFloat(TM.payroll||0);
+  var payroll1 = parseFloat(TM.payroll1||0);
+  var payroll2 = parseFloat(TM.payroll2||0);
+  var payroll = (payroll1+payroll2) || parseFloat(TM.payroll||0);
   var cogs = parseFloat(TM.cogs_dollar||0);
   var packaging = parseFloat(TM.packaging||0);
   var pos = parseFloat(TM.pos_fees||0);
@@ -6730,15 +6743,21 @@ function tmRunCostAnalysis() {
   }
 
   // Build recommendations
-  var savings_consolidate = rent2+util2;
+  var savings_consolidate = rent2+util2+payroll2;
 
-  if (rent2 > 0) {
+  if (rent2 > 0 || payroll2 > 0) {
     var occ_pct = rev > 0 ? Math.round(total_occupancy/rev*100) : 0;
+    var consol_detail = 'Closing Location 2 removes $'+savings_consolidate.toLocaleString()+'/mo immediately';
+    var parts = [];
+    if (rent2+util2 > 0) parts.push('$'+(rent2+util2).toLocaleString()+' in rent/utilities');
+    if (payroll2 > 0) parts.push('$'+payroll2.toLocaleString()+' in staff costs');
+    if (parts.length) consol_detail += ' (' + parts.join(' + ') + ')';
+    consol_detail += '. Occupancy drops from '+(occ_pct)+'% of revenue to '+(rev > 0 ? Math.round(rent1/rev*100) : 0)+'%. That single move'+( net < 0 && savings_consolidate > Math.abs(net) ? ' alone would make you cash-flow positive.' : ' is the largest single lever available.');
     recs.push({
       title: 'Consolidate to one location',
       saving: '$'+savings_consolidate.toLocaleString()+'/mo',
       saving_num: savings_consolidate,
-      detail: 'Closing Location 2 removes $'+savings_consolidate.toLocaleString()+'/mo in fixed overhead immediately. Occupancy drops from '+(occ_pct)+'% of revenue to '+(rev > 0 ? Math.round(rent1/rev*100) : 0)+'%. That single move'+( net < 0 && savings_consolidate > Math.abs(net) ? ' alone would make you cash-flow positive.' : ' is the largest single lever available.')
+      detail: consol_detail
     });
   }
   if (marketing < 100 && rev > 5000) {
@@ -6796,7 +6815,7 @@ function tmRunCostAnalysis() {
   html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:14px;">';
   if (rev) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:white;">$'+rev.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Revenue</div></div>';
   if (total_costs) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:white;">$'+total_costs.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Total Costs</div></div>';
-  if (rev||total_costs) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:'+netColor+';">'+(net>=0?'+':'')+'$'+Math.abs(net).toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Monthly Net</div></div>';
+  if (rev||total_costs) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:'+netColor+';">'+(net>=0?'+':'-')+'$'+Math.abs(net).toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Monthly Net</div></div>';
   if (savings_consolidate) html += '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.1rem;font-weight:800;color:#4CAF50;">+$'+savings_consolidate.toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;text-transform:uppercase;">Save if Consolidate</div></div>';
   html += '</div>';
 
@@ -6823,7 +6842,7 @@ function tmRunCostAnalysis() {
   container.appendChild(output);
 
   // Store analysis context for AI
-  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo. Occupancy: $'+total_occupancy+'/mo. Labor: $'+payroll+'/mo. COGS+packaging: $'+total_cogs+'/mo. Overhead: $'+total_overhead+'/mo. Consolidation would save: $'+savings_consolidate+'/mo.';
+  window.TM_COST_CONTEXT = 'Revenue: $'+rev+'/mo. Total costs: $'+total_costs+'/mo. Net: $'+net+'/mo. Occupancy: $'+total_occupancy+'/mo. Labor: $'+payroll+'/mo'+(payroll2>0?' (Loc1: $'+payroll1+', Loc2: $'+payroll2+')':'')+'. COGS+packaging: $'+total_cogs+'/mo. Overhead: $'+total_overhead+'/mo. Consolidation (rent+util+staff) would save: $'+savings_consolidate+'/mo.';
 }
 
 function tmAskAIAboutCosts() {
@@ -7055,7 +7074,7 @@ function tmStartGuide() {
   TM_CHAT_HISTORY.push({role:'user', parts:[{text: "I just opened this page and I'm not sure where to start. Guide me — ask me what I need to know to point me in the right direction. Keep it short, ask one question at a time."}]});
 
   var body = {
-    system_instruction: {parts:[{text: TM_CHAT_SYSTEM + "\n\nSPECIAL MODE: The user just opened the page and feels overwhelmed. Your job is to guide them to the right section. Ask ONE question first: what is most pressing right now — cash flow survival, getting grants, improving the website, planning the pivot, or something else? Based on their answer, tell them exactly which section to open first and what to do there. Be warm, direct, and brief. Max 3 sentences per message."}]},
+    system_instruction: {parts:[{text: TM_CHAT_SYSTEM + "\n\nSPECIAL MODE: The user just opened this page and needs guidance. They may be in acute crisis — unable to make payroll, unsure whether to close one or both locations, lights-on emergency, not an abstract strategy question. Start from that reality. Ask ONE question: 'What's the most urgent thing right now — this week, this month? Are you trying to survive the next 30 days, or is there some breathing room and you're working on the longer-term plan?' Based on their answer, point them to one specific section and tell them exactly what to do there first. Be human and direct. Max 3 sentences per message."}]},
     contents: TM_CHAT_HISTORY,
     generationConfig: {temperature: 0.7, maxOutputTokens: 250}
   };
@@ -7556,7 +7575,7 @@ var grantDrafter = (function() {
     var locAFallback = (window.TM && TM.loc_a_name) ? TM.loc_a_name : null;
     var locBFallback = (window.TM && TM.loc_b_name) ? TM.loc_b_name : null;
     return {
-      staff:   firstSet(raw.staff)   !== null ? firstSet(raw.staff)   : '\u2014',
+      staff:   (raw.staff1||raw.staff2) ? String((parseFloat(raw.staff1||0)+parseFloat(raw.staff2||0))) : (firstSet(raw.staff) !== null ? firstSet(raw.staff) : '\u2014'),
       revenue: firstSet(raw.revenue_store, raw.revenue),
       locA:    firstSet(raw.loc_a_name, locAFallback) || 'Location A',
       locB:    firstSet(raw.loc_b_name, locBFallback) || 'Location B',
