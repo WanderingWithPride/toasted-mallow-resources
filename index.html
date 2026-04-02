@@ -6795,16 +6795,16 @@ function tmRunCostAnalysis(autoRun) {
     }
   }
 
-  // COGS-based signal even without production field data
+  // Ingredient cost signal even without production field data
   var rev_online = parseFloat(TM.revenue_online||0);
   var rev_store = parseFloat(TM.revenue_store||0);
   if (cogs > 0 && !batches_day) {
-    // No production data — fire a general signal based on COGS alone
+    // No production data — fire a general signal based on ingredient costs alone
     var cogs_pct_rev = rev > 0 ? Math.round((cogs+packaging)/rev*100) : null;
     if (cogs_pct_rev !== null && cogs_pct_rev > 30) {
       recs.push({
         title: 'High ingredient costs — production volume worth examining',
-        saving: cogs_pct_rev + '% of revenue in COGS',
+        saving: cogs_pct_rev + '% of revenue in ingredient costs',
         saving_num: 0,
         detail: 'Ingredients + packaging are eating ' + cogs_pct_rev + '% of your revenue ($' + (cogs+packaging).toLocaleString() + '/mo). If you are producing more than you sell — which is common when in-store foot traffic drops — cutting batch frequency on slow days directly reduces this cost. Online orders (Goldbelly, subscriptions, TikTok Shop) can also absorb existing production without adding overhead. Fill in the Production fields above to get a specific batch-reduction number.'
       });
@@ -6871,10 +6871,10 @@ function tmRunCostAnalysis(autoRun) {
     var cogs_pct = Math.round(cogs/rev*100);
     if (cogs_pct > 40) {
       recs.push({
-        title: 'COGS is elevated — review ingredient sourcing',
+        title: 'Ingredient costs are too high — review sourcing',
         saving: 'Variable',
         saving_num: 0,
-        detail: 'Your ingredient cost is '+cogs_pct+'% of revenue. Target range for artisan food is 25-35%. Options: bulk purchasing for core ingredients, dropping underperforming SKUs (cupcakes typically have higher COGS than marshmallows), or adjusting retail pricing on high-cost items.'
+        detail: 'Your ingredient cost is '+cogs_pct+'% of revenue. Healthy range for artisan food is 25-35%. Options: bulk purchasing for core ingredients, dropping underperforming items (cupcakes typically cost more to make than marshmallows), or adjusting retail pricing on high-cost items.'
       });
     }
   }
