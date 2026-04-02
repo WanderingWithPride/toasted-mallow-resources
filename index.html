@@ -860,20 +860,74 @@ body { padding-bottom: 52px; }
 .ai-open-claude { background:#C05A10; }
 .ai-open-chatgpt { background:#10a37f; }
 .ai-open-perplexity { background:#5b5ef4; }
+/* Sticky panel button */
+#tm-sticky-btn { display:none;position:fixed;bottom:24px;right:20px;z-index:999;align-items:center;gap:8px;background:#3A1A08;color:var(--gold);border:2px solid var(--gold);border-radius:100px;padding:10px 18px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.35);transition:transform 0.15s; }
+#tm-sticky-btn:hover { transform:scale(1.04); }
+/* Jargon tooltips */
+.tm-tip { border-bottom:1px dotted var(--gold);cursor:help;position:relative; }
+.tm-tip:hover::after { content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1a0a02;color:rgba(255,255,255,0.9);font-size:12px;line-height:1.5;padding:8px 12px;border-radius:8px;width:220px;white-space:normal;z-index:99;border:1px solid rgba(255,200,100,0.3);pointer-events:none;font-weight:400; }
+.tm-tip:hover::before { content:'';position:absolute;bottom:calc(100% + 1px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1a0a02;z-index:100; }
+/* Prefill button */
+.tm-prefill-btn { background:rgba(139,90,43,0.1);border:1px solid var(--gold);color:var(--brown);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif; }
+.tm-prefill-btn:hover { background:rgba(139,90,43,0.2); }
+/* AI Advisor button */
+.tm-ai-btn { display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(139,90,43,0.35);color:var(--text-mid);border-radius:6px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.3px;margin-top:20px; }
+.tm-ai-btn:hover { border-color:var(--brown);color:var(--brown); }
+.tm-ai-toast { position:fixed;bottom:80px;right:20px;background:#1a0a02;color:var(--gold);font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;z-index:9999;pointer-events:none;opacity:0;transition:opacity 0.2s; }
+.tm-ai-toast.show { opacity:1; }
 </style>
 
 <!-- TOOLKIT GLOBAL JS -->
 <script>
 // ── Global state ──────────────────────────────────────────────────────────────
 var TM = {};
+var TM_DATA_KEY = 'toasted_mallow_data';
 var TM_FIELDS = ['rent','revenue','aov','cogs_pct','staff','followers','email_list'];
 var TM_LABELS = {rent:'Monthly rent (one location)',revenue:'Monthly revenue (all)',aov:'Avg order value (online)',cogs_pct:'Product cost % of price',staff:'Staff count',followers:'TikTok followers',email_list:'Email list size'};
 var TM_PREFIXES = {rent:'$',revenue:'$',aov:'$',cogs_pct:'',staff:'',followers:'',email_list:''};
 var TM_SUFFIXES = {cogs_pct:'%'};
 
-function tmLoad() {
-  TM_FIELDS.forEach(function(k) {
+// ── Unified data model ────────────────────────────────────────────────────────
+function tmGetData() {
+  try { return JSON.parse(localStorage.getItem(TM_DATA_KEY) || '{}'); } catch(e) { return {}; }
+}
+function tmSetData(updates) {
+  var current = tmGetData();
+  var merged = Object.assign({}, current, updates);
+  localStorage.setItem(TM_DATA_KEY, JSON.stringify(merged));
+  Object.assign(TM, merged);
+  window.dispatchEvent(new CustomEvent('tm:datachange', { detail: merged }));
+}
+function tmMigrateFromLegacy() {
+  var allKeys = ['rent','revenue','aov','cogs_pct','staff','followers','email_list',
+    'revenue_store','revenue_online','cash','rent1','rent2','util1','util2','payroll','owner_pay',
+    'cogs_dollar','packaging','shipping_supplies','pos_fees','insurance','software','marketing',
+    'debt','other_fixed','batches_day','units_batch','prod_days','waste_pct','cost_batch','units_sold_week'];
+  var unified = tmGetData();
+  var any = false;
+  allKeys.forEach(function(k) {
     var v = localStorage.getItem('tm_'+k);
+    if (v && !unified[k]) { unified[k] = v; any = true; }
+  });
+  if (any) { localStorage.setItem(TM_DATA_KEY, JSON.stringify(unified)); }
+  Object.assign(TM, unified);
+}
+// Populate consolidation calculator from Numbers Panel values
+function tmPrefillConsol() {
+  var d = tmGetData();
+  var map = { 'loc-a-rent': d.rent1, 'loc-a-utilities': d.util1, 'loc-b-rent': d.rent2, 'loc-b-utilities': d.util2 };
+  var filled = 0;
+  Object.keys(map).forEach(function(id) {
+    if (map[id]) { var el = document.getElementById(id); if (el && !el.value) { el.value = map[id]; filled++; } }
+  });
+  if (filled > 0) { tmSaveConsolInputs(); var btn = document.getElementById('consol-prefill-btn'); if (btn) { var orig = btn.textContent; btn.textContent = filled + ' fields filled'; setTimeout(function(){ btn.textContent = orig; }, 2000); } }
+  else { var btn = document.getElementById('consol-prefill-btn'); if (btn) { var orig = btn.textContent; btn.textContent = 'No data in Numbers Panel yet'; setTimeout(function(){ btn.textContent = orig; }, 2000); } }
+}
+
+function tmLoad() {
+  var unified = tmGetData();
+  TM_FIELDS.forEach(function(k) {
+    var v = unified[k] || localStorage.getItem('tm_'+k);
     if (v) TM[k] = v;
   });
 }
@@ -1071,14 +1125,136 @@ function tmCalcSub() {
   document.getElementById('sub-results').style.display = 'block';
 }
 
+// ── Sticky Numbers Panel button ───────────────────────────────────────────────
+function tmInitStickyPanel() {
+  var panel = document.getElementById('tm-numbers-panel');
+  var btn = document.getElementById('tm-sticky-btn');
+  if (!panel || !btn) return;
+  var observer = new IntersectionObserver(function(entries) {
+    btn.style.display = entries[0].isIntersecting ? 'none' : 'flex';
+  }, { threshold: 0 });
+  observer.observe(panel);
+}
+function tmStickyOpen() {
+  var panel = document.getElementById('tm-numbers-panel');
+  if (panel) { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  setTimeout(function() {
+    var body = document.getElementById('tm-numbers-body');
+    if (body && !body.classList.contains('open')) { tmTogglePanel(); }
+  }, 400);
+}
+
+// ── Export data ───────────────────────────────────────────────────────────────
+function tmExportData() {
+  var data = tmGetData();
+  var json = JSON.stringify(data, null, 2);
+  var blob = new Blob([json], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = 'toasted-mallow-data.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── One Number to Watch banner ─────────────────────────────────────────────────
+function tmUpdateOneNumber() {
+  var banner = document.getElementById('tm-one-number');
+  var textEl = document.getElementById('tm-one-number-text');
+  var subEl = document.getElementById('tm-one-number-sub');
+  if (!banner || !textEl || !subEl) return;
+  var d = tmGetData();
+  var rev = parseFloat(d.revenue_store||0) + parseFloat(d.revenue_online||0);
+  var cash = parseFloat(d.cash||0);
+  var rent = parseFloat(d.rent1||0) + parseFloat(d.rent2||0);
+  var payroll = parseFloat(d.payroll||0);
+  // Need at least revenue or cash to show something meaningful
+  if (!rev && !cash) { banner.style.display='none'; return; }
+  banner.style.display='block';
+  if (cash && rev && (rent||payroll)) {
+    // Estimate fixed costs: rent + payroll + 20% buffer for other costs
+    var fixedEst = rent + payroll;
+    var monthsRunway = fixedEst > 0 ? (cash / Math.max(fixedEst - rev, 1)) : 0;
+    var gap = fixedEst - rev;
+    if (gap > 0) {
+      textEl.textContent = 'You need $' + Math.round(gap).toLocaleString() + '/month more to cover fixed costs';
+      subEl.textContent = 'Current revenue $' + Math.round(rev).toLocaleString() + ' vs. estimated fixed costs $' + Math.round(fixedEst).toLocaleString() + '. At current burn, approximately ' + (cash > 0 ? Math.round(cash/Math.max(gap,1)) + ' months of runway remain.' : 'track cash on hand in the Numbers Panel to see runway.');
+    } else {
+      var surplus = Math.abs(gap);
+      textEl.textContent = 'Revenue is covering fixed costs — $' + Math.round(surplus).toLocaleString() + '/month surplus';
+      subEl.textContent = 'The business is above break-even at current revenue. Focus on building cash reserves and reducing lease exposure.';
+    }
+  } else if (rev) {
+    textEl.textContent = 'Monthly revenue: $' + Math.round(rev).toLocaleString();
+    subEl.textContent = 'Add rent and payroll in the Numbers Panel to see your break-even gap.';
+  } else if (cash) {
+    textEl.textContent = 'Cash on hand: $' + Math.round(cash).toLocaleString();
+    subEl.textContent = 'Add revenue and fixed costs in the Numbers Panel to see how long this lasts.';
+  }
+}
+window.addEventListener('tm:datachange', tmUpdateOneNumber);
+
+// ── Per-section AI advisor clipboard prompt ────────────────────────────────────
+function tmCopyAIPrompt(topic) {
+  var d = tmGetData();
+  var ctx = [];
+  if (d.revenue_store) ctx.push('in-store revenue $' + d.revenue_store + '/mo');
+  if (d.revenue_online) ctx.push('online revenue $' + d.revenue_online + '/mo');
+  if (d.rent1) ctx.push('Rent 1 $' + d.rent1);
+  if (d.rent2) ctx.push('Rent 2 $' + d.rent2);
+  if (d.payroll) ctx.push('payroll $' + d.payroll);
+  if (d.cash) ctx.push('cash on hand $' + d.cash);
+  if (d.staff) ctx.push(d.staff + ' staff');
+  var ctxStr = ctx.length ? '\n\nBusiness context: ' + ctx.join(', ') + '.' : '';
+  var prompts = {
+    strategy: 'I own a small artisan marshmallow shop in the Phoenix area with two retail locations. I\'m weighing three options: (A) discount and run promotions to increase foot traffic, (B) close one location and go leaner, or (C) consolidate to one location and pivot online for national marshmallow sales. I may also consider keeping both but cutting overhead. Which path makes the most sense for a specialty food shop in this situation, and what would be your first three steps?' + ctxStr,
+    grants: 'I own an LGBTQ+-owned artisan marshmallow shop in Arizona. I\'m looking for small business grants specifically for LGBTQ+ business owners and/or food/CPG businesses. What grants should I be applying to right now, and what makes a strong grant application for a business like mine?' + ctxStr,
+    revenue: 'I sell artisan marshmallows through two retail stores in the Phoenix area and a Square online shop. I\'m trying to identify which online revenue channels are highest ROI for a specialty confection brand: Goldbelly, TikTok Shop, corporate gifting, subscription boxes, or wholesale. Walk me through how to prioritize these for a 90-day survival scenario.' + ctxStr,
+    site: 'I have an artisan marshmallow shop on Square. My online store has a 5-click checkout path, minimal product photos, and no customer reviews showing. What are the highest-impact fixes I should make in the next week to improve conversion rate, and in what order?' + ctxStr,
+    tiktok: 'I have 270,000+ TikTok followers but my videos aren\'t converting to online sales. What specific types of TikTok content convert for artisan food brands, and how do I turn my existing audience into buyers without spending money on ads?' + ctxStr
+  };
+  var text = prompts[topic] || prompts.strategy;
+  navigator.clipboard.writeText(text).then(function() {
+    var toast = document.getElementById('tm-ai-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'tm-ai-toast';
+      toast.className = 'tm-ai-toast';
+      toast.textContent = 'Prompt copied — paste into ChatGPT';
+      document.body.appendChild(toast);
+    }
+    toast.className = 'tm-ai-toast show';
+    setTimeout(function(){ toast.className = 'tm-ai-toast'; }, 2800);
+    window.open('https://chat.openai.com/', '_blank');
+  }).catch(function() {
+    alert('Copy failed — please copy manually: ' + text.substring(0, 80) + '...');
+  });
+}
+
+// ── Input auto-normalization (strips $, commas on paste for number inputs) ─────
+document.addEventListener('paste', function(e) {
+  var el = e.target;
+  if (!el || el.type !== 'number') return;
+  var text = (e.clipboardData || window.clipboardData).getData('text');
+  var cleaned = text.replace(/[$,\s]/g, '');
+  if (/^\d*\.?\d*$/.test(cleaned) && cleaned !== text.trim()) {
+    e.preventDefault();
+    var num = parseFloat(cleaned);
+    if (!isNaN(num)) {
+      el.value = num;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+}, true);
+
 // ── Init all ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+  tmMigrateFromLegacy();
   tmLoad();
   tmLoadAll();
   tmInitCheckboxes();
   tmInitGrants();
   tmCountdown();
   setInterval(tmCountdown, 30000);
+  tmInitStickyPanel();
+  tmUpdateOneNumber();
 });
 </script>
 
@@ -1117,7 +1293,7 @@ document.getElementById('pw-input').focus();
 <div class="hero">
   <div class="hero-eyebrow">Business Support Package · April 2026</div>
   <h1>The <span>Toasted Mallow</span></h1>
-  <p class="hero-sub">A full strategic package for Tricia + Hazel: grants, funding, site audit, revenue channels, and your 90-day path forward.</p>
+  <p class="hero-sub">A full strategic package for Tricia Arce: grants, funding, site audit, revenue channels, and your 90-day path forward.</p>
   <div class="hero-badges">
     <span class="badge">LGBTQ+ Owned</span>
     <span class="badge">Women Owned</span>
@@ -1132,7 +1308,7 @@ document.getElementById('pw-input').focus();
 <div style="background:linear-gradient(135deg,#3A1A08,#5C2810);padding:36px 40px;text-align:center;border-top:3px solid var(--gold);">
   <div style="max-width:720px;margin:0 auto;color:white;">
     <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:0.7;margin-bottom:12px;">From Michael Eisinger · @wanderingceo</div>
-    <p style="font-size:17px;line-height:1.8;opacity:0.95;">Hey Tricia — I saw your video about the three paths you're weighing and it stuck with me. I'm a tech person with 11+ years in nonprofits and grants, and I went down a full rabbit hole on your situation. This is what I built. Take what's useful, ignore the rest — it's yours, no strings, no follow-up required from you.</p>
+    <p style="font-size:17px;line-height:1.8;opacity:0.95;">Hey Tricia — I saw your video about the three paths you're weighing and it stuck with me. I'm a tech person with 11+ years in nonprofits and grants, and I went down a full rabbit hole on your situation. This is what I built. Take what's useful, ignore the rest — it's yours, no strings, no follow-up required. But don't hesitate to reach out if any of it is helpful or if you want to talk through anything.</p>
     <p style="font-size:15px;line-height:1.7;opacity:0.8;margin-top:12px;"><strong style="color:var(--gold-light);">Where to start:</strong> Scroll down to "Start Here" — three things to do this week, no money required. After that, the Grants section has the most time-sensitive items. If you want hands-on help with any of it, scroll to "How I Can Help" at the bottom.</p>
     <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="https://wanderingwithpride.com" target="_blank" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;text-decoration:none;padding:8px 18px;border-radius:100px;font-size:13px;font-weight:600;">wanderingwithpride.com</a>
@@ -1164,7 +1340,7 @@ document.getElementById('pw-input').focus();
     <div id="tm-tab-basic" class="tm-input-grid">
       <div class="tm-field"><label>Monthly revenue — in-store</label><input id="tmf_revenue_store" type="number" min="0" placeholder="12000"></div>
       <div class="tm-field"><label>Monthly revenue — online</label><input id="tmf_revenue_online" type="number" min="0" placeholder="3000"></div>
-      <div class="tm-field"><label>Average online order value ($)</label><input id="tmf_aov" type="number" min="0" placeholder="45"></div>
+      <div class="tm-field"><label><span class="tm-tip" data-tip="Average Order Value — the typical dollar amount of one online transaction. Raise it with bundles, gift sets, and upsells at checkout.">Average online order value</span> ($)</label><input id="tmf_aov" type="number" min="0" placeholder="45"></div>
       <div class="tm-field"><label>TikTok followers</label><input id="tmf_followers" type="number" min="0" placeholder="270900"></div>
       <div class="tm-field"><label>Email list size</label><input id="tmf_email_list" type="number" min="0" placeholder="500"></div>
       <div class="tm-field"><label>Cash on hand right now ($)</label><input id="tmf_cash" type="number" min="0" placeholder="8000"></div>
@@ -1186,7 +1362,7 @@ document.getElementById('pw-input').focus();
         <div class="tm-field"><label>Your own pay (if any)</label><input id="tmf_owner_pay" type="number" min="0" placeholder="0"></div>
 
         <div style="grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);opacity:0.7;margin-top:4px;">Product Costs</div>
-        <div class="tm-field"><label>Ingredients / COGS ($)</label><input id="tmf_cogs_dollar" type="number" min="0" placeholder="3500"></div>
+        <div class="tm-field"><label>Ingredients / <span class="tm-tip" data-tip="Cost of Goods Sold — the direct cost of making what you sell (ingredients, packaging inserts). Does NOT include rent or labor.">COGS</span> ($)</label><input id="tmf_cogs_dollar" type="number" min="0" placeholder="3500"></div>
         <div class="tm-field"><label>Packaging materials</label><input id="tmf_packaging" type="number" min="0" placeholder="400"></div>
         <div class="tm-field"><label>Shipping supplies</label><input id="tmf_shipping_supplies" type="number" min="0" placeholder="200"></div>
 
@@ -1265,6 +1441,17 @@ document.getElementById('pw-input').focus();
   </div>
 </div>
 
+<!-- ONE NUMBER TO WATCH BANNER (dynamic, only shows when numbers are entered) -->
+<div id="tm-one-number" style="display:none;background:linear-gradient(90deg,#3A1A08,#5C2810);border-top:3px solid var(--gold);padding:16px 40px;">
+  <div style="max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,200,100,0.7);margin-bottom:4px;">Your one number to watch</div>
+      <div id="tm-one-number-text" style="font-size:17px;font-weight:800;color:white;line-height:1.4;"></div>
+    </div>
+    <div id="tm-one-number-sub" style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;max-width:340px;"></div>
+  </div>
+</div>
+
 <!-- DISCLAIMER BANNER -->
 <div style="background:#fef3c7;border-top:1px solid #d97706;border-bottom:1px solid #d97706;padding:12px 40px;">
   <div style="max-width:820px;margin:0 auto;font-size:0.79rem;color:#92400e;line-height:1.6;">
@@ -1324,30 +1511,40 @@ document.getElementById('pw-input').focus();
         </div>
       </div>
       <div class="option-card" style="border-color: var(--border);">
-        <h3>Option B — Drop Cupcakes</h3>
-        <p>Eliminate the cupcake line. Improves margins at the product level but doesn't address fixed overhead.</p>
+        <h3>Option B — Audit the Cupcake Line</h3>
+        <p>Are cupcakes actually a margin drag, or are they pulling their weight? Before making any call to cut them, run the numbers. This section walks you through how to find out.</p>
         <div class="option-meta">
-          <div class="option-meta-row"><span>Revenue Impact</span><span>Modest improvement</span></div>
-          <div class="option-meta-row"><span>Overhead Cut</span><span>Low — rent/utilities stay</span></div>
-          <div class="option-meta-row"><span>Risk</span><span>Low</span></div>
-          <div class="option-meta-row"><span>Bottom Line</span><span>Helpful, not sufficient</span></div>
+          <div class="option-meta-row"><span>If margin is negative</span><span>Drop the line — it's costing you</span></div>
+          <div class="option-meta-row"><span>If margin is thin but positive</span><span>Consider repricing or reformatting</span></div>
+          <div class="option-meta-row"><span>If margin is healthy</span><span>Keep it — it's not the problem</span></div>
+          <div class="option-meta-row"><span>Bottom Line</span><span>Don't decide without the math</span></div>
         </div>
       </div>
       <div class="option-card" style="border-color: var(--border);">
-        <h3>Option C — E-Commerce Pivot</h3>
-        <p>Go online-only for marshmallows nationally. Keep milkshakes in-store. Consolidate to one location.</p>
+        <h3>Option C — Scale the Online Channel</h3>
+        <p>You already ship online — the question is whether you can make it the primary revenue driver for marshmallows, and close one location to match. Keep milkshakes in-store at the remaining location; marshmallows scale nationally.</p>
         <div class="option-meta">
-          <div class="option-meta-row"><span>Revenue Impact</span><span>High — opens national market</span></div>
+          <div class="option-meta-row"><span>Revenue Impact</span><span>High — national marshmallow market</span></div>
           <div class="option-meta-row"><span>Overhead Cut</span><span>~50% (one lease)</span></div>
           <div class="option-meta-row"><span>Risk</span><span>Medium — transition period</span></div>
           <div class="option-meta-row"><span>Customer Signal</span><span>Evolution, not retreat</span></div>
         </div>
       </div>
+      <div class="option-card" style="border-color: var(--border);">
+        <h3>Option D — Keep Both, Reduce Overhead</h3>
+        <p>Stay at both locations but cut operating costs aggressively — staffing model, hours, product mix — without closing. Buys time and tests if the cost structure can work.</p>
+        <div class="option-meta">
+          <div class="option-meta-row"><span>Revenue Impact</span><span>Neutral to slightly negative</span></div>
+          <div class="option-meta-row"><span>Overhead Cut</span><span>Partial — depends on execution</span></div>
+          <div class="option-meta-row"><span>Risk</span><span>Medium — requires tight management</span></div>
+          <div class="option-meta-row"><span>Customer Signal</span><span>Continuity — no visible change</span></div>
+        </div>
+      </div>
     </div>
 
     <div class="verdict-box" style="margin-top: 32px;">
-      <h3>The Verdict: Option C + B — together</h3>
-      <p>Option B (drop cupcakes) is necessary but not enough on its own. Option C (e-commerce pivot + consolidate to one location) is what actually solves the problem. Combined, they cut fixed overhead by ~50% — one lease, one set of utilities, fewer staff — while opening the national market for marshmallows. <strong>Option A is the worst path:</strong> it signals decline to customers, reduces revenue more than it reduces costs, and doesn't touch the real problem. <em style="color:var(--text-mid);font-size:0.9em;">Note on dropping cupcakes: this is the right call if cupcakes are a margin drag — but only you know your actual cupcake margins, cross-sell contribution, and whether any wholesale or event contracts depend on them. Run the math before making it final.</em></p>
+      <h3>The Verdict: Option C — with cupcakes as a question, not a given</h3>
+      <p>Option C (e-commerce pivot + consolidate to one location) is what actually solves the overhead problem. It cuts fixed costs by ~50% — one lease, one set of utilities, fewer staff — while opening the national market for marshmallows. <strong>Option A is the worst path:</strong> it signals decline to customers, reduces revenue more than it reduces costs, and doesn't touch the real problem. <strong>On cupcakes:</strong> run the margin math first (see Option B). If they're losing money, dropping them is the right call. If they're profitable, they may deserve to stay. Only you know your actual cupcake margins, cross-sell contribution, and whether wholesale or event contracts depend on them. Don't cut a line that's working — but don't keep one that isn't.</p>
       <div class="precedent-box">
         <strong>The precedent you need to know:</strong> XO Marshmallow (Chicago) ran the world's first marshmallow cafe — same category as you. Their cafe closed in 2024. Their e-commerce immediately jumped <strong>325%</strong> and they became a seven-figure business. TikTok Shop alone projects over $1M in revenue for them. You have something XO didn't: 10+ years of history, two locations as proof of scale, verified regional TV features (Arizona PBS, CBS 5, FOX 10 Phoenix), and dual certification (LGBTQ+ + women-owned) that opens major grant programs to you.
       </div>
@@ -1367,7 +1564,8 @@ document.getElementById('pw-input').focus();
     <div style="background:white;border:2px solid #C05A10;border-radius:14px;padding:28px 28px 24px;margin-top:20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C05A10;margin-bottom:8px;">Decision Tool</div>
       <h3 style="font-family:'Playfair Display',serif;color:var(--brown);font-size:1.15rem;margin:0 0 6px 0;">Consolidation Cost Calculator</h3>
-      <p style="font-size:13px;color:var(--text-mid);margin:0 0 20px 0;">Enter details for both locations. The calculator will tell you which one to close, what it will cost, and how long until you break even. Numbers are saved automatically.</p>
+      <p style="font-size:13px;color:var(--text-mid);margin:0 0 12px 0;">Enter details for both locations. The calculator will tell you which one to close, what it will cost, and how long until you break even. Numbers are saved automatically.</p>
+      <div style="margin-bottom:16px;"><button id="consol-prefill-btn" class="tm-prefill-btn" onclick="tmPrefillConsol()">Pre-fill rent &amp; utilities from Numbers Panel &uarr;</button> <span style="font-size:11px;color:var(--text-mid);">Fills Location A from Rent 1 / Util 1, Location B from Rent 2 / Util 2</span></div>
 
       <!-- Two-location inputs -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" id="consol-grid">
@@ -1696,6 +1894,12 @@ document.getElementById('pw-input').focus();
         + '<strong>Staff impact:</strong> ' + staffNote;
     }
     </script>
+    <div style="text-align:center;padding-top:8px;">
+      <button class="tm-ai-btn" onclick="tmCopyAIPrompt('strategy')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        Ask an AI advisor about your strategy options
+      </button>
+    </div>
   </div>
 </section>
 
@@ -1757,7 +1961,7 @@ document.getElementById('pw-input').focus();
         <div class="timeline-items">
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
-            <div class="timeline-item-text"><strong>Stop ordering cupcake ingredients immediately.</strong> Run down existing inventory.</div>
+            <div class="timeline-item-text"><strong>Run the cupcake margin math</strong> — see the Option B calculator below. If the margin is negative or negligible, stop ordering new ingredients. If it's healthy, they stay. Don't cut a line without knowing the numbers first.</div>
             <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_1"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
@@ -1772,7 +1976,7 @@ document.getElementById('pw-input').focus();
           </div>
           <div class="timeline-item">
             <div class="timeline-item-icon">&#9632;</div>
-            <div class="timeline-item-text"><strong>Run a "Last Call for Cupcakes" in-store event.</strong> Liquidate inventory and drive one final surge of foot traffic. Make it a celebration.</div>
+            <div class="timeline-item-text"><strong>If cupcakes are getting cut:</strong> Run a "Last Call for Cupcakes" in-store event. Liquidate inventory and drive one final surge of foot traffic. Make it a celebration, not a retreat. Skip this item if you're keeping the line.</div>
             <label class="tm-check"><input type="checkbox" class="tm-task-check" data-id="task_4"><span>Mark done</span></label>
           </div>
           <div class="timeline-item">
@@ -2084,6 +2288,12 @@ document.getElementById('pw-input').focus();
         <div class="assets-list-item">Press mentions: links to your TV appearances and any print/online coverage</div>
       </div>
     </div>
+    <div style="text-align:center;padding-top:12px;">
+      <button class="tm-ai-btn" onclick="tmCopyAIPrompt('grants')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        Ask an AI advisor about grants for your business
+      </button>
+    </div>
   </div>
 </section>
 
@@ -2231,8 +2441,8 @@ document.getElementById('pw-input').focus();
         <div class="audit-severity high">HIGH</div>
         <div>
           <h4>Product Name Typos in Square Store <span class="free-pill">Free Fix</span></h4>
-          <p>Live audit found three product listing errors: "Vanilla Bean Marshmallow Fluuf" (Fluff), "Mint Chocolate Chip Fluuf" (Fluff), "Rainbowlicious Ceral Bar" (Cereal). Small thing, but grant reviewers and press contacts who check your store will notice.</p>
-          <div class="audit-fix">Fix in Square Dashboard → Items → search each product name. 5 minutes total.</div>
+          <p>Live audit found: "Vanilla Bean Marshmallow Fluuf," "Mint Chocolate Chip Fluuf," and "Rainbowlicious Ceral Bar" (Cereal is a likely typo). On "Fluuf" — if that's intentional brand spelling, keep it; if it's a typo for "Fluff," it's worth fixing. Grant reviewers and press contacts check your store. Small thing, but it signals attention to detail.</p>
+          <div class="audit-fix">Verify: is "Fluuf" intentional? If yes, leave it. If not: Square Dashboard → Items → search each name. 5 minutes total.</div>
         </div>
       </div>
       <div class="audit-item">
@@ -2243,6 +2453,12 @@ document.getElementById('pw-input').focus();
           <div class="audit-fix">Update homepage copy to "12 years." Update the Square shop footer year to 2026. Also update the 19,663 Facebook likes and 9,988 check-ins that never appear anywhere — this social proof should be on the site.</div>
         </div>
       </div>
+    </div>
+    <div style="text-align:center;padding-top:12px;">
+      <button class="tm-ai-btn" onclick="tmCopyAIPrompt('site')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        Ask an AI advisor about fixing your online store
+      </button>
     </div>
   </div>
 </section>
@@ -2667,7 +2883,7 @@ document.getElementById('pw-input').focus();
           <input id="sub-price" type="number" placeholder="35" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
         <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Cost to fulfill per box ($)</label>
           <input id="sub-cost" type="number" placeholder="14" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
-        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Monthly churn rate (%)</label>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;"><span class="tm-tip" data-tip="Churn = the % of subscribers who cancel each month. 8% churn means the average subscriber stays about 12 months.">Monthly churn rate</span> (%)</label>
           <input id="sub-churn" type="number" placeholder="8" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
         <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Target subscribers at launch</label>
           <input id="sub-target" type="number" placeholder="50" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
@@ -2709,6 +2925,12 @@ document.getElementById('pw-input').focus();
         </div>
         <div id="cf-verdict" style="margin-top:12px;font-size:13px;line-height:1.7;padding:12px 16px;border-radius:8px;"></div>
       </div>
+    </div>
+    <div style="text-align:center;padding-top:12px;">
+      <button class="tm-ai-btn" onclick="tmCopyAIPrompt('revenue')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+        Ask an AI advisor about your revenue channels
+      </button>
     </div>
 </section>
 
@@ -3371,8 +3593,8 @@ document.getElementById('pw-input').focus();
       </div>
 
       <div style="background:var(--cream);border-radius:10px;padding:16px;border-left:3px solid var(--orange);">
-        <div style="font-weight:700;font-size:0.85rem;color:var(--brown);margin-bottom:6px;">Hazel + Mom Moments</div>
-        <div style="font-size:0.78rem;color:var(--text);line-height:1.6;">The mother-daughter business story is genuinely compelling content. Not staged — real moments. Hazel helping, disagreeing, making a face at a new flavor, packaging an order. The awkward, unscripted in-between moments ARE the content. "Authentic small business" is a search behavior on TikTok. What feels unremarkable to you ("we're just packing orders") looks like a window into a real life to someone scrolling at midnight. You don't need to be polished. You need to be real.</div>
+        <div style="font-weight:700;font-size:0.85rem;color:var(--brown);margin-bottom:6px;">Real Life Moments</div>
+        <div style="font-size:0.78rem;color:var(--text);line-height:1.6;">The real life of running a small business is genuinely compelling content. Not staged — real moments. Helping, disagreeing, making a face at a new flavor, packaging an order. The awkward, unscripted in-between moments ARE the content. "Authentic small business" is a search behavior on TikTok. What feels unremarkable to you ("we're just packing orders") looks like a window into a real life to someone scrolling at midnight. You don't need to be polished. You need to be real.</div>
       </div>
 
     </div>
@@ -3510,6 +3732,13 @@ document.getElementById('pw-input').focus();
       <div style="font-size:0.79rem;color:var(--text);line-height:1.6;">TikTok Shop requires retail-compliant food packaging before approval: FDA-compliant labeling (ingredients, nutrition facts panel, allergen declarations, net weight), sealed retail-ready packaging (no carry-out boxes), and no homemade/cottage food exemption. TikTok increased enforcement after a 2025 BBC investigation into allergen violations. Have your nutritional analysis, allergen statements, and packaging ready before applying. If you're already selling through a licensed commercial kitchen with proper labels, you likely meet the bar — just confirm your packaging is retail-sealed, not loose or in carry-out containers.</div>
     </div>
 
+  </div>
+
+  <div style="text-align:center;padding-top:12px;">
+    <button class="tm-ai-btn" onclick="tmCopyAIPrompt('tiktok')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg>
+      Ask an AI advisor about converting your TikTok audience
+    </button>
   </div>
 
 </div>
@@ -3911,7 +4140,7 @@ document.getElementById('pw-input').focus();
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px;">
         <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Product cost to make ($)</label>
           <input id="pc-cogs" type="number" placeholder="4.50" step="0.01" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
-        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Target gross margin (%)</label>
+        <div><label style="font-size:12px;font-weight:700;color:var(--brown);display:block;margin-bottom:4px;">Target gross margin (%) <span style="font-weight:400;color:var(--text-mid);">— industry benchmark: 60–70% for artisan confections</span></label>
           <input id="pc-margin" type="number" placeholder="65" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;box-sizing:border-box;"></div>
       </div>
       <button onclick="tmCalcPricing()" style="background:var(--brown);color:white;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;">Calculate prices</button>
@@ -4265,7 +4494,7 @@ document.getElementById('pw-input').focus();
     <div style="background:var(--cream-dark);border-radius:12px;padding:20px;">
       <div style="font-weight:700;color:var(--brown);font-size:0.9rem;margin-bottom:4px;">Custom Flavor for the Event</div>
       <div style="font-size:0.8rem;color:var(--text-mid);margin-bottom:8px;">$8–$12/unit premium, 30+ minimum</div>
-      <div style="font-size:0.82rem;color:var(--text);">Name a flavor after the couple or the event ("The Ramirez-Chen Rosé," "Hazel's First Birthday Cake"). Limited production run. This is where you charge a premium because it's genuinely one-of-a-kind. Offer at weddings, milestone birthdays, corporate product launches.</div>
+      <div style="font-size:0.82rem;color:var(--text);">Name a flavor after the couple or the event ("The Ramirez-Chen Rosé," "The Rivera Anniversary," "First Birthday Cake"). Limited production run. This is where you charge a premium because it's genuinely one-of-a-kind. Offer at weddings, milestone birthdays, corporate product launches.</div>
     </div>
     <div style="background:var(--cream-dark);border-radius:12px;padding:20px;">
       <div style="font-weight:700;color:var(--brown);font-size:0.9rem;margin-bottom:4px;">Bridal / Baby Shower Packs</div>
@@ -6095,7 +6324,7 @@ thetoastedmallow.com
       </div>
       <div>
         <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.5;margin-bottom:10px;">The Toasted Mallow</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Tricia Arce + Hazel</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Tricia Arce, Owner</div>
         <div style="opacity:0.7;font-size:14px;line-height:1.6;margin-bottom:14px;">Arizona's first artisan marshmallow shop. Gilbert + Chandler. Founded 2014. Nationally TV-featured. Ships nationwide.</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
           <a href="https://thetoastedmallow.com" target="_blank" style="color:var(--gold-light);font-size:14px;font-weight:600;">thetoastedmallow.com</a>
@@ -6250,7 +6479,7 @@ SITE ISSUES (from audit):
 - Stale Easter announcement bar still live
 - No product reviews shown on pages
 - Nationwide shipping hidden in checkout modal (should be front and center)
-- Product name typos: "Fluuf" instead of "Fluff" on 3 products
+- Product name "Fluuf" on 3 products — verify if intentional brand spelling or typo
 - "Over 8 years" copy — actually 12 years now
 - TV credentials listed as "Cooking Network" and "Food Channel" — unverifiable, should use actual station names
 
@@ -6377,22 +6606,26 @@ function tmTab(which) {
 }
 
 function tmSaveAll() {
+  var updates = {};
   TM_COST_FIELDS.forEach(function(k) {
     var el = document.getElementById('tmf_'+k);
-    if (el && el.value) { TM[k] = el.value; localStorage.setItem('tm_'+k, el.value); }
+    if (el && el.value) { updates[k] = el.value; TM[k] = el.value; localStorage.setItem('tm_'+k, el.value); }
   });
   // Legacy field compat
   var rev1 = parseFloat(TM.revenue_store||0), rev2 = parseFloat(TM.revenue_online||0);
-  if (rev1||rev2) { TM.revenue = String(rev1+rev2); localStorage.setItem('tm_revenue', TM.revenue); }
+  if (rev1||rev2) { updates.revenue = String(rev1+rev2); TM.revenue = updates.revenue; localStorage.setItem('tm_revenue', TM.revenue); }
   var r1 = parseFloat(TM.rent1||0);
-  if (r1) { TM.rent = String(r1); localStorage.setItem('tm_rent', String(r1)); }
+  if (r1) { updates.rent = String(r1); TM.rent = updates.rent; localStorage.setItem('tm_rent', String(r1)); }
+  // Write to unified key + fire event
+  if (Object.keys(updates).length) { tmSetData(updates); }
   var note = document.getElementById('tm-saved-note');
   if (note) { note.style.opacity=1; setTimeout(function(){ note.style.opacity=0; }, 2000); }
 }
 
 function tmLoadAll() {
+  var unified = tmGetData();
   TM_COST_FIELDS.forEach(function(k) {
-    var v = localStorage.getItem('tm_'+k);
+    var v = unified[k] || localStorage.getItem('tm_'+k);
     if (v) { TM[k] = v; var el = document.getElementById('tmf_'+k); if(el) el.value = v; }
   });
 }
@@ -7139,6 +7372,11 @@ var grantDrafter = (function() {
 })();
 </script>
 
+<!-- STICKY NUMBERS PANEL BUTTON -->
+<button id="tm-sticky-btn" onclick="tmStickyOpen()" aria-label="Open Numbers Panel">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+  My Numbers
+</button>
 
 </body>
 </html>
