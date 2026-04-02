@@ -42,3 +42,4 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 05:18 | Add Too Good To Go assessment: keep for cupcakes, phase out post-pivot, never us
   - 2026-04-02 05:20 | Fix TGTG marshmallow guidance: near-expiry = TGTG ok, fresh = full-price only
   - 2026-04-02 05:31 | Add full holiday revenue calendar: all key dates, ship deadlines, calendar butto
+  - 2026-04-02 05:34 | Fix critical JS apostrophe syntax errors that broke all interactive features, fi
