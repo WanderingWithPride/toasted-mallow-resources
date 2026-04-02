@@ -1085,7 +1085,7 @@ document.getElementById('pw-input').focus();
   <div id="tm-numbers-body">
     <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 16px;margin-bottom:4px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">Your privacy</div>
-      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">The numbers you enter here are stored <strong style="color:white;">only in your browser</strong> using localStorage — never sent to me or any third party. This page loads Google Fonts (a standard IP-only request to Google). The AI chat routes through a proxy I control to Google Gemini — your messages go to Google for processing but no history is kept on my end. On a shared device, use incognito mode. Clearing browser data removes all saved numbers. <button onclick="tmExportData()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin-left:4px;">Export my data</button></p>
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.6;margin:0;">The numbers you enter here are stored <strong style="color:white;">only in your browser</strong> using localStorage — never sent to me or any third party. This page loads Google Fonts (a standard IP-only request to Google). The AI chat routes through a proxy I control to Groq (Llama 3.3) — your messages go to Groq for processing but no history is kept on my end. On a shared device, use incognito mode. Clearing browser data removes all saved numbers. <button onclick="tmExportData()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;margin-left:4px;">Export my data</button></p>
     </div>
     <!-- TAB SWITCHER -->
     <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:8px;">
@@ -5765,10 +5765,11 @@ thetoastedmallow.com
   <div id="tm-chat-header">
     <div>
       <h4>Business Advisor AI</h4>
-      <span>Powered by Google Gemini (free) — knows your situation</span>
+      <span>Powered by Llama 3.3 AI — knows your situation</span>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
+    <div style="display:flex;align-items:center;gap:6px;">
       <button id="tm-tts-btn" onclick="tmToggleTTS()" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:100px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:0.5px;">Voice: OFF</button>
+      <button onclick="tmClearChat()" title="Start new conversation" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border:none;border-radius:100px;padding:4px 10px;font-size:10px;cursor:pointer;">New chat</button>
       <span id="tm-chat-close" onclick="tmChatToggle()">&times;</span>
     </div>
   </div>
@@ -5780,7 +5781,7 @@ thetoastedmallow.com
     <button id="tm-chat-voice" onclick="tmChatVoice()" title="Speak instead of type" style="background:#f5f0eb;border:1px solid #ddd;border-radius:8px;padding:8px 10px;font-size:16px;cursor:pointer;flex-shrink:0;" aria-label="Voice input">&#127908;</button>
     <button id="tm-chat-send" onclick="tmChatSend()">Send</button>
   </div>
-  <div id="tm-chat-privacy">Conversations are not saved. Nothing is sent except to Google Gemini. Voice stays on your device until you send.</div>
+  <div id="tm-chat-privacy">Conversations are not saved. Nothing is sent except to Groq AI (Llama 3.3). Voice stays on your device until you send.</div>
 </div>
 
 <script>
@@ -6220,6 +6221,45 @@ function tmCalcCashFlow() {
 }
 
 
+
+// ── Chat persistence ──────────────────────────────────────────────────────────
+function tmSaveChatHistory() {
+  try {
+    localStorage.setItem('tm_chat_history', JSON.stringify(TM_CHAT_HISTORY));
+    localStorage.setItem('tm_chat_messages_html', document.getElementById('tm-chat-messages').innerHTML);
+  } catch(e) {}
+}
+
+function tmLoadChatHistory() {
+  try {
+    var saved = localStorage.getItem('tm_chat_history');
+    var savedHtml = localStorage.getItem('tm_chat_messages_html');
+    if (saved && savedHtml) {
+      TM_CHAT_HISTORY = JSON.parse(saved);
+      var msgs = document.getElementById('tm-chat-messages');
+      if (msgs && TM_CHAT_HISTORY.length > 0) {
+        msgs.innerHTML = savedHtml;
+        // Add a "resumed" indicator
+        var banner = document.createElement('div');
+        banner.style.cssText = 'text-align:center;font-size:11px;color:#aaa;padding:4px;border-top:1px solid #eee;margin-top:4px;';
+        banner.textContent = '-- Previous conversation restored --';
+        msgs.insertBefore(banner, msgs.firstChild);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+    }
+  } catch(e) {}
+}
+
+function tmClearChat() {
+  TM_CHAT_HISTORY = [];
+  localStorage.removeItem('tm_chat_history');
+  localStorage.removeItem('tm_chat_messages_html');
+  var msgs = document.getElementById('tm-chat-messages');
+  if (msgs) {
+    msgs.innerHTML = '<div class="tm-msg-bot">Hi Tricia. I have context on your business situation from this toolkit — your two locations, the three paths you\'re weighing, your TikTok following, and the grants in this package. Ask me anything: grant writing help, TikTok script ideas, pricing questions, or just talking through a decision. What\'s on your mind?</div>';
+  }
+}
+
 // ── Text-to-speech ────────────────────────────────────────────────────────────
 var TM_TTS_ON = false;
 
@@ -6429,6 +6469,7 @@ function tmChatVoice() {
 
 // Auto-resize textarea
 document.addEventListener('DOMContentLoaded', function() {
+  tmLoadChatHistory();
   var inp = document.getElementById('tm-chat-input');
   if (inp) inp.addEventListener('input', function() {
     this.style.height = 'auto';
