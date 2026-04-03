@@ -52,3 +52,38 @@ Auto-tracked by git post-commit hook.
   - 2026-04-02 13:12 | Fix Groq branding, add chat persistence via localStorage
   - 2026-04-02 13:17 | Fix audit badge overflow, add body overflow-x hidden
   - 2026-04-02 13:34 | Expand consolidation calc to compare both locations with localStorage persistenc
+  - 2026-04-02 13:39 | Make consolidation advice blocks dynamic — update with her actual numbers on c
+  - 2026-04-02 14:04 | Fix nav overflow indicator + TikTok card URL word-break
+  - 2026-04-02 14:16 | Add interactive grant application drafter to all 6 actionable grants
+  - 2026-04-02 14:33 | Fix NaN guards in grant drafter, add input validation, strengthen draft disclaim
+  - 2026-04-02 14:46 | Add utilities & internet cost reduction section (SRP/APS rebates, Cox negotiatio
+  - 2026-04-02 15:03 | Final audit fixes: recs ordering, div/0, broken link, min=0 inputs, duplicate st
+  - 2026-04-02 15:28 | Fix mobile overflow, broken external links, html overflow-x
+  - 2026-04-02 17:13 | Add UX features, data architecture, and content accuracy fixes
+  - 2026-04-02 17:44 | Add Draft My Application to all 13 grants/loans/resources
+  - 2026-04-02 18:04 | Add action buttons to all revenue channels, free reach, and corporate gifting se
+  - 2026-04-02 18:17 | Fix Monthly Net sign, privacy notice redesign, per-location payroll fields, cris
+  - 2026-04-02 18:20 | Remove prescriptive (keep)/(close?) labels — neutral Location A/B throughout
+  - 2026-04-02 18:26 | Auto-run cost analysis on save; render markdown in AI chat responses
+  - 2026-04-02 18:32 | Add production cutback and online revenue gap recommendations to cost analysis
+  - 2026-04-02 18:38 | Add AR and one-time obligations to cash position; real runway in analysis output
+  - 2026-04-02 18:40 | Cash Runway Calculator: pre-fill from saved numbers including effective cash (AR
+  - 2026-04-02 18:44 | Fix AI cost analysis: pre-computed ratios in context, COGS warning, math rules i
+  - 2026-04-02 18:49 | Replace all COGS jargon with plain language: ingredient costs, ingredient & supp
+  - 2026-04-02 18:52 | Remove all COGS jargon from recommendation output strings
+  - 2026-04-02 19:02 | AI: add three-scenario comparison (rightsize vs consolidate vs both) + Location 
+  - 2026-04-02 19:06 | Add 'Load my estimates' button: pre-fill Numbers Panel from Tricia's public info
+  - 2026-04-02 19:07 | Add Clear all button: wipes fields, localStorage, and analysis output
+  - 2026-04-02 19:25 | Update estimates with video-confirmed numbers + add supplier comparison table
+  - 2026-04-02 19:27 | Fix supplier table with verified wholesale prices from live research
+  - 2026-04-02 20:20 | Remove assumed cost estimates — keep only video-confirmed numbers
+  - 2026-04-02 21:06 | Add cross-device note to localStorage privacy blurb
+  - 2026-04-02 21:09 | Add floating section nav widget (bottom-right, grouped by category)
+  - 2026-04-02 21:11 | Fix overlapping pills — stack Sections above My Numbers button
+  - 2026-04-02 21:13 | Fix bottom-right clutter — clean 3-button stack (My Numbers / Sections / Chat)
+  - 2026-04-02 21:27 | Fix button stack: clear progress bar, unify z-index to 9000
+  - 2026-04-02 22:45 | Strengthen grant disclaimers: fraud warning + section notice
+
+## 2026-04-03 Session
+**Started:** 2026-04-03 13:43
+  - 2026-04-03 13:43 | Add OneSheet Spark CTA + strengthen AI disclosure footer
