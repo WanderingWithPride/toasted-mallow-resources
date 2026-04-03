@@ -2099,6 +2099,9 @@ document.getElementById('pw-input').focus();
     <div class="section-label">Funding</div>
     <h2 class="section-title">Grants — Priority Sequence</h2>
     <p class="section-intro">You qualify for LGBTQ+- and women-owned grant programs simultaneously — a powerful double stack. Apply in this order.</p>
+    <div style="background:#fff8e1;border-left:4px solid #f59e0b;border-radius:6px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:#78350f;line-height:1.5;">
+      <strong>Research tool only.</strong> Grant information was verified at the time this toolkit was built but deadlines, amounts, and eligibility change. Always confirm details at the official funder website before starting an application. AI-generated drafts are a starting point — you are responsible for accuracy before submitting.
+    </div>
 
     <div class="grant-tier-header"><span>Apply This Week</span></div>
     <div class="grants-grid">
@@ -7944,7 +7947,7 @@ var grantDrafter = (function() {
 
     var output = document.getElementById('gd-output');
     output.innerHTML = '<div class="gd-output-header">Your Draft</div>'
-      + '<div class="gd-output-note">These are starting drafts based on your inputs and known facts about your business. Read each section, make it sound more like you, then copy and paste into the application form. <strong>Review carefully before submitting</strong> — personalize any details that don\u2019t match your situation.</div>'
+      + '<div class="gd-output-note"><strong>Important:</strong> This draft is AI-generated from publicly available information and the numbers you entered. You must review every section for accuracy before submitting to any funder. Verify grant amounts, deadlines, and eligibility criteria at the official source — this information changes frequently. Submitting inaccurate information on a grant application may constitute fraud. This tool provides research assistance only and is not legal or financial advice.</div>'
       + sectionsHtml
       + '<button class="gd-copy-all-btn" onclick="grantDrafter.copyAll()">Copy All Sections</button>';
     output.style.display = 'flex';
