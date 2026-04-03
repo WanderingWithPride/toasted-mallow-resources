@@ -1342,7 +1342,7 @@ document.getElementById('pw-input').focus();
     </div>
     <!-- ESTIMATE LOADER -->
     <div style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;flex:1;min-width:200px;">Some numbers pulled directly from your April 2026 video (revenue, payroll, boxes, butter). The rest are AZ retail benchmarks. Adjust anything that looks wrong.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;flex:1;min-width:200px;">Fills in numbers confirmed directly from your April 2026 video: revenue, payroll, boxes, waste rate, followers, cash on hand. Everything else you&rsquo;ll need to fill in yourself.</div>
       <div style="display:flex;gap:8px;flex-shrink:0;">
         <button onclick="tmLoadEstimates()" style="background:var(--gold);color:var(--brown);border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Load my estimates &rarr;</button>
         <button onclick="tmClearAll()" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:7px 14px;font-size:12px;cursor:pointer;white-space:nowrap;">Clear all</button>
@@ -6772,42 +6772,23 @@ function tmLoadEstimates() {
   // - Online channel essentially unused
   // AZ retail benchmarks + artisan food production ratios fill in the rest
   var est = {
-    // Video-confirmed (April 2026 TikTok): revenue ~$27K/mo (Jan-Mar $80-84K ÷ 3),
-    // payroll ~$3,500/mo at Loc1 (biweekly $3K cycle for 3 employees), 3 staff total (2FT+1PT),
-    // boxes $400/mo, cash ~$1K (bounced checks), $3K owed to staff for bounced payroll,
-    // cupcake waste 2x/week → ~20% waste rate, butter $92/30lbs
+    // Video-confirmed only (April 2026 TikTok):
+    // - Revenue ~$27K/mo (Jan-Mar $80-84K ÷ 3)
+    // - Cash ~$1K (bounced checks comment)
+    // - $3K owed to staff (bounced payroll)
+    // - Payroll Loc1 ~$3,500/mo (biweekly $3K cycle, 3 employees: 2FT + 1PT)
+    // - Packaging $400/mo (boxes)
+    // - Waste ~20% (cupcake waste 2x/week)
+    // - 270K followers (stated on video)
     tmf_revenue_store:   27000,
-    tmf_revenue_online:   300,
-    tmf_aov:              42,
-    tmf_followers:        270900,
-    tmf_email_list:       600,
-    tmf_cash:             1000,
-    tmf_ar:               0,
-    tmf_one_time_out:     3000,
-    tmf_rent1:            3500,
-    tmf_rent2:            2850,
-    tmf_util1:            500,
-    tmf_util2:            400,
-    tmf_payroll1:         3500,
-    tmf_payroll2:         3000,
-    tmf_staff1:           2,
-    tmf_staff2:           1,
-    tmf_owner_pay:        0,
-    tmf_cogs_dollar:      9500,
-    tmf_packaging:        400,
-    tmf_shipping_supplies: 150,
-    tmf_pos_fees:         350,
-    tmf_insurance:        300,
-    tmf_software:         200,
-    tmf_marketing:        50,
-    tmf_debt:             400,
-    tmf_other_fixed:      250,
-    tmf_batches_day:      3,
-    tmf_units_batch:      48,
-    tmf_prod_days:        5,
-    tmf_waste_pct:        20,
-    tmf_cost_batch:       20,
-    tmf_units_sold_week:  180
+    tmf_followers:       270900,
+    tmf_cash:            1000,
+    tmf_one_time_out:    3000,
+    tmf_payroll1:        3500,
+    tmf_staff1:          2,
+    tmf_staff2:          1,
+    tmf_packaging:       400,
+    tmf_waste_pct:       20
   };
   Object.keys(est).forEach(function(id) {
     var el = document.getElementById(id);
